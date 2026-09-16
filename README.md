@@ -21,8 +21,8 @@ Built mainly for:
    - Common cipher helpers
    - File magic/signature identification
 
-2. Heap Dump / Memory Analysis
-   - Chrome/Chromium heap snapshots
+2. Heap Dump / Memory Analysis [DONE]
+    - Chrome/Chromium heap snapshots
    - Firefox-compatible inspection
    - Extract strings
    - Search for:
@@ -71,6 +71,10 @@ Built mainly for:
    - nmap
    - jq
    - Python one-liners
+   - most common kali linux pen test
+   - msf console 
+   - katana
+   - as well as custom linux command generator
 
 5. Network / Recon Reference
    - IP / MAC
@@ -97,6 +101,7 @@ Built mainly for:
    - archive inspection
    - steganography helpers
    - deleted/recovered data concepts
+   - .bin to image/vid/text/etc convert bin files into its readable file
 
 7. OSINT Reference
    - DNS enumeration

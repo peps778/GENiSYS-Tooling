@@ -5,6 +5,7 @@ interface NavigationItem {
   label: string;
   href: string;
   icon: string;
+  title?: string;
 }
 
 /**
@@ -18,46 +19,54 @@ const navigationItems: NavigationItem[] = [
     label: "Decoding / Encoding",
     href: "/decode",
     icon: "decode",
+    // title: "GENiSYS | Decoder/Encoder"
   },
   {
     label: "File Analysis",
     href: "/files",
     icon: "file",
+    // title: "GENiSYS | File Analyzer"
   },
   {
     label: "Heap Dump / Memory",
     href: "/heap",
     icon: "memory",
+    // title: "GENiSYS | Memory Dump"
   },
   {
     label: "Linux Docs",
     href: "/linux",
     icon: "terminal",
+    // title: "GENiSYS | Create Linux Commands"
   },
-  {
-    label: "Navigation",
-    href: "/navigation",
-    icon: "navigation",
-  },
+  // {
+  //   label: "Navigation",
+  //   href: "/navigation",
+  //   icon: "navigation",
+  // },
   {
     label: "Networking",
     href: "/networking",
     icon: "network",
+    // title: "GENiSYS | Networking Docs and Tools"
   },
   {
     label: "Notes / SOP",
     href: "/notes",
     icon: "notes",
+    title: "GENiSYS | SOP for exploit and manuals"
   },
   {
     label: "OSINT",
     href: "/osint",
     icon: "search",
+    // title: "GENiSYS | OSINT Resources"
   },
   {
     label: "Web Automation / Exploit",
     href: "/web",
     icon: "web",
+    // title: "GENiSYS | Automate Web Exploit"
   },
 ];
 
@@ -222,11 +231,11 @@ export default function Sidebar() {
             </div>
 
             <div>
-              <p className="text-sm font-semibold tracking-tight text-gray-950">
+              <p className="text-sm font-semibold tracking-tight text-green-700">
                 GENiSYS
               </p>
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gray-400">
-                Tooling
+                Toolkit
               </p>
             </div>
           </div>
@@ -288,11 +297,11 @@ export default function Sidebar() {
         {/* Footer */}
         <div className="border-t border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-gray-400">
+            <span className="text-[11px] font-medium text-green-700">
               GENiSYS Tooling
             </span>
 
-            <span className="rounded-md bg-gray-50 px-2 py-1 text-[10px] font-medium text-gray-400">
+            <span className="rounded-md bg-gray-50 px-2 py-1 text-[10px] font-medium text-green-700">
               v1.0
             </span>
           </div>

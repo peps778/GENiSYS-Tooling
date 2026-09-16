@@ -17,7 +17,7 @@ interface TabDef {
   id: HeapDumpTabId;
   label: string;
   icon: (props: { width?: number; height?: number; className?: string }) => JSX.Element;
-}
+} 
 
 export const HEAP_DUMP_TABS: TabDef[] = [
   { id: "overview", label: "Overview", icon: LayersIcon },

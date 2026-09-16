@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import DecodingEncodingPage from "../components/DecodingEncoding/DecodingEncodingPage"
 import Sidebar from "../components/Navigation/Sidebar";
 import HeapDump from "./HeapDump_MemoryAnalysis";
+import Dashboard from "./Dashboard";
 
 export default function GenisysApp() {
   return (
@@ -12,12 +13,12 @@ export default function GenisysApp() {
         <main className="min-h-screen lg:pl-64">
           <Routes>
             {/* The default dashboard can be added when the dashboard module exists. */}
-            {/* <Route path="/" element={<Dashboard />} /> */}
+            <Route path="/" element={<Dashboard />} /> 
 
-            <Route path="/heap" element={<HeapDump />} />
+            <Route path="/heap" element={<HeapDump />}/>
 
             {/* Add additional GENiSYS tools as their modules are implemented. */}
-            {/* <Route path="/decode" element={<DecodingEncoding />} /> */}
+            <Route path="/decode" element={<DecodingEncodingPage />} /> 
             {/* <Route path="/files" element={<FileAnalysis />} /> */}
             {/* <Route path="/linux" element={<LinuxDocs />} /> */}
             {/* <Route path="/navigation" element={<Navigation />} /> */}
