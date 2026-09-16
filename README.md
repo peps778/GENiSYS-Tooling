@@ -1,46 +1,121 @@
-# Astro Starter Kit: Basics
+Built on top of ASTRO + REACT + TAILWIND 
 
-```sh
-npm create astro@latest -- --template basics
-```
+- Components -> Overall react renders
+- Navigation -> Nav related components and UI 
+- Tools -> [STRICT]: Each component should house each tooling and functions, if possible minimize externalization. 
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- USE TS for safety
+ 
 
-## 🚀 Project Structure
+Built mainly for:
 
-Inside of your Astro project, you'll see the following folders and files:
+1. Decoding / Encoding
+   - Base64 / Base32 / Base16
+   - URL encoding
+   - Hex / ASCII
+   - Binary
+   - Decimal / character conversion
+   - ROT / Caesar
+   - XOR
+   - Hash identification
+   - Common cipher helpers
+   - File magic/signature identification
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+2. Heap Dump / Memory Analysis
+   - Chrome/Chromium heap snapshots
+   - Firefox-compatible inspection
+   - Extract strings
+   - Search for:
+       - tokens
+       - passwords
+       - API keys
+       - URLs
+       - endpoints
+       - flags
+   - JSON/structured-data extraction
+   - Regex search
+   - Large-file processing
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+3. Web Security / CTF Automation
+   - HTTP request builder
+   - Headers / cookies / tokens
+   - Endpoint enumeration
+   - Parameter discovery
+   - Status-code analysis
+   - Directory/file discovery
+   - Basic fuzzing helpers
+   - JWT inspection
+   - API testing helpers
+   - Request/response comparison
+   - Common CTF web checks
+   - Evidence/output logging
 
-## 🧞 Commands
+4. Linux Docs / Command Reference
+   - grep
+   - sed
+   - awk
+   - cut
+   - sort / uniq
+   - strings
+   - file
+   - xxd
+   - base64
+   - curl
+   - wget
+   - find
+   - locate
+   - tar / unzip
+   - chmod
+   - ps / ss
+   - dig / nslookup
+   - nmap
+   - jq
+   - Python one-liners
 
-All commands are run from the root of the project, from a terminal:
+5. Network / Recon Reference
+   - IP / MAC
+   - TCP / UDP
+   - DNS
+   - HTTP/HTTPS
+   - common ports
+   - CIDR/subnets
+   - routing
+   - NAT
+   - firewall
+   - proxy
+   - reverse proxy
+   - curl inspection
+   - nmap syntax
+   - packet-analysis commands
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+6. Forensics / File Analysis
+   - file identification
+   - metadata
+   - strings extraction
+   - hex inspection
+   - image analysis
+   - archive inspection
+   - steganography helpers
+   - deleted/recovered data concepts
 
-## 👀 Want to learn more?
+7. OSINT Reference
+   - DNS enumeration
+   - WHOIS
+   - subdomain concepts
+   - URL/domain analysis
+   - metadata
+   - search operators
+   - username/email investigation techniques
+   - public-source evidence collection
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+8. Notes / SOP
+   - Enumeration SOP
+   - Web testing SOP
+   - Network investigation SOP
+   - Forensics SOP
+   - Stego SOP
+   - Encoding/decoding decision tree
+   - "What do I try next?" checklist
+   - Flag/evidence recording
+   - Time-management procedure
+    - 

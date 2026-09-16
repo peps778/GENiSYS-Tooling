@@ -1,0 +1,38 @@
+---
+import Sidebar from "../components/Navigation/Sidebar";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "GENiSYS Tooling" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>{title}</title>
+
+    <meta
+      name="description"
+      content="GENiSYS Tooling cybersecurity analysis workspace."
+    />
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-950 antialiased">
+    <Sidebar client:load />
+
+    <main class="min-h-screen lg:pl-64">
+      <div class="mx-auto max-w-[1600px] p-6 lg:p-8">
+        <slot />
+      </div>
+    </main>
+  </body>
+</html>

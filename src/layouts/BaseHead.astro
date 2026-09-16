@@ -1,0 +1,47 @@
+---
+interface Props {
+    title: string;
+    description?: string;
+    image?: string;
+    canonical?: string;
+}
+
+const {
+    title,
+    description = "My Astro website",
+    image,
+    canonical
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL("https://example.com");
+const canonicalUrl = canonical
+    ? new URL(canonical, siteUrl)
+    : Astro.url;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+
+<title>{title}</title>
+<meta name="description" content={description} />
+
+{canonicalUrl && (
+    <link
+        rel="canonical"
+        href={canonicalUrl}
+    />
+)}
+
+<link rel="icon" href="/favicon.svg" />
+
+<!-- Open Graph metadata -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+
+{image && (
+    <meta
+        property="og:image"
+        content={new URL(image, siteUrl)}
+    />
+)}
