@@ -1,55 +1,66 @@
-import type { GeneratedCommand, GeneratorPurpose } from "../types/linuxDocs";
+import type { GeneratorPurpose, GeneratorState } from "../types/linuxDocs";
+import { validateGeneratedCommand } from "./commandValidation";
 
-const clean = (value: string) => value.trim();
-const shellSafe = (value: string) => value.replace(/[\n\r]/g, "").trim();
+const value = (state: GeneratorState, key: string, fallback = "") => {
+  const current = state.values[key];
+  return current === undefined ? fallback : String(current);
+};
 
-export function generateCommand(purpose: GeneratorPurpose, values: Record<string, string | boolean>): GeneratedCommand {
-  const target = shellSafe(String(values.target ?? ""));
+const flag = (condition: boolean, text: string) => condition ? text : "";
 
-  switch (purpose) {
-    case "file-search": {
-      const path = shellSafe(String(values.path || "."));
-      const pattern = shellSafe(String(values.pattern || "*"));
-      const type = values.type === "directory" ? "d" : "f";
-      return { command: `find ${path} -type ${type} -name '${pattern.replaceAll("'", "'\\''")}'`, explanation: "Search a filesystem tree by type and filename pattern.", valid: Boolean(path && pattern) };
+export function generateCommand(purpose: GeneratorPurpose, state: GeneratorState): string {
+  const v = (key: string, fallback = "") => value(state, key, fallback);
+
+  switch (purpose.id) {
+    case "search-text": {
+      const pattern = v("pattern", "pattern").replace(/'/g, "'\\''");
+      const path = v("path", ".");
+      return `grep ${flag(Boolean(state.values.ignoreCase), "-i ")}${flag(Boolean(state.values.regex), "-E ")}${flag(Boolean(state.values.recursive), "-r ")}'${pattern}' ${path}`.trim();
     }
-    case "text-search": {
-      const path = shellSafe(String(values.path || "."));
-      const term = clean(String(values.term || ""));
-      if (!term) return { command: "", explanation: "A search term is required.", valid: false };
-      const flags = `${values.ignoreCase ? "i" : ""}${values.lineNumbers ? "n" : ""}${values.recursive ? "R" : ""}`;
-      return { command: `grep -${flags || "n"} '${term.replaceAll("'", "'\\''")}' ${path}`, explanation: "Search text using grep with the selected options.", valid: true };
+    case "inspect-binary": {
+      const tool = v("tool", "file");
+      const path = v("path", "artifact.bin");
+      if (tool === "file") return `file --mime ${path}`;
+      if (tool === "strings") return `strings ${path}`;
+      if (tool === "xxd") return `xxd -l ${v("bytes", "64")} ${path}`;
+      return `hexdump -C ${path}`;
     }
-    case "network-scan": {
-      if (!target) return { command: "", explanation: "A target is required.", valid: false };
-      const flags = [values.pingDisabled ? "-Pn" : "", values.serviceDetection ? "-sV" : "", values.defaultScripts ? "-sC" : ""].filter(Boolean).join(" ");
-      const ports = shellSafe(String(values.ports || ""));
-      return { command: `nmap ${flags}${ports ? ` -p ${ports}` : ""} ${target}`.replace(/  +/g, " "), explanation: "Generate an Nmap command for an authorized assessment target.", valid: true };
+    case "find-files": {
+      const parts = [`find ${v("path", ".")}`, `-type ${v("type", "f")}`];
+      if (v("name")) parts.push(`-name '${v("name").replace(/'/g, "'\\''")}'`);
+      if (v("mtime")) parts.push(`-mtime -${v("mtime")}`);
+      return parts.join(" ");
     }
-    case "http-request": {
-      if (!target) return { command: "", explanation: "A URL is required.", valid: false };
-      const method = String(values.method || "GET").toUpperCase();
-      const parts = [`curl -s`, method !== "GET" ? `-X ${method}` : "", values.followRedirects ? "-L" : "", values.headers ? `-H '${shellSafe(String(values.headers))}'` : "", target].filter(Boolean);
-      return { command: parts.join(" "), explanation: "Generate a curl request without executing it.", valid: true };
+    case "inspect-http": {
+      const url = v("url", "https://example.test/");
+      const mode = v("mode", "headers");
+      const token = v("token");
+      const auth = token ? ` -H 'Authorization: Bearer ${token.replace(/'/g, "'\\''")}'` : "";
+      if (mode === "json") return `curl -sS -H 'Accept: application/json'${auth} ${url}`;
+      if (mode === "redirects") return `curl -iL${auth} ${url}`;
+      if (mode === "post") return `curl -sS -X POST -H 'Content-Type: application/json'${auth} -d '{}' ${url}`;
+      return `curl -I${auth} ${url}`;
     }
-    case "dns-query": {
-      if (!target) return { command: "", explanation: "A domain is required.", valid: false };
-      const record = String(values.record || "A").toUpperCase();
-      return { command: `dig +short ${record} ${target}`, explanation: "Generate a concise DNS query.", valid: true };
+    case "scan-services": {
+      const target = v("target", "192.0.2.10");
+      const mode = v("mode", "ports");
+      if (mode === "discovery") return `nmap -sn ${target}`;
+      if (mode === "version") return `nmap -sV ${target}`;
+      if (mode === "top") return `nmap --top-ports ${v("top", "100")} ${target}`;
+      return `nmap -p ${v("ports", "22,80,443")} ${target}`;
     }
-    case "file-inspection": {
-      if (!target) return { command: "", explanation: "A file is required.", valid: false };
-      const commands = [values.identify ? `file ${target}` : "", values.strings ? `strings -n 8 ${target}` : "", values.hex ? `xxd -l ${shellSafe(String(values.bytes || "128"))} ${target}` : "", values.hash ? `sha256sum ${target}` : ""].filter(Boolean);
-      return { command: commands.join("\n"), explanation: "Generate a non-executing file inspection checklist.", valid: commands.length > 0 };
-    }
-    case "json-filter": {
-      if (!target) return { command: "", explanation: "A JSON file or input path is required.", valid: false };
-      const filter = shellSafe(String(values.filter || "."));
-      return { command: `jq -r '${filter.replaceAll("'", "'\\''")}' ${target}`, explanation: "Generate a jq JSON filter.", valid: true };
-    }
-    case "process-investigation": {
-      const commands = [values.processes ? "ps aux" : "", values.sockets ? "ss -tunap" : "", values.networkFiles ? "lsof -i" : ""].filter(Boolean);
-      return { command: commands.join("\n"), explanation: "Generate local process/network investigation commands.", valid: commands.length > 0 };
-    }
+    case "extract-json":
+      return `jq '${v("expression", ".").replace(/'/g, "'\\''")}' ${v("path", "response.json")}`;
+    case "search-logs":
+      return `grep ${flag(Boolean(state.values.lines), "-n ")}${flag(Boolean(state.values.ignoreCase), "-i ")}-E '${v("pattern", "error|failed")}' ${v("path", "app.log")}`.trim();
+    case "calculate-hash":
+      return `${v("algorithm", "sha256")}sum ${v("path", "artifact.bin")}`;
+    default:
+      return "";
   }
+}
+
+export function generateValidatedCommand(purpose: GeneratorPurpose, state: GeneratorState) {
+  const command = generateCommand(purpose, state);
+  return { command, validation: validateGeneratedCommand(command) };
 }

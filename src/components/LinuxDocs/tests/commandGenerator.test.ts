@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { generatorPurposes } from "../data/generator";
 import { generateCommand } from "../lib/commandGenerator";
 
-describe("Linux Docs command generator", () => {
-  it("generates an Nmap command", () => {
-    const result = generateCommand("network-scan", { target: "TARGET", ports: "22,80", serviceDetection: true });
-    expect(result.valid).toBe(true);
-    expect(result.command).toContain("nmap");
-    expect(result.command).not.toContain("undefined");
+describe("command generator", () => {
+  it("generates a deterministic grep command", () => {
+    const purpose = generatorPurposes.find((item) => item.id === "search-text")!;
+    const state = { purpose: purpose.id, values: { pattern: "failed|denied", path: "auth.log", regex: true, ignoreCase: true, recursive: false } };
+    expect(generateCommand(purpose, state)).toBe("grep -i -E 'failed|denied' auth.log");
   });
-  it("rejects a missing target", () => expect(generateCommand("network-scan", {}).valid).toBe(false));
+
+  it("changes command family with the selected purpose", () => {
+    const purpose = generatorPurposes.find((item) => item.id === "scan-services")!;
+    const state = { purpose: purpose.id, values: { target: "192.0.2.10", mode: "version", ports: "22,80", top: "100" } };
+    expect(generateCommand(purpose, state)).toBe("nmap -sV 192.0.2.10");
+  });
 });

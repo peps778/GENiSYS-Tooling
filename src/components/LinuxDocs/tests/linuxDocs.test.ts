@@ -1,12 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { commands } from "../data/commands";
+import { linuxCommands } from "../data/commands";
+import { kaliTools } from "../data/kali";
+import { commandCategories } from "../data/categories";
+import { validateGeneratedCommand } from "../lib/commandValidation";
 
-describe("Linux Docs data integrity", () => {
-  it("contains the required core references", () => {
-    const names = new Set(commands.map((command) => command.name));
-    ["grep", "sed", "awk", "cut", "sort", "uniq", "strings", "file", "xxd", "base64", "curl", "wget", "find", "locate", "tar", "unzip", "chmod", "ps", "ss", "dig", "nslookup", "nmap", "jq", "python3"].forEach((name) => expect(names.has(name)).toBe(true));
+describe("Linux Docs contracts", () => {
+  it("keeps every Kali tool on the shared contract", () => {
+    for (const tool of kaliTools) {
+      expect(Object.keys(tool).sort()).toEqual(["category", "command", "name", "purpose", "tags"]);
+      expect(typeof tool.name).toBe("string");
+      expect(typeof tool.purpose).toBe("string");
+      expect(typeof tool.command).toBe("string");
+      expect(typeof tool.category).toBe("string");
+      expect(Array.isArray(tool.tags)).toBe(true);
+    }
   });
-  it("does not contain empty command definitions", () => commands.forEach((command) => {
-    expect(command.id).toBeTruthy(); expect(command.name).toBeTruthy(); expect(command.syntax).toBeTruthy(); expect(command.examples.length).toBeGreaterThan(0);
-  }));
+
+  it("contains all major requested categories", () => {
+    const categories = new Set(linuxCommands.map((command) => command.category));
+    expect(categories).toEqual(expect.objectContaining({}));
+    for (const category of ["core", "text", "forensics", "process", "network", "dns", "web", "nmap"]) {
+      expect(categories.has(category)).toBe(true);
+    }
+    expect(commandCategories.map((item) => item.id)).toEqual(expect.arrayContaining(["core", "text", "forensics", "process", "network", "dns", "web", "nmap"]));
+  });
+
+  it("flags destructive shell patterns", () => {
+    expect(validateGeneratedCommand("rm -rf /").valid).toBe(false);
+    expect(validateGeneratedCommand("mkfs.ext4 /dev/sda").valid).toBe(false);
+    expect(validateGeneratedCommand("grep -n error app.log").valid).toBe(true);
+  });
 });

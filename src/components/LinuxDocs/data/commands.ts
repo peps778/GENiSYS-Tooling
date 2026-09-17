@@ -1,108 +1,1451 @@
 import type { LinuxCommand } from "../types/linuxDocs";
 
-export const commands: LinuxCommand[] = [
+export const linuxCommands: LinuxCommand[] = [
   {
-    id: "grep", name: "grep", category: "Text Processing",
-    summary: "Search text using fixed strings or regular expressions.",
-    description: "grep reads input and prints lines matching a pattern. It is one of the most useful tools for filtering logs, command output, configuration files, and reconnaissance results.",
-    syntax: "grep [OPTIONS] PATTERN [FILE...]",
-    tags: ["search", "regex", "logs", "filter"],
-    options: [
-      { flag: "-i", description: "Ignore case." }, { flag: "-n", description: "Show line numbers." },
-      { flag: "-r", description: "Recursively search directories." }, { flag: "-v", description: "Invert the match." },
-      { flag: "-E", description: "Use extended regular expressions." }, { flag: "-o", description: "Print only matching portions." },
-      { flag: "-A/-B/-C N", description: "Show context after, before, or around matches." },
-    ],
+    id: 'pwd',
+    name: 'pwd',
+    category: 'core',
+    description: 'Print the current working directory.',
+    syntax: 'pwd',
     examples: [
-      { description: "Search a log recursively", command: "grep -Rni \"error\" ./logs" },
-      { description: "Extract unique HTTP paths from a log", command: "grep \"404\" access.log | awk '{print $7}' | sort -u" },
-    ], relatedCommands: ["awk", "sed", "sort", "uniq"],
+    { description: 'Show the current directory', command: 'pwd', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Useful when documenting evidence paths.'],
+    tags: ['path', 'directory'],
   },
   {
-    id: "sed", name: "sed", category: "Text Processing", summary: "Stream editor for selecting, replacing, and deleting text.",
-    description: "sed processes text one line at a time. It is useful for transforming command output and making repeatable text substitutions.", syntax: "sed [OPTIONS] 'SCRIPT' [FILE...]", tags: ["stream", "replace", "filter"],
-    options: [{ flag: "-n", description: "Suppress automatic output." }, { flag: "-i", description: "Edit files in place; use carefully." }],
-    examples: [{ description: "Replace a value in a stream", command: "printf '%s\\n' 'host=TARGET' | sed 's/TARGET/example.local/'" }, { description: "Delete matching lines", command: "sed '/^#/d' config.txt" }], relatedCommands: ["grep", "awk", "cut"],
+    id: 'ls',
+    name: 'ls',
+    category: 'core',
+    description: 'List directory contents.',
+    syntax: 'ls [OPTIONS] [PATH]',
+    examples: [
+    { description: 'Detailed listing', command: 'ls -lah', authorizedOnly: false },
+    { description: 'List a target directory', command: 'ls -la /var/log', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-l', description: 'Long listing format.' },
+    { flag: '-a', description: 'Include hidden entries.' },
+    { flag: '-h', description: 'Human-readable sizes.' }
+    ],
+    notes: [],
+    tags: ['files', 'directory'],
   },
   {
-    id: "awk", name: "awk", category: "Text Processing", summary: "Process structured text by fields, patterns, and expressions.",
-    description: "awk is especially effective for column-oriented output such as logs, process lists, and scanner results.", syntax: "awk [OPTIONS] 'PROGRAM' [FILE...]", tags: ["columns", "fields", "logs", "filter"],
-    options: [{ flag: "-F SEP", description: "Set the input field separator." }, { flag: "$1, $2, $NF", description: "Reference fields; NF is the number of fields." }],
-    examples: [{ description: "Print the first field", command: "awk '{print $1}' file.txt" }, { description: "Extract the last field", command: "awk '{print $NF}' access.log" }], relatedCommands: ["grep", "cut", "sort"],
+    id: 'cd',
+    name: 'cd',
+    category: 'core',
+    description: 'Change the current shell directory.',
+    syntax: 'cd [PATH]',
+    examples: [
+    { description: 'Move to a directory', command: 'cd /var/log', authorizedOnly: false },
+    { description: 'Move to the parent', command: 'cd ..', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'A shell builtin; `pwd` verifies the resulting location.'],
+    tags: ['navigation', 'shell'],
   },
   {
-    id: "cut", name: "cut", category: "Text Processing", summary: "Extract selected characters or delimiter-separated fields.",
-    description: "cut is a lightweight way to extract columns from predictable text formats.", syntax: "cut [OPTIONS] [FILE]", tags: ["columns", "fields", "text"],
-    options: [{ flag: "-d DELIM", description: "Use DELIM as the field delimiter." }, { flag: "-f LIST", description: "Select fields." }, { flag: "-c LIST", description: "Select character positions." }],
-    examples: [{ description: "Extract a colon-separated field", command: "cut -d: -f1 /etc/passwd" }], relatedCommands: ["awk", "sort"],
+    id: 'tree',
+    name: 'tree',
+    category: 'core',
+    description: 'Display a directory hierarchy.',
+    syntax: 'tree [OPTIONS] [PATH]',
+    examples: [
+    { description: 'Two-level tree', command: 'tree -L 2 /tmp', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-L N', description: 'Limit displayed depth.' }
+    ],
+    notes: [    'Availability depends on whether the `tree` package is installed.'],
+    tags: ['directory', 'layout'],
   },
   {
-    id: "sort", name: "sort", category: "Text Processing", summary: "Sort lines for easier analysis and deduplication.", description: "sort orders lines and is commonly paired with uniq for counting or removing duplicates.", syntax: "sort [OPTIONS] [FILE...]", tags: ["sort", "deduplicate", "logs"], options: [{ flag: "-n", description: "Numeric sort." }, { flag: "-r", description: "Reverse order." }, { flag: "-u", description: "Output unique lines." }], examples: [{ description: "Rank repeated values", command: "sort values.txt | uniq -c | sort -nr" }], relatedCommands: ["uniq", "awk", "grep"],
+    id: 'cat',
+    name: 'cat',
+    category: 'core',
+    description: 'Print file contents to standard output.',
+    syntax: 'cat [OPTIONS] FILE',
+    examples: [
+    { description: 'Read a small text file', command: 'cat notes.txt', authorizedOnly: false },
+    { description: 'Combine evidence snippets', command: 'cat part1.txt part2.txt', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Avoid dumping very large files directly into a terminal.'],
+    tags: ['read', 'text'],
   },
   {
-    id: "uniq", name: "uniq", category: "Text Processing", summary: "Filter or count adjacent duplicate lines.", description: "uniq operates on adjacent duplicates, so sort is normally used first when counting arbitrary repeated values.", syntax: "uniq [OPTIONS] [INPUT] [OUTPUT]", tags: ["count", "deduplicate"], options: [{ flag: "-c", description: "Prefix lines with occurrence counts." }, { flag: "-d", description: "Show only duplicated lines." }], examples: [{ description: "Count repeated values", command: "sort values.txt | uniq -c | sort -nr" }], relatedCommands: ["sort"],
+    id: 'less',
+    name: 'less',
+    category: 'core',
+    description: 'Paginate text interactively.',
+    syntax: 'less FILE',
+    examples: [
+    { description: 'Inspect a log', command: 'less /var/log/auth.log', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Use `/pattern` inside less to search and `q` to exit.'],
+    tags: ['read', 'logs'],
   },
   {
-    id: "strings", name: "strings", category: "File Analysis", summary: "Extract printable character sequences from binary files.", description: "strings is useful during initial inspection of binaries, dumps, firmware, and unknown files. It is an indicator, not a substitute for deeper analysis.", syntax: "strings [OPTIONS] FILE", tags: ["binary", "forensics", "file-analysis"], options: [{ flag: "-n N", description: "Require at least N printable characters." }], examples: [{ description: "Find likely URLs or tokens in a sample", command: "strings -n 8 sample.bin | grep -Ei 'https?://|token|key'" }], relatedCommands: ["file", "xxd", "hexdump"],
+    id: 'head',
+    name: 'head',
+    category: 'core',
+    description: 'Show the beginning of a file or stream.',
+    syntax: 'head [OPTIONS] FILE',
+    examples: [
+    { description: 'First 20 lines', command: 'head -n 20 access.log', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-n N', description: 'Number of lines.' }
+    ],
+    notes: [],
+    tags: ['preview', 'logs'],
   },
   {
-    id: "file", name: "file", category: "File Analysis", summary: "Identify a file using its contents and magic signatures.", description: "file helps determine the likely format of a file even when the filename extension is misleading or missing.", syntax: "file [OPTIONS] FILE...", tags: ["magic", "signature", "forensics"], options: [], examples: [{ description: "Identify an unknown artifact", command: "file sample.bin" }, { description: "Inspect files in a directory", command: "file *" }], relatedCommands: ["xxd", "strings"],
+    id: 'tail',
+    name: 'tail',
+    category: 'core',
+    description: 'Show the end of a file or follow appended data.',
+    syntax: 'tail [OPTIONS] FILE',
+    examples: [
+    { description: 'Last 50 lines', command: 'tail -n 50 app.log', authorizedOnly: false },
+    { description: 'Follow a log', command: 'tail -f app.log', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-n N', description: 'Number of lines.' },
+    { flag: '-f', description: 'Follow appended output.' }
+    ],
+    notes: [    'Use `-f` only when live output is useful.'],
+    tags: ['logs', 'monitor'],
   },
   {
-    id: "xxd", name: "xxd", category: "File Analysis", summary: "Create and reverse hexadecimal dumps.", description: "xxd provides a convenient byte-level view for inspecting file headers and binary content.", syntax: "xxd [OPTIONS] [FILE]", tags: ["hex", "binary", "forensics"], options: [{ flag: "-l N", description: "Limit output to N bytes." }, { flag: "-r", description: "Reverse a hex dump back to binary." }], examples: [{ description: "Inspect the first 64 bytes", command: "xxd -l 64 sample.bin" }], relatedCommands: ["file", "strings"],
+    id: 'cp',
+    name: 'cp',
+    category: 'core',
+    description: 'Copy files or directories.',
+    syntax: 'cp [OPTIONS] SOURCE DEST',
+    examples: [
+    { description: 'Copy a file', command: 'cp report.txt report-copy.txt', authorizedOnly: false },
+    { description: 'Copy a directory', command: 'cp -a evidence evidence-copy', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-a', description: 'Archive mode; preserve attributes recursively.' }
+    ],
+    notes: [    'Use a separate destination when preserving original evidence.'],
+    tags: ['copy', 'files'],
   },
   {
-    id: "base64", name: "base64", category: "File Analysis", summary: "Encode or decode Base64 data.", description: "Base64 is an encoding scheme, not encryption. It is frequently encountered in HTTP data, configuration, tokens, and files.", syntax: "base64 [OPTIONS] [FILE]", tags: ["encoding", "decode", "web"], options: [{ flag: "-d", description: "Decode Base64 input." }], examples: [{ description: "Decode a value", command: "printf '%s' 'VEFSR0VU' | base64 -d" }], relatedCommands: ["xxd", "python3"],
+    id: 'mv',
+    name: 'mv',
+    category: 'core',
+    description: 'Move or rename files.',
+    syntax: 'mv SOURCE DEST',
+    examples: [
+    { description: 'Rename a file', command: 'mv draft.txt final.txt', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Be careful when the destination already exists.'],
+    tags: ['move', 'rename'],
   },
   {
-    id: "curl", name: "curl", category: "HTTP", summary: "Make HTTP and other network requests from the terminal.", description: "curl is useful for checking HTTP headers, APIs, redirects, request methods, and response bodies during authorized testing.", syntax: "curl [OPTIONS] URL", tags: ["http", "api", "headers", "web"], options: [{ flag: "-I", description: "Request headers only." }, { flag: "-v", description: "Show verbose request/response details." }, { flag: "-L", description: "Follow redirects." }, { flag: "-H", description: "Add a request header." }, { flag: "-d", description: "Send request data." }, { flag: "-o FILE", description: "Write output to a file." }], examples: [{ description: "Inspect response headers", command: "curl -I https://TARGET" }, { description: "Pretty-print JSON when jq is installed", command: "curl -s https://TARGET/api | jq ." }], relatedCommands: ["wget", "jq", "katana"],
+    id: 'mkdir',
+    name: 'mkdir',
+    category: 'core',
+    description: 'Create directories.',
+    syntax: 'mkdir [OPTIONS] DIRECTORY',
+    examples: [
+    { description: 'Create a nested evidence path', command: 'mkdir -p evidence/raw/2026-09-17', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-p', description: 'Create missing parent directories.' }
+    ],
+    notes: [],
+    tags: ['directory', 'evidence'],
   },
   {
-    id: "wget", name: "wget", category: "HTTP", summary: "Retrieve files and resources over HTTP and related protocols.", description: "wget is useful for repeatable downloads and controlled retrieval of authorized resources.", syntax: "wget [OPTIONS] URL", tags: ["http", "download", "web"], options: [{ flag: "-O FILE", description: "Write the response to FILE." }, { flag: "-q", description: "Quiet output." }, { flag: "-c", description: "Continue a partial download." }], examples: [{ description: "Save a response under a known name", command: "wget -O response.bin https://TARGET/file" }], relatedCommands: ["curl"],
+    id: 'touch',
+    name: 'touch',
+    category: 'core',
+    description: 'Create an empty file or update timestamps.',
+    syntax: 'touch FILE',
+    examples: [
+    { description: 'Create a notes file', command: 'touch notes.txt', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Do not use it on preserved originals when timestamps are evidence.'],
+    tags: ['files', 'timestamps'],
   },
   {
-    id: "find", name: "find", category: "Filesystem", summary: "Search directory trees by name, type, size, time, permissions, and more.", description: "find performs live filesystem traversal and is preferable when current filesystem state matters.", syntax: "find PATH [TESTS] [ACTIONS]", tags: ["files", "search", "forensics"], options: [{ flag: "-name PATTERN", description: "Match a filename pattern." }, { flag: "-type f/d", description: "Restrict to files or directories." }, { flag: "-size", description: "Filter by file size." }, { flag: "-mtime", description: "Filter by modification age." }, { flag: "-perm", description: "Filter by permissions." }, { flag: "-exec", description: "Run an action for matching entries." }], examples: [{ description: "Find log files", command: "find /var/log -type f -name '*.log'" }, { description: "Find files in the current project", command: "find . -type f -name '*.json'" }], relatedCommands: ["locate", "file", "grep"],
+    id: 'echo',
+    name: 'echo',
+    category: 'core',
+    description: 'Write arguments to standard output.',
+    syntax: 'echo TEXT',
+    examples: [
+    { description: 'Print a variable', command: 'echo "$HOME"', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['shell', 'output'],
   },
   {
-    id: "locate", name: "locate", category: "Filesystem", summary: "Find paths using a prebuilt filename database.", description: "locate is usually faster than find for name lookups but depends on an updated database and may not include newly created files.", syntax: "locate [OPTIONS] PATTERN", tags: ["files", "search"], options: [], examples: [{ description: "Search the locate database", command: "locate filename" }], relatedCommands: ["find"],
+    id: 'printf',
+    name: 'printf',
+    category: 'core',
+    description: 'Format and print text.',
+    syntax: 'printf FORMAT [ARGUMENTS]',
+    examples: [
+    { description: 'Print a stable line', command: "printf '%s\\n' 'finding: example'", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Prefer `printf` when exact formatting matters.'],
+    tags: ['shell', 'output'],
   },
   {
-    id: "tar", name: "tar", category: "Filesystem", summary: "Create, inspect, and extract tar archives.", description: "tar is a standard archive utility and commonly appears in Linux packages, backups, source trees, and collected evidence.", syntax: "tar [OPTIONS] ARCHIVE [FILES...]", tags: ["archive", "extract"], options: [{ flag: "-c", description: "Create an archive." }, { flag: "-x", description: "Extract an archive." }, { flag: "-t", description: "List archive contents." }, { flag: "-f", description: "Specify the archive file." }, { flag: "-z", description: "Use gzip compression." }], examples: [{ description: "List a gzip-compressed archive", command: "tar -tzf archive.tar.gz" }, { description: "Extract an archive", command: "tar -xzf archive.tar.gz" }], relatedCommands: ["unzip", "gzip"],
+    id: 'tee',
+    name: 'tee',
+    category: 'core',
+    description: 'Copy standard input to a file while also displaying it.',
+    syntax: 'tee [OPTIONS] FILE',
+    examples: [
+    { description: 'Record command output', command: 'ip addr | tee interfaces.txt', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-a', description: 'Append instead of overwrite.' }
+    ],
+    notes: [    'Useful for creating a transcript while reviewing output.'],
+    tags: ['capture', 'evidence'],
   },
   {
-    id: "unzip", name: "unzip", category: "Filesystem", summary: "Inspect and extract ZIP archives.", description: "Use unzip -l to inspect an archive before extraction when working with untrusted files.", syntax: "unzip [OPTIONS] ARCHIVE", tags: ["archive", "zip", "extract"], options: [{ flag: "-l", description: "List archive contents." }], examples: [{ description: "Inspect a ZIP archive", command: "unzip -l sample.zip" }], relatedCommands: ["tar"],
+    id: 'whoami',
+    name: 'whoami',
+    category: 'core',
+    description: 'Print the effective username.',
+    syntax: 'whoami',
+    examples: [
+    { description: 'Show current identity', command: 'whoami', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['identity', 'user'],
   },
   {
-    id: "chmod", name: "chmod", category: "Permissions", summary: "Change file and directory permissions.", description: "chmod changes read, write, and execute permissions for the owner, group, and others.", syntax: "chmod [OPTIONS] MODE FILE...", tags: ["permissions", "linux", "security"], options: [{ flag: "755", description: "Owner rwx; group and others rx." }, { flag: "644", description: "Owner rw; group and others r." }, { flag: "+x", description: "Add execute permission." }, { flag: "-R", description: "Apply recursively; use carefully." }], examples: [{ description: "Make a script executable", command: "chmod +x script.sh" }, { description: "Set conventional file permissions", command: "chmod 644 config.txt" }], relatedCommands: ["chown", "ls"],
+    id: 'id',
+    name: 'id',
+    category: 'core',
+    description: 'Display user and group identity information.',
+    syntax: 'id [USER]',
+    examples: [
+    { description: 'Inspect current identity', command: 'id', authorizedOnly: false },
+    { description: 'Inspect another local account', command: 'id analyst', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['identity', 'groups'],
   },
   {
-    id: "ps", name: "ps", category: "Processes", summary: "Display running processes.", description: "ps provides a point-in-time process listing and is useful for identifying process IDs, users, commands, and process relationships.", syntax: "ps [OPTIONS]", tags: ["process", "system", "investigation"], options: [{ flag: "aux", description: "Show processes for all users with detailed information." }, { flag: "-ef", description: "Full-format process listing." }], examples: [{ description: "List processes", command: "ps aux" }, { description: "Filter a process list", command: "ps aux | grep -i process" }], relatedCommands: ["pgrep", "ss", "top"],
+    id: 'groups',
+    name: 'groups',
+    category: 'core',
+    description: 'Show group memberships.',
+    syntax: 'groups [USER]',
+    examples: [
+    { description: 'Show current groups', command: 'groups', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['identity', 'permissions'],
   },
   {
-    id: "ss", name: "ss", category: "Processes", summary: "Inspect sockets, listening ports, and network connections.", description: "ss is a modern socket inspection utility. It can associate sockets with processes when sufficient privileges are available.", syntax: "ss [OPTIONS]", tags: ["network", "ports", "process"], options: [{ flag: "-t", description: "TCP sockets." }, { flag: "-u", description: "UDP sockets." }, { flag: "-l", description: "Listening sockets." }, { flag: "-n", description: "Do not resolve service names." }, { flag: "-p", description: "Show process information when permitted." }], examples: [{ description: "Show listening TCP/UDP sockets", command: "ss -tuln" }, { description: "Show sockets with process information", command: "ss -tunap" }], relatedCommands: ["ps", "lsof", "ip"],
+    id: 'hostname',
+    name: 'hostname',
+    category: 'core',
+    description: 'Show or set the system hostname.',
+    syntax: 'hostname [OPTION]',
+    examples: [
+    { description: 'Show hostname', command: 'hostname', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['host', 'identity'],
   },
   {
-    id: "dig", name: "dig", category: "DNS", summary: "Query DNS records and inspect DNS responses.", description: "dig is a precise DNS troubleshooting and reconnaissance utility.", syntax: "dig [@SERVER] NAME [TYPE]", tags: ["dns", "recon", "network"], options: [{ flag: "+short", description: "Show concise output." }, { flag: "A/MX/NS/TXT", description: "Query common record types." }], examples: [{ description: "Get an IPv4 address", command: "dig +short A TARGET" }, { description: "Inspect TXT records", command: "dig TXT TARGET" }], relatedCommands: ["nslookup", "host"],
+    id: 'uname',
+    name: 'uname',
+    category: 'core',
+    description: 'Print system and kernel information.',
+    syntax: 'uname [OPTIONS]',
+    examples: [
+    { description: 'Kernel and architecture', command: 'uname -a', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-a', description: 'Print available system information.' }
+    ],
+    notes: [],
+    tags: ['kernel', 'os'],
   },
   {
-    id: "nslookup", name: "nslookup", category: "DNS", summary: "Perform DNS queries from the terminal.", description: "nslookup is a portable DNS lookup utility useful for quick record checks.", syntax: "nslookup [-type=TYPE] NAME [SERVER]", tags: ["dns", "network"], options: [{ flag: "-type=TYPE", description: "Select the DNS record type." }], examples: [{ description: "Look up a host", command: "nslookup TARGET" }, { description: "Query MX records", command: "nslookup -type=MX TARGET" }], relatedCommands: ["dig", "host"],
+    id: 'env',
+    name: 'env',
+    category: 'core',
+    description: 'Print or run with environment variables.',
+    syntax: 'env [OPTION] [COMMAND]',
+    examples: [
+    { description: 'Review environment', command: 'env | sort', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Treat environment output as potentially sensitive.'],
+    tags: ['environment', 'configuration'],
   },
   {
-    id: "nmap", name: "nmap", category: "Reconnaissance", summary: "Discover hosts, ports, and services on authorized targets.", description: "Nmap is a network discovery and security auditing tool. Use it only against systems and networks where scanning is authorized.", syntax: "nmap [SCAN OPTIONS] TARGET", tags: ["recon", "ports", "services", "network"], options: [{ flag: "-Pn", description: "Skip host discovery and treat hosts as online." }, { flag: "-p-", description: "Scan all TCP ports." }, { flag: "-p PORTS", description: "Scan selected ports." }, { flag: "-sV", description: "Probe services for version information." }, { flag: "-sC", description: "Run the default NSE script set." }, { flag: "-oN FILE", description: "Save normal output." }], examples: [{ description: "Service/version enumeration in an authorized lab", command: "nmap -sV TARGET" }, { description: "Full TCP port discovery", command: "nmap -Pn -p- TARGET" }], relatedCommands: ["curl", "dig", "katana"],
+    id: 'printenv',
+    name: 'printenv',
+    category: 'core',
+    description: 'Print environment variables.',
+    syntax: 'printenv [VARIABLE]',
+    examples: [
+    { description: 'Inspect PATH', command: 'printenv PATH', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Avoid exposing secrets when copying environment output.'],
+    tags: ['environment', 'configuration'],
   },
   {
-    id: "jq", name: "jq", category: "JSON", summary: "Query, filter, transform, and format JSON data.", description: "jq is especially useful when command-line security tools or APIs return structured JSON.", syntax: "jq [OPTIONS] FILTER [FILE...]", tags: ["json", "api", "filter"], options: [{ flag: ".", description: "Pretty-print JSON." }, { flag: "-r", description: "Output raw strings." }, { flag: "select(...) ", description: "Filter objects by a condition." }], examples: [{ description: "Pretty-print an API response", command: "curl -s https://TARGET/api | jq ." }, { description: "Extract a field from every array element", command: "jq -r '.[] | .url' endpoints.json" }], relatedCommands: ["curl", "grep", "awk"],
+    id: 'history',
+    name: 'history',
+    category: 'core',
+    description: 'Show shell command history.',
+    syntax: 'history [N]',
+    examples: [
+    { description: 'Review recent commands', command: 'history 50', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'History can contain credentials or tokens; handle it as sensitive evidence.'],
+    tags: ['shell', 'history'],
   },
   {
-    id: "ip", name: "ip", category: "Networking", summary: "Inspect and manage Linux interfaces, addresses, routes, and links.", description: "The ip utility is the standard modern interface for Linux networking configuration and inspection.", syntax: "ip OBJECT COMMAND", tags: ["network", "interface", "route"], options: [], examples: [{ description: "Show addresses", command: "ip addr" }, { description: "Show routes", command: "ip route" }], relatedCommands: ["ss", "ping"],
+    id: 'which',
+    name: 'which',
+    category: 'core',
+    description: 'Locate an executable in PATH.',
+    syntax: 'which COMMAND',
+    examples: [
+    { description: 'Locate curl', command: 'which curl', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'For shell-aware command lookup, `command -v` is often preferable.'],
+    tags: ['path', 'shell'],
   },
   {
-    id: "whois", name: "whois", category: "Reconnaissance", summary: "Query registration information where a WHOIS service provides it.", description: "WHOIS can provide domain or network registration information. Availability and output depend on registry and privacy practices.", syntax: "whois DOMAIN_OR_IP", tags: ["recon", "domain"], options: [], examples: [{ description: "Query a domain", command: "whois TARGET" }], relatedCommands: ["dig", "nslookup"],
+    id: 'command',
+    name: 'command',
+    category: 'core',
+    description: 'Inspect or invoke shell commands and builtins.',
+    syntax: 'command [OPTIONS] NAME',
+    examples: [
+    { description: 'Locate a command', command: 'command -v nmap', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-v', description: 'Print how a name would be interpreted.' }
+    ],
+    notes: [],
+    tags: ['shell', 'path'],
   },
   {
-    id: "sha256sum", name: "sha256sum", category: "File Analysis", summary: "Calculate SHA-256 checksums for files or input.", description: "Checksums help verify file integrity and compare artifacts without relying on filenames.", syntax: "sha256sum [FILE...]", tags: ["hash", "integrity", "forensics"], options: [], examples: [{ description: "Hash an artifact", command: "sha256sum sample.bin" }], relatedCommands: ["md5sum", "sha1sum"],
+    id: 'sudo',
+    name: 'sudo',
+    category: 'core',
+    description: "Run a command with another user's privileges when permitted.",
+    syntax: 'sudo COMMAND',
+    examples: [
+    { description: 'Run an approved administrative read', command: 'sudo systemctl status ssh', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Use only with authorized accounts and approved commands.'],
+    tags: ['privilege', 'admin'],
   },
   {
-    id: "python3", name: "python3", category: "Python", summary: "Run concise Python scripts and one-liners from the shell.", description: "Python is useful for parsing, encoding, hashing, JSON processing, and small repeatable transformations.", syntax: "python3 -c 'CODE'", tags: ["python", "script", "automation"], options: [{ flag: "-c", description: "Execute code supplied as a string." }], examples: [{ description: "Decode Base64", command: "python3 -c \"import base64; print(base64.b64decode('VEFSR0VU').decode())\"" }, { description: "Read JSON", command: "python3 -c \"import json; print(json.load(open('data.json')))\"" }], relatedCommands: ["jq", "base64"],
+    id: 'chmod',
+    name: 'chmod',
+    category: 'core',
+    description: 'Change file permission bits.',
+    syntax: 'chmod MODE FILE',
+    examples: [
+    { description: 'Add owner execute permission', command: 'chmod u+x script.sh', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Changing permissions can alter evidence; work on copies where appropriate.'],
+    tags: ['permissions', 'files'],
   },
+  {
+    id: 'chown',
+    name: 'chown',
+    category: 'core',
+    description: 'Change file ownership.',
+    syntax: 'chown OWNER[:GROUP] FILE',
+    examples: [
+    { description: 'Change ownership on a working copy', command: 'sudo chown analyst:analyst working-copy', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Requires appropriate privileges and can change forensic metadata.'],
+    tags: ['permissions', 'ownership'],
+  },
+  {
+    id: 'grep',
+    name: 'grep',
+    category: 'text',
+    description: 'Search text using patterns.',
+    syntax: 'grep [OPTIONS] PATTERN [FILE...]',
+    examples: [
+    { description: 'Find error lines', command: "grep -n 'ERROR' app.log", authorizedOnly: false },
+    { description: 'Regex search', command: "grep -nE 'failed|denied|invalid' auth.log", authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-n', description: 'Show line numbers.' },
+    { flag: '-i', description: 'Ignore case.' },
+    { flag: '-E', description: 'Use extended regular expressions.' },
+    { flag: '-r', description: 'Search directories recursively.' }
+    ],
+    notes: [    'Use `-I` when you want to avoid binary files during recursive searches.'],
+    tags: ['regex', 'search', 'logs'],
+  },
+  {
+    id: 'egrep',
+    name: 'egrep',
+    category: 'text',
+    description: 'Compatibility name for grep extended regular expressions.',
+    syntax: 'egrep [OPTIONS] PATTERN [FILE...]',
+    examples: [
+    { description: 'Search alternatives', command: "egrep -n 'GET|POST' access.log", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Modern scripts can use `grep -E` instead.'],
+    tags: ['regex', 'search'],
+  },
+  {
+    id: 'sed',
+    name: 'sed',
+    category: 'text',
+    description: 'Stream editor for selecting or transforming text.',
+    syntax: 'sed [OPTIONS] SCRIPT [FILE...]',
+    examples: [
+    { description: 'Print matching lines', command: "sed -n '1,20p' notes.txt", authorizedOnly: false },
+    { description: 'Normalize a delimiter', command: "sed 's/:/ /g' data.txt", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Keep originals untouched when transforming evidence.'],
+    tags: ['transform', 'regex'],
+  },
+  {
+    id: 'awk',
+    name: 'awk',
+    category: 'text',
+    description: 'Pattern scanning and structured text processing language.',
+    syntax: "awk 'PROGRAM' [FILE...]",
+    examples: [
+    { description: 'Print the first field', command: "awk '{print $1}' access.log", authorizedOnly: false },
+    { description: 'Count status codes', command: "awk '{count[$9]++} END {for (s in count) print s,count[s]}' access.log", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Field positions depend on the input format.'],
+    tags: ['parse', 'logs', 'fields'],
+  },
+  {
+    id: 'cut',
+    name: 'cut',
+    category: 'text',
+    description: 'Remove or select sections of each line.',
+    syntax: 'cut [OPTIONS] [FILE...]',
+    examples: [
+    { description: 'Select CSV-like fields', command: 'cut -d, -f1,3 data.csv', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-d CHAR', description: 'Field delimiter.' },
+    { flag: '-f LIST', description: 'Selected fields.' }
+    ],
+    notes: [],
+    tags: ['fields', 'parse'],
+  },
+  {
+    id: 'sort',
+    name: 'sort',
+    category: 'text',
+    description: 'Sort lines of text.',
+    syntax: 'sort [OPTIONS] [FILE...]',
+    examples: [
+    { description: 'Sort IP-like text', command: 'sort ips.txt', authorizedOnly: false },
+    { description: 'Numeric sort', command: 'sort -n counts.txt', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-n', description: 'Numeric comparison.' },
+    { flag: '-u', description: 'Unique lines.' }
+    ],
+    notes: [],
+    tags: ['sort', 'text'],
+  },
+  {
+    id: 'uniq',
+    name: 'uniq',
+    category: 'text',
+    description: 'Report or omit repeated adjacent lines.',
+    syntax: 'uniq [OPTIONS] [INPUT [OUTPUT]]',
+    examples: [
+    { description: 'Count repeated values', command: 'sort users.txt | uniq -c', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-c', description: 'Prefix lines with counts.' },
+    { flag: '-d', description: 'Show only duplicates.' }
+    ],
+    notes: [    'Run `sort` first when duplicates are not already adjacent.'],
+    tags: ['count', 'dedupe'],
+  },
+  {
+    id: 'tr',
+    name: 'tr',
+    category: 'text',
+    description: 'Translate or delete characters.',
+    syntax: 'tr [OPTION] SET1 [SET2]',
+    examples: [
+    { description: 'Normalize case', command: "tr '[:upper:]' '[:lower:]' < input.txt", authorizedOnly: false },
+    { description: 'Remove CR characters', command: "tr -d '\\r' < file.txt", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['normalize', 'text'],
+  },
+  {
+    id: 'wc',
+    name: 'wc',
+    category: 'text',
+    description: 'Count lines, words, bytes, or characters.',
+    syntax: 'wc [OPTIONS] [FILE...]',
+    examples: [
+    { description: 'Count lines', command: 'wc -l access.log', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-l', description: 'Lines.' },
+    { flag: '-w', description: 'Words.' },
+    { flag: '-c', description: 'Bytes.' }
+    ],
+    notes: [],
+    tags: ['count', 'logs'],
+  },
+  {
+    id: 'xargs',
+    name: 'xargs',
+    category: 'text',
+    description: 'Build and execute argument lists from standard input.',
+    syntax: 'xargs [OPTIONS] [COMMAND]',
+    examples: [
+    { description: 'Pass filenames to file', command: "printf '%s\\n' *.log | xargs file", authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Review generated arguments before using destructive commands.'],
+    tags: ['pipeline', 'automation'],
+  },
+  {
+    id: 'paste',
+    name: 'paste',
+    category: 'text',
+    description: 'Merge corresponding lines from files.',
+    syntax: 'paste [OPTIONS] FILE1 FILE2',
+    examples: [
+    { description: 'Join two columns', command: 'paste names.txt counts.txt', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['merge', 'columns'],
+  },
+  {
+    id: 'diff',
+    name: 'diff',
+    category: 'text',
+    description: 'Compare files line by line.',
+    syntax: 'diff [OPTIONS] FILE1 FILE2',
+    examples: [
+    { description: 'Compare two reports', command: 'diff -u original.txt analyzed.txt', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-u', description: 'Unified diff format.' }
+    ],
+    notes: [],
+    tags: ['compare', 'evidence'],
+  },
+  {
+    id: 'comm',
+    name: 'comm',
+    category: 'text',
+    description: 'Compare two sorted files line by line.',
+    syntax: 'comm [OPTIONS] FILE1 FILE2',
+    examples: [
+    { description: 'Compare indicator lists', command: 'comm -3 <(sort a.txt) <(sort b.txt)', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Inputs should be sorted for reliable results.'],
+    tags: ['compare', 'sets'],
+  },
+  {
+    id: 'file',
+    name: 'file',
+    category: 'forensics',
+    description: 'Identify a file from its content and metadata.',
+    syntax: 'file [OPTIONS] FILE',
+    examples: [
+    { description: 'Identify a binary', command: 'file suspicious.bin', authorizedOnly: false },
+    { description: 'Inspect MIME type', command: 'file --mime suspicious.bin', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '--mime', description: 'Report MIME type.' },
+    { flag: '-b', description: 'Brief output.' }
+    ],
+    notes: [    'Magic-byte identification is heuristic; confirm unusual artifacts with multiple methods.'],
+    tags: ['binary', 'magic', 'mime'],
+  },
+  {
+    id: 'strings',
+    name: 'strings',
+    category: 'forensics',
+    description: 'Extract printable character sequences from a binary.',
+    syntax: 'strings [OPTIONS] FILE',
+    examples: [
+    { description: 'Extract strings', command: 'strings suspicious.bin', authorizedOnly: false },
+    { description: 'Search extracted strings', command: "strings suspicious.bin | grep -Ei 'flag|token|password'", authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-a', description: 'Scan the whole file.' },
+    { flag: '-n N', description: 'Minimum string length.' }
+    ],
+    notes: [    'Do not treat a string match alone as proof of maliciousness.'],
+    tags: ['binary', 'strings', 'ctf'],
+  },
+  {
+    id: 'xxd',
+    name: 'xxd',
+    category: 'forensics',
+    description: 'Create a hexadecimal dump or reverse one.',
+    syntax: 'xxd [OPTIONS] FILE',
+    examples: [
+    { description: 'Preview bytes', command: 'xxd -l 64 suspicious.bin', authorizedOnly: false },
+    { description: 'Search a hex dump', command: 'xxd suspicious.bin | less', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-l N', description: 'Limit bytes read.' },
+    { flag: '-g N', description: 'Group bytes.' }
+    ],
+    notes: [    'Hex output is for inspection; preserve the original file.'],
+    tags: ['hex', 'binary'],
+  },
+  {
+    id: 'hexdump',
+    name: 'hexdump',
+    category: 'forensics',
+    description: 'Display file contents in hexadecimal and other formats.',
+    syntax: 'hexdump [OPTIONS] FILE',
+    examples: [
+    { description: 'Canonical hex view', command: 'hexdump -C suspicious.bin', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-C', description: 'Canonical hex+ASCII display.' }
+    ],
+    notes: [],
+    tags: ['hex', 'binary'],
+  },
+  {
+    id: 'od',
+    name: 'od',
+    category: 'forensics',
+    description: 'Display file contents in octal, hexadecimal, decimal, or other formats.',
+    syntax: 'od [OPTIONS] FILE',
+    examples: [
+    { description: 'Hexadecimal bytes', command: 'od -Ax -tx1z suspicious.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['hex', 'binary'],
+  },
+  {
+    id: 'find',
+    name: 'find',
+    category: 'forensics',
+    description: 'Search directory trees using names, types, times, and other predicates.',
+    syntax: 'find PATH [TESTS] [ACTIONS]',
+    examples: [
+    { description: 'Find recent files', command: 'find /var/log -type f -mtime -2', authorizedOnly: false },
+    { description: 'Find binaries', command: 'find . -type f -perm /111', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-type', description: 'Filter by file type.' },
+    { flag: '-mtime', description: 'Filter by modification age.' },
+    { flag: '-name', description: 'Filter by name.' }
+    ],
+    notes: [    'Prefer read-only predicates during evidence triage.'],
+    tags: ['files', 'search', 'forensics'],
+  },
+  {
+    id: 'locate',
+    name: 'locate',
+    category: 'forensics',
+    description: 'Search a prebuilt file-name database.',
+    syntax: 'locate [OPTIONS] PATTERN',
+    examples: [
+    { description: 'Find a filename', command: 'locate suspicious.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    "Database freshness depends on the system's locate service."],
+    tags: ['files', 'search'],
+  },
+  {
+    id: 'stat',
+    name: 'stat',
+    category: 'forensics',
+    description: 'Display detailed file status and timestamps.',
+    syntax: 'stat [OPTIONS] FILE',
+    examples: [
+    { description: 'Inspect metadata', command: 'stat suspicious.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Record timestamps before changing the file.'],
+    tags: ['metadata', 'timestamps'],
+  },
+  {
+    id: 'du',
+    name: 'du',
+    category: 'forensics',
+    description: 'Estimate file and directory space usage.',
+    syntax: 'du [OPTIONS] [PATH]',
+    examples: [
+    { description: 'Find large directories', command: 'du -sh ./* | sort -h', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-s', description: 'Summarize.' },
+    { flag: '-h', description: 'Human-readable.' }
+    ],
+    notes: [],
+    tags: ['disk', 'files'],
+  },
+  {
+    id: 'df',
+    name: 'df',
+    category: 'forensics',
+    description: 'Report filesystem disk-space usage.',
+    syntax: 'df [OPTIONS] [PATH]',
+    examples: [
+    { description: 'Review mounted filesystems', command: 'df -h', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-h', description: 'Human-readable.' }
+    ],
+    notes: [],
+    tags: ['disk', 'filesystem'],
+  },
+  {
+    id: 'tar',
+    name: 'tar',
+    category: 'forensics',
+    description: 'Create or extract tar archives.',
+    syntax: 'tar [OPTIONS] ARCHIVE [FILES]',
+    examples: [
+    { description: 'List archive contents', command: 'tar -tf evidence.tar', authorizedOnly: false },
+    { description: 'Extract to a working directory', command: 'tar -xf evidence.tar -C work/', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-t', description: 'List contents.' },
+    { flag: '-x', description: 'Extract.' },
+    { flag: '-f', description: 'Archive file.' }
+    ],
+    notes: [    'Inspect archive contents before extraction when the source is untrusted.'],
+    tags: ['archive', 'evidence'],
+  },
+  {
+    id: 'unzip',
+    name: 'unzip',
+    category: 'forensics',
+    description: 'List or extract ZIP archives.',
+    syntax: 'unzip [OPTIONS] ARCHIVE',
+    examples: [
+    { description: 'List files', command: 'unzip -l evidence.zip', authorizedOnly: false },
+    { description: 'Extract to a working directory', command: 'unzip evidence.zip -d work/', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-l', description: 'List contents.' },
+    { flag: '-d', description: 'Destination directory.' }
+    ],
+    notes: [    'Extract untrusted archives into an isolated working directory.'],
+    tags: ['archive', 'zip'],
+  },
+  {
+    id: 'zip',
+    name: 'zip',
+    category: 'forensics',
+    description: 'Create ZIP archives.',
+    syntax: 'zip [OPTIONS] ARCHIVE FILES',
+    examples: [
+    { description: 'Archive a working copy', command: 'zip -r evidence-copy.zip evidence-copy/', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-r', description: 'Recurse into directories.' }
+    ],
+    notes: [],
+    tags: ['archive', 'zip'],
+  },
+  {
+    id: 'gzip',
+    name: 'gzip',
+    category: 'forensics',
+    description: 'Compress files using gzip.',
+    syntax: 'gzip [OPTIONS] FILE',
+    examples: [
+    { description: 'Compress a copy', command: 'gzip -k report.txt', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-k', description: 'Keep original.' }
+    ],
+    notes: [],
+    tags: ['compression', 'archive'],
+  },
+  {
+    id: 'gunzip',
+    name: 'gunzip',
+    category: 'forensics',
+    description: 'Decompress gzip files.',
+    syntax: 'gunzip [OPTIONS] FILE.gz',
+    examples: [
+    { description: 'Decompress a working copy', command: 'gunzip -k artifact.gz', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-k', description: 'Keep compressed input.' }
+    ],
+    notes: [],
+    tags: ['compression', 'archive'],
+  },
+  {
+    id: 'sha256sum',
+    name: 'sha256sum',
+    category: 'forensics',
+    description: 'Calculate or verify SHA-256 checksums.',
+    syntax: 'sha256sum [OPTIONS] FILE',
+    examples: [
+    { description: 'Hash an artifact', command: 'sha256sum suspicious.bin', authorizedOnly: false },
+    { description: 'Verify a manifest', command: 'sha256sum -c SHA256SUMS', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-c', description: 'Read checksum lines and verify.' }
+    ],
+    notes: [    'Hash the original before analysis and record the exact output.'],
+    tags: ['hash', 'evidence', 'sha256'],
+  },
+  {
+    id: 'sha1sum',
+    name: 'sha1sum',
+    category: 'forensics',
+    description: 'Calculate or verify SHA-1 checksums.',
+    syntax: 'sha1sum [OPTIONS] FILE',
+    examples: [
+    { description: 'Calculate a legacy checksum', command: 'sha1sum artifact.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'SHA-1 is retained for legacy identification; prefer SHA-256 for evidence integrity.'],
+    tags: ['hash', 'sha1'],
+  },
+  {
+    id: 'md5sum',
+    name: 'md5sum',
+    category: 'forensics',
+    description: 'Calculate or verify MD5 checksums.',
+    syntax: 'md5sum [OPTIONS] FILE',
+    examples: [
+    { description: 'Calculate a legacy checksum', command: 'md5sum artifact.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'MD5 is not collision-resistant and should not be the sole integrity mechanism.'],
+    tags: ['hash', 'md5'],
+  },
+  {
+    id: 'openssl',
+    name: 'openssl',
+    category: 'forensics',
+    description: 'Use OpenSSL for cryptographic, certificate, and encoding operations.',
+    syntax: 'openssl COMMAND [OPTIONS]',
+    examples: [
+    { description: 'Inspect a PEM certificate', command: 'openssl x509 -in cert.pem -noout -subject -issuer -dates', authorizedOnly: false },
+    { description: 'Calculate a digest', command: 'openssl dgst -sha256 artifact.bin', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Use the specific OpenSSL subcommand appropriate to the artifact.'],
+    tags: ['crypto', 'certificate', 'hash'],
+  },
+  {
+    id: 'ps',
+    name: 'ps',
+    category: 'process',
+    description: 'Report running processes.',
+    syntax: 'ps [OPTIONS]',
+    examples: [
+    { description: 'Full process snapshot', command: 'ps aux', authorizedOnly: false },
+    { description: 'Process tree', command: 'ps -ef --forest', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['processes', 'triage'],
+  },
+  {
+    id: 'pgrep',
+    name: 'pgrep',
+    category: 'process',
+    description: 'Find processes by name or attributes.',
+    syntax: 'pgrep [OPTIONS] PATTERN',
+    examples: [
+    { description: 'Find an application process', command: 'pgrep -a nginx', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-a', description: 'Show command line.' },
+    { flag: '-f', description: 'Match full command line.' }
+    ],
+    notes: [],
+    tags: ['processes', 'search'],
+  },
+  {
+    id: 'pkill',
+    name: 'pkill',
+    category: 'process',
+    description: 'Send a signal to matching processes.',
+    syntax: 'pkill [OPTIONS] PATTERN',
+    examples: [
+    { description: 'Terminate a lab process', command: "pkill -TERM -f 'test-service'", authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-TERM', description: 'Request graceful termination.' },
+    { flag: '-f', description: 'Match full command line.' }
+    ],
+    notes: [    'Potentially disruptive; use only on approved systems and processes.'],
+    tags: ['processes', 'admin'],
+  },
+  {
+    id: 'top',
+    name: 'top',
+    category: 'process',
+    description: 'Interactive process and resource monitor.',
+    syntax: 'top',
+    examples: [
+    { description: 'Review CPU and memory use', command: 'top', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'For a static snapshot, `ps` may be easier to document.'],
+    tags: ['processes', 'resources'],
+  },
+  {
+    id: 'lsof',
+    name: 'lsof',
+    category: 'process',
+    description: 'List open files, sockets, and process associations.',
+    syntax: 'lsof [OPTIONS]',
+    examples: [
+    { description: 'List listening network files', command: 'lsof -nP -iTCP -sTCP:LISTEN', authorizedOnly: false },
+    { description: 'Inspect a file holder', command: 'lsof -- /var/log/app.log', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['sockets', 'processes', 'files'],
+  },
+  {
+    id: 'ss',
+    name: 'ss',
+    category: 'process',
+    description: 'Inspect network sockets.',
+    syntax: 'ss [OPTIONS]',
+    examples: [
+    { description: 'Listening TCP/UDP sockets', command: 'ss -lntup', authorizedOnly: false },
+    { description: 'Established TCP connections', command: 'ss -tn state established', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-l', description: 'Listening.' },
+    { flag: '-n', description: 'Do not resolve names.' },
+    { flag: '-t', description: 'TCP.' },
+    { flag: '-u', description: 'UDP.' },
+    { flag: '-p', description: 'Show process information.' }
+    ],
+    notes: [    'Some process details require elevated privileges.'],
+    tags: ['network', 'sockets'],
+  },
+  {
+    id: 'systemctl',
+    name: 'systemctl',
+    category: 'process',
+    description: 'Inspect and manage systemd services.',
+    syntax: 'systemctl COMMAND [UNIT]',
+    examples: [
+    { description: 'Inspect service state', command: 'systemctl status ssh', authorizedOnly: false },
+    { description: 'List failed units', command: 'systemctl --failed', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Changing service state is administrative; status/list operations are read-only.'],
+    tags: ['systemd', 'services'],
+  },
+  {
+    id: 'journalctl',
+    name: 'journalctl',
+    category: 'process',
+    description: 'Query the systemd journal.',
+    syntax: 'journalctl [OPTIONS]',
+    examples: [
+    { description: 'Recent authentication-related entries', command: 'journalctl -n 100 --no-pager', authorizedOnly: false },
+    { description: 'Boot errors', command: 'journalctl -b -p err', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-b', description: 'Current boot.' },
+    { flag: '-p', description: 'Priority filter.' },
+    { flag: '-n N', description: 'Recent N entries.' }
+    ],
+    notes: [],
+    tags: ['logs', 'systemd'],
+  },
+  {
+    id: 'free',
+    name: 'free',
+    category: 'process',
+    description: 'Display memory usage.',
+    syntax: 'free [OPTIONS]',
+    examples: [
+    { description: 'Human-readable memory usage', command: 'free -h', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-h', description: 'Human-readable.' }
+    ],
+    notes: [],
+    tags: ['memory', 'resources'],
+  },
+  {
+    id: 'uptime',
+    name: 'uptime',
+    category: 'process',
+    description: 'Show system uptime and load averages.',
+    syntax: 'uptime',
+    examples: [
+    { description: 'Check uptime', command: 'uptime', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['system', 'resources'],
+  },
+  {
+    id: 'ip',
+    name: 'ip',
+    category: 'network',
+    description: 'Show and manipulate interfaces, addresses, and routes.',
+    syntax: 'ip OBJECT COMMAND',
+    examples: [
+    { description: 'List interfaces and addresses', command: 'ip addr', authorizedOnly: true },
+    { description: 'Show routes', command: 'ip route', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Changing network configuration is administrative; use read-only subcommands during triage.'],
+    tags: ['network', 'interfaces', 'routes'],
+  },
+  {
+    id: 'ping',
+    name: 'ping',
+    category: 'network',
+    description: 'Test IP reachability with ICMP echo requests.',
+    syntax: 'ping [OPTIONS] HOST',
+    examples: [
+    { description: 'Check an approved host', command: 'ping -c 4 192.0.2.10', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-c N', description: 'Send N requests.' }
+    ],
+    notes: [    'Use only against systems you are authorized to test.'],
+    tags: ['network', 'connectivity'],
+  },
+  {
+    id: 'traceroute',
+    name: 'traceroute',
+    category: 'network',
+    description: 'Trace a network path toward a destination.',
+    syntax: 'traceroute [OPTIONS] HOST',
+    examples: [
+    { description: 'Trace an approved destination', command: 'traceroute 192.0.2.10', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Network devices may filter or rate-limit probes.'],
+    tags: ['network', 'routing'],
+  },
+  {
+    id: 'tracepath',
+    name: 'tracepath',
+    category: 'network',
+    description: 'Trace a path and discover path MTU information.',
+    syntax: 'tracepath HOST',
+    examples: [
+    { description: 'Trace an approved destination', command: 'tracepath 192.0.2.10', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Use within authorized network troubleshooting or assessment.'],
+    tags: ['network', 'routing'],
+  },
+  {
+    id: 'arp',
+    name: 'arp',
+    category: 'network',
+    description: 'Display or manipulate the ARP cache on systems that provide the utility.',
+    syntax: 'arp [OPTIONS]',
+    examples: [
+    { description: 'Review ARP entries', command: 'arp -a', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Modern Linux commonly uses `ip neigh` instead.'],
+    tags: ['network', 'arp'],
+  },
+  {
+    id: 'route',
+    name: 'route',
+    category: 'network',
+    description: 'Show or manipulate the IP routing table.',
+    syntax: 'route [OPTIONS]',
+    examples: [
+    { description: 'Review routes', command: 'route -n', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Read-only route inspection is preferred during triage; modern systems commonly use `ip route`.'],
+    tags: ['network', 'routes'],
+  },
+  {
+    id: 'nc',
+    name: 'nc',
+    category: 'network',
+    description: 'Read and write data across network connections.',
+    syntax: 'nc [OPTIONS] HOST PORT',
+    examples: [
+    { description: 'Check an approved TCP service', command: 'nc -vz 192.0.2.10 443', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-v', description: 'Verbose.' },
+    { flag: '-z', description: 'Scan without sending application data.' }
+    ],
+    notes: [    'Use only against approved hosts and ports.'],
+    tags: ['network', 'tcp'],
+  },
+  {
+    id: 'curl',
+    name: 'curl',
+    category: 'network',
+    description: 'Transfer data and inspect HTTP or other supported protocols.',
+    syntax: 'curl [OPTIONS] URL',
+    examples: [
+    { description: 'Inspect response headers', command: 'curl -I https://example.test/', authorizedOnly: true },
+    { description: 'Fetch JSON', command: "curl -sS -H 'Accept: application/json' https://example.test/api/status", authorizedOnly: true },
+    { description: 'Send JSON in an authorized test', command: 'curl -sS -X POST -H \'Content-Type: application/json\' -d \'{"name":"test"}\' https://example.test/api/items', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-I', description: 'Headers only.' },
+    { flag: '-i', description: 'Include response headers.' },
+    { flag: '-L', description: 'Follow redirects.' },
+    { flag: '-H', description: 'Add a header.' },
+    { flag: '-X', description: 'Select method.' },
+    { flag: '-d', description: 'Request body.' },
+    { flag: '-b', description: 'Send cookies.' }
+    ],
+    notes: [    'Bearer tokens and cookies are credentials; never paste real secrets into shared notes.'],
+    tags: ['http', 'headers', 'json', 'api'],
+  },
+  {
+    id: 'wget',
+    name: 'wget',
+    category: 'network',
+    description: 'Retrieve resources over HTTP and related protocols.',
+    syntax: 'wget [OPTIONS] URL',
+    examples: [
+    { description: 'Fetch a public test resource', command: 'wget -S -O response.html https://example.test/', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-S', description: 'Print server response.' },
+    { flag: '-O', description: 'Write to a chosen output file.' }
+    ],
+    notes: [    'Use only for authorized resources and controlled downloads.'],
+    tags: ['http', 'download'],
+  },
+  {
+    id: 'dig',
+    name: 'dig',
+    category: 'dns',
+    description: 'Query DNS records.',
+    syntax: 'dig [@SERVER] NAME [TYPE]',
+    examples: [
+    { description: 'A record', command: 'dig example.test A', authorizedOnly: false },
+    { description: 'AAAA record', command: 'dig example.test AAAA', authorizedOnly: false },
+    { description: 'MX record', command: 'dig example.test MX', authorizedOnly: false },
+    { description: 'TXT record', command: 'dig example.test TXT', authorizedOnly: false },
+    { description: 'NS record', command: 'dig example.test NS', authorizedOnly: false },
+    { description: 'CNAME record', command: 'dig www.example.test CNAME', authorizedOnly: false },
+    { description: 'Reverse lookup', command: 'dig -x 192.0.2.10', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'DNS answers can vary by resolver and time.'],
+    tags: ['dns', 'a', 'aaaa', 'mx', 'txt', 'ns', 'cname', 'reverse'],
+  },
+  {
+    id: 'nslookup',
+    name: 'nslookup',
+    category: 'dns',
+    description: 'Query DNS records using a simple interface.',
+    syntax: 'nslookup [OPTIONS] NAME [SERVER]',
+    examples: [
+    { description: 'A lookup', command: 'nslookup example.test', authorizedOnly: false },
+    { description: 'Reverse lookup', command: 'nslookup 192.0.2.10', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [],
+    tags: ['dns', 'reverse'],
+  },
+  {
+    id: 'host',
+    name: 'host',
+    category: 'dns',
+    description: 'Perform DNS lookups from the command line.',
+    syntax: 'host [OPTIONS] NAME [SERVER]',
+    examples: [
+    { description: 'MX lookup', command: 'host -t MX example.test', authorizedOnly: false },
+    { description: 'Reverse lookup', command: 'host 192.0.2.10', authorizedOnly: false }
+    ],
+    flags: [
+    { flag: '-t TYPE', description: 'Select DNS record type.' }
+    ],
+    notes: [],
+    tags: ['dns', 'records'],
+  },
+  {
+    id: 'whois',
+    name: 'whois',
+    category: 'dns',
+    description: 'Query registration information for supported domains or IPs.',
+    syntax: 'whois NAME',
+    examples: [
+    { description: 'Inspect registration data', command: 'whois example.test', authorizedOnly: false }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Availability and response format depend on registry and service.'],
+    tags: ['dns', 'registration'],
+  },
+  {
+    id: 'httpx',
+    name: 'httpx',
+    category: 'web',
+    description: 'Probe HTTP services and print structured response information.',
+    syntax: 'httpx [OPTIONS] -u URL',
+    examples: [
+    { description: 'Inspect a known authorized URL', command: 'httpx -u https://example.test -status-code -title -tech-detect', authorizedOnly: true },
+    { description: 'Read URLs from a file', command: 'httpx -l urls.txt -status-code -follow-redirects', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-status-code', description: 'Print status code.' },
+    { flag: '-title', description: 'Print page title.' },
+    { flag: '-tech-detect', description: 'Attempt technology detection.' },
+    { flag: '-follow-redirects', description: 'Follow redirects.' }
+    ],
+    notes: [    'Use only against approved targets.'],
+    tags: ['http', 'recon', 'authorized'],
+  },
+  {
+    id: 'whatweb',
+    name: 'whatweb',
+    category: 'web',
+    description: 'Identify web technologies from HTTP responses.',
+    syntax: 'whatweb [OPTIONS] URL',
+    examples: [
+    { description: 'Identify technologies on an approved host', command: 'whatweb https://example.test', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Technology detection is indicative, not proof of a specific backend version.'],
+    tags: ['http', 'technology'],
+  },
+  {
+    id: 'ffuf',
+    name: 'ffuf',
+    category: 'web',
+    description: 'Fuzz web requests for content or parameter discovery.',
+    syntax: 'ffuf [OPTIONS]',
+    examples: [
+    { description: 'Discover paths on an authorized lab target', command: 'ffuf -u https://example.test/FUZZ -w words.txt -mc 200,204,301,302,307,308', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-u', description: 'Target URL containing FUZZ or another keyword.' },
+    { flag: '-w', description: 'Wordlist input.' },
+    { flag: '-mc', description: 'Match status codes.' }
+    ],
+    notes: [    'Use conservative rates and only authorized targets.'],
+    tags: ['http', 'content-discovery', 'authorized'],
+  },
+  {
+    id: 'gobuster',
+    name: 'gobuster',
+    category: 'web',
+    description: 'Perform content and related discovery using wordlists.',
+    syntax: 'gobuster dir -u URL -w WORDLIST',
+    examples: [
+    { description: 'Discover directories on an approved lab host', command: 'gobuster dir -u https://example.test -w words.txt -t 10', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-u', description: 'Target URL.' },
+    { flag: '-w', description: 'Wordlist.' },
+    { flag: '-t', description: 'Concurrent threads.' }
+    ],
+    notes: [    'Keep concurrency reasonable and follow the engagement rules.'],
+    tags: ['http', 'directories', 'authorized'],
+  },
+  {
+    id: 'feroxbuster',
+    name: 'feroxbuster',
+    category: 'web',
+    description: 'Perform recursive content discovery against web targets.',
+    syntax: 'feroxbuster -u URL [OPTIONS]',
+    examples: [
+    { description: 'Discover content on an approved host', command: 'feroxbuster -u https://example.test -w words.txt --depth 2', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-u', description: 'Target URL.' },
+    { flag: '-w', description: 'Wordlist.' },
+    { flag: '--depth', description: 'Maximum recursion depth.' }
+    ],
+    notes: [    'Use only on approved targets; recursion can create substantial traffic.'],
+    tags: ['http', 'directories', 'authorized'],
+  },
+  {
+    id: 'nikto',
+    name: 'nikto',
+    category: 'web',
+    description: 'Check a web server for common configuration and known-file issues.',
+    syntax: 'nikto -h HOST',
+    examples: [
+    { description: 'Assess an authorized test server', command: 'nikto -h https://example.test', authorizedOnly: true }
+    ],
+    flags: [
+
+    ],
+    notes: [    'Use only with explicit authorization; scanning can generate many requests.'],
+    tags: ['http', 'scanner', 'authorized'],
+  },
+  {
+    id: 'nmap',
+    name: 'nmap',
+    category: 'nmap',
+    description: 'Network discovery and service enumeration tool.',
+    syntax: 'nmap [OPTIONS] TARGET',
+    examples: [
+    { description: 'Host discovery on an approved subnet', command: 'nmap -sn 192.0.2.0/24', authorizedOnly: true },
+    { description: 'Basic TCP scan', command: 'nmap 192.0.2.10', authorizedOnly: true },
+    { description: 'Selected ports', command: 'nmap -p 22,80,443 192.0.2.10', authorizedOnly: true },
+    { description: 'Service/version detection', command: 'nmap -sV 192.0.2.10', authorizedOnly: true },
+    { description: 'Default scripts', command: 'nmap -sC 192.0.2.10', authorizedOnly: true },
+    { description: 'Skip host discovery', command: 'nmap -Pn 192.0.2.10', authorizedOnly: true },
+    { description: 'Top ports', command: 'nmap --top-ports 100 192.0.2.10', authorizedOnly: true },
+    { description: 'Normal output', command: 'nmap -oN scan.txt 192.0.2.10', authorizedOnly: true },
+    { description: 'Grepable output', command: 'nmap -oG scan.gnmap 192.0.2.10', authorizedOnly: true }
+    ],
+    flags: [
+    { flag: '-sn', description: 'Host discovery without a port scan.' },
+    { flag: '-p', description: 'Select ports.' },
+    { flag: '-sV', description: 'Service/version detection.' },
+    { flag: '-sC', description: 'Default NSE scripts.' },
+    { flag: '-Pn', description: 'Treat hosts as online; skip discovery.' },
+    { flag: '--top-ports N', description: 'Scan N common ports.' },
+    { flag: '-oN FILE', description: 'Normal output.' },
+    { flag: '-oG FILE', description: 'Grepable output.' },
+    { flag: '-T0..5', description: 'Timing template; higher values can increase traffic.' }
+    ],
+    notes: [    'Use only against authorized systems. Start with narrow, low-impact scans and expand only when the engagement permits it.'],
+    tags: ['network', 'ports', 'services', 'recon', 'authorized'],
+  }
 ];

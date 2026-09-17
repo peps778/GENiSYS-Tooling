@@ -1,53 +1,98 @@
 import { useMemo, useState } from "react";
-import { commands } from "./data/commands";
-import { categories } from "./data/categories";
-import { searchCommands } from "./lib/commandSearch";
+import { linuxCommands } from "./data/commands";
+import { commandCategories } from "./data/categories";
+import { searchCommands, filterByCategory } from "./lib/commandSearch";
 import type { CommandCategory } from "./types/linuxDocs";
-import CommandCard from "./components/CommandCard";
-import CommandDetail from "./components/CommandDetail";
-import CommandGenerator from "./components/CommandGenerator";
-import KaliReference from "./components/KaliReference";
-import PythonReference from "./components/PythonReference";
-import Workflows from "./components/Workflows";
+import { LinuxDocsHeader } from "./components/LinuxDocsHeader";
+import { LinuxDocsSidebar } from "./components/LinuxDocsSidebar";
+import { CommandSearch } from "./components/CommandSearch";
+import { CategoryTabs } from "./components/CategoryTabs";
+import { CommandCard } from "./components/CommandCard";
+import { CommandGenerator } from "./components/CommandGenerator";
+import { PipelineBuilder } from "./components/PipelineBuilder";
+import { KaliReference } from "./components/KaliReference";
+import { MetasploitReference } from "./components/MetasploitReference";
+import { KatanaReference } from "./components/KatanaReference";
+import { PythonOneLiners } from "./components/PythonOneLiners";
+import { Hack4GovCheatSheet } from "./components/Hack4GovCheatSheet";
+import { SafetyNotice } from "./components/SafetyNotice";
 
-const specialCategories = new Set(["Kali / Tools", "Workflows", "Generator"]);
-
-type View = "reference" | "generator" | "kali" | "workflows" | "python";
-
-export default function LinuxDocsPage() {
-  const [view, setView] = useState<View>("reference");
-  const [category, setCategory] = useState<string>("All");
+export function LinuxDocsPage() {
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState(commands[0]?.id ?? "");
+  const [category, setCategory] = useState<CommandCategory | "all">("all");
+  const [mobileArea, setMobileArea] = useState("commands");
 
   const filtered = useMemo(() => {
-    const searched = searchCommands(commands, query);
-    if (category === "All" || specialCategories.has(category)) return searched;
-    return searched.filter((command) => command.category === category);
-  }, [category, query]);
+    const categoryCommands = filterByCategory(linuxCommands, category);
+    return query ? searchCommands(categoryCommands, query).map((result) => result.command) : categoryCommands;
+  }, [query, category]);
 
-  const selected = filtered.find((command) => command.id === selectedId) ?? filtered[0] ?? commands[0];
+  return (
+    <main className="flex min-h-0 min-w-0 flex-1 overflow-hidden bg-slate-100">
+      <LinuxDocsSidebar categories={commandCategories} selected={category} onChange={setCategory} />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <LinuxDocsHeader commandCount={linuxCommands.length} />
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="mx-auto min-w-0 max-w-[1600px] space-y-4 p-3 sm:p-4">
+            <SafetyNotice />
+            <div className="sticky top-0 z-10 -mx-1 rounded-md border border-slate-200 bg-slate-100/95 p-2 backdrop-blur-sm">
+              <CommandSearch query={query} onQueryChange={setQuery} resultCount={filtered.length} />
+              <div className="mt-2 lg:hidden">
+                <select value={mobileArea} onChange={(event) => setMobileArea(event.target.value)} className="h-9 w-full rounded-md border border-slate-300 bg-white px-2 text-xs font-medium text-slate-700">
+                  <option value="commands">Command library</option>
+                  <option value="generator">Command generator</option>
+                  <option value="pipelines">Pipeline builder</option>
+                  <option value="kali">Kali reference</option>
+                  <option value="metasploit">Metasploit</option>
+                  <option value="katana">Katana</option>
+                  <option value="python">Python one-liners</option>
+                  <option value="hack4gov">Hack4Gov cheat sheet</option>
+                </select>
+              </div>
+            </div>
 
-  function selectCategory(value: string) {
-    setCategory(value);
-    if (specialCategories.has(value)) {
-      if (value === "Generator") setView("generator");
-      else if (value === "Kali / Tools") setView("kali");
-      else if (value === "Workflows") setView("workflows");
-    } else {
-      setView("reference");
-    }
-  }
+            <section className={`${mobileArea === "commands" ? "" : "hidden lg:block"} min-w-0 space-y-3`}>
+              <div className="hidden lg:block"><CategoryTabs categories={commandCategories} selected={category} onChange={setCategory} /></div>
+              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                {filtered.map((command, index) => <CommandCard key={command.id} command={command} defaultOpen={index === 0 && !query} />)}
+              </div>
+              {filtered.length === 0 && <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">No commands match the current search and category.</div>}
+            </section>
 
-  return <div className="min-w-0">
-    <header className="mb-6"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-600">GENiSYS / Linux Security Reference</p><h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-950">Linux Docs</h1><p className="mt-1 max-w-2xl text-sm text-gray-500">Practical command reference, security workflows, Kali tooling, and a non-executing command generator.</p></div><div className="rounded-lg border border-green-100 bg-green-50 px-3 py-2 text-xs text-green-700">Authorized testing only</div></div></header>
-    <div className="mb-5 rounded-lg border border-gray-200 bg-white p-3"><div className="flex flex-wrap gap-2">{(["reference", "generator", "kali", "workflows", "python"] as View[]).map((item) => <button key={item} type="button" onClick={() => setView(item)} className={["rounded-md px-3 py-1.5 text-xs font-medium capitalize", view === item ? "bg-green-600 text-white" : "text-gray-600 hover:bg-gray-100"].join(" ")}>{item === "kali" ? "Kali / Tools" : item}</button>)}</div></div>
-    {view === "generator" ? <CommandGenerator /> : view === "kali" ? <KaliReference /> : view === "workflows" ? <Workflows /> : view === "python" ? <PythonReference /> : <div className="grid gap-5 xl:grid-cols-[260px_minmax(0,1fr)_minmax(420px,1.3fr)]">
-      <aside className="rounded-xl border border-gray-200 bg-white p-3"><div className="px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">Categories</div><div className="space-y-1">{categories.map((item) => <button key={item} type="button" onClick={() => selectCategory(item)} className={["w-full rounded-lg px-3 py-2 text-left text-xs font-medium", category === item && view === "reference" ? "bg-green-50 text-green-700" : "text-gray-600 hover:bg-gray-50"].join(" ")}>{item}</button>)}</div></aside>
-      <section className="min-w-0"><div className="mb-3"><input aria-label="Search Linux commands" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search commands, flags, tags, or concepts..." className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100" /></div><div className="mb-3 flex items-center justify-between px-1 text-xs text-gray-400"><span>{filtered.length} reference{filtered.length === 1 ? "" : "s"}</span><span>{category}</span></div><div className="space-y-2">{filtered.map((command) => <CommandCard key={command.id} command={command} selected={selected?.id === command.id} onSelect={() => setSelectedId(command.id)} />)}{filtered.length === 0 && <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500">No commands match this search.</div>}</div></section>
-      <section className="min-w-0">{selected ? <CommandDetail command={selected} /> : null}</section>
-    </div>}
-    <p className="mt-6 text-[11px] leading-5 text-gray-400">Use reconnaissance, scanning, exploitation, and post-exploitation techniques only on systems you own or are explicitly authorized to test. Generated commands are displayed and copied only; GENiSYS does not execute them.</p>
-  </div>;
+            <section className={`${mobileArea === "generator" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <div className="mb-4"><h2 className="text-sm font-bold text-slate-900">Command generator</h2><p className="mt-1 text-xs text-slate-500">Purpose → attributes → generated command → copy. Generation is local and never executes a shell command.</p></div>
+              <CommandGenerator />
+            </section>
+
+            <section className={`${mobileArea === "pipelines" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <div className="mb-4"><h2 className="text-sm font-bold text-slate-900">Pipeline builder</h2><p className="mt-1 text-xs text-slate-500">Reusable, read-oriented workflows for triage and evidence handling.</p></div>
+              <PipelineBuilder />
+            </section>
+
+            <section className={`${mobileArea === "kali" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <h2 className="mb-1 text-sm font-bold text-slate-900">Kali reference</h2><p className="mb-3 text-xs text-slate-500">Shared KaliTool contract: name, purpose, command, category, tags.</p><KaliReference />
+            </section>
+
+            <section className={`${mobileArea === "metasploit" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <h2 className="mb-1 text-sm font-bold text-slate-900">Metasploit / msfconsole</h2><p className="mb-3 text-xs text-amber-700">Authorized lab or engagement use only.</p><MetasploitReference />
+            </section>
+
+            <section className={`${mobileArea === "katana" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <h2 className="mb-1 text-sm font-bold text-slate-900">Katana reference</h2><p className="mb-3 text-xs text-slate-500">Crawling, JavaScript parsing, output, deduplication, and endpoint filtering.</p><KatanaReference />
+            </section>
+
+            <section className={`${mobileArea === "python" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <h2 className="mb-1 text-sm font-bold text-slate-900">Python one-liners</h2><p className="mb-3 text-xs text-slate-500">Local analysis, parsing, hashing, and controlled connectivity checks.</p><PythonOneLiners />
+            </section>
+
+            <section className={`${mobileArea === "hack4gov" ? "" : "hidden lg:block"} rounded-lg border border-slate-200 bg-white p-4`}>
+              <h2 className="mb-1 text-sm font-bold text-slate-900">Hack4Gov quick reference</h2><p className="mb-3 text-xs text-slate-500">Initial triage, web, DNS, file analysis, logs, and evidence handling.</p><Hack4GovCheatSheet />
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }
 
+export default LinuxDocsPage;
