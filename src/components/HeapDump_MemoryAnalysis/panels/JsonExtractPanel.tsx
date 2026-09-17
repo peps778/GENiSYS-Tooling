@@ -49,7 +49,7 @@ export default function JsonExtractPanel({ results, loading, onExtract }: JsonEx
         </button>
       </div>
 
-      <div className="max-h-[500px] space-y-2 overflow-y-auto">
+      <div className="max-h-125 space-y-2 overflow-y-auto">
         {results.length === 0 && (
           <div className="rounded-md border border-[#E5E7EB] bg-white p-6 text-center text-sm text-[#4B5563]">
             No JSON-shaped data was found.

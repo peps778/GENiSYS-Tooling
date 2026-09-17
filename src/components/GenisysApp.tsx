@@ -3,6 +3,8 @@ import DecodingEncodingPage from "../components/DecodingEncoding/DecodingEncodin
 import Sidebar from "../components/Navigation/Sidebar";
 import HeapDump from "./HeapDump_MemoryAnalysis";
 import Dashboard from "./Dashboard";
+import { FileAnalysisPage } from "../components/FileAnalysis";
+import LinuxDocs from "../components/LinuxDocs/index";
 
 export default function GenisysApp() {
   return (
@@ -12,15 +14,14 @@ export default function GenisysApp() {
 
         <main className="min-h-screen lg:pl-64">
           <Routes>
-            {/* The default dashboard can be added when the dashboard module exists. */}
+            {/* no content pa si dashboard */}
             <Route path="/" element={<Dashboard />} /> 
 
             <Route path="/heap" element={<HeapDump />}/>
 
-            {/* Add additional GENiSYS tools as their modules are implemented. */}
             <Route path="/decode" element={<DecodingEncodingPage />} /> 
-            {/* <Route path="/files" element={<FileAnalysis />} /> */}
-            {/* <Route path="/linux" element={<LinuxDocs />} /> */}
+            <Route path="/files" element={<FileAnalysisPage />} />
+            <Route path="/linux" element={<LinuxDocs />} />
             {/* <Route path="/navigation" element={<Navigation />} /> */}
             {/* <Route path="/networking" element={<Networking />} /> */}
             {/* <Route path="/notes" element={<NotesSOP />} /> */}

@@ -1,0 +1,16 @@
+export const metasploitCommands = [
+  ["msfconsole", "Start the Metasploit Console."],
+  ["help", "Show available console commands."],
+  ["search <term>", "Search modules by name, description, or metadata."],
+  ["info <module>", "Inspect module information before use."],
+  ["use <module>", "Select a module."],
+  ["show options", "Display module configuration options."],
+  ["show payloads", "List compatible payloads where applicable."],
+  ["set OPTION VALUE", "Set a module option."],
+  ["unset OPTION", "Clear a module option."],
+  ["run", "Execute an auxiliary or other selected module where appropriate."],
+  ["sessions -l", "List active sessions."],
+  ["sessions -i ID", "Interact with a session."],
+  ["jobs -l", "List background jobs."],
+  ["back", "Return to the previous console context."],
+];

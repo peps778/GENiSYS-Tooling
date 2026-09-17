@@ -394,13 +394,13 @@ export default function DecodingEncodingPage() {
       <SmartDetectPanel onUseCandidate={handleUseCandidate} />
 
       {/* Category + tool navigation */}
-      <div className="flex flex-col gap-3 rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
+      <div className="flex flex-col gap-3 rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
         <ToolCategoryNav activeCategory={activeCategory} onSelect={handleCategorySelect} />
         <ToolSelector category={activeCategory} activeTool={activeTool} onSelect={handleToolSelect} />
       </div>
 
       {/* Workspace */}
-      <div className="flex flex-col gap-5 rounded-[12px] border border-[#E5E7EB] bg-white p-6 shadow-sm">
+      <div className="flex flex-col gap-5 rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold text-[#111827]">{tool.label}</h2>

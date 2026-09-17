@@ -9,7 +9,7 @@ Built on top of ASTRO + REACT + TAILWIND
 
 Built mainly for:
 
-1. Decoding / Encoding
+1. Decoding / Encoding [DONE]
    - Base64 / Base32 / Base16
    - URL encoding
    - Hex / ASCII
@@ -74,7 +74,7 @@ Built mainly for:
    - most common kali linux pen test
    - msf console 
    - katana
-   - as well as custom linux command generator
+   - as well as custom linux command generator (select purpose -> select attributes -> generate / add if there are missing process)
 
 5. Network / Recon Reference
    - IP / MAC
@@ -92,7 +92,7 @@ Built mainly for:
    - nmap syntax
    - packet-analysis commands
 
-6. Forensics / File Analysis
+6. Forensics / File Analysis [ONGOING]
    - file identification
    - metadata
    - strings extraction
