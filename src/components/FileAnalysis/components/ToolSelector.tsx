@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface ToolSelectorOption<T extends string> {
   value: T;
@@ -41,12 +41,14 @@ export function ToolSelector<T extends string>({
             disabled={option.disabled}
             onClick={() => onChange(option.value)}
             className={[
-              "px-2.5 py-1 text-xs font-medium rounded-[8px] transition-colors",
+              'px-2.5 py-1 text-xs font-medium rounded-[8px] transition-colors',
               active
-                ? "bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]"
-                : "text-[#6B7280] border border-transparent hover:text-[#111827]",
-              option.disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer",
-            ].join(" ")}
+                ? 'bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]'
+                : 'text-[#6B7280] border border-transparent hover:text-[#111827]',
+              option.disabled
+                ? 'opacity-40 cursor-not-allowed'
+                : 'cursor-pointer',
+            ].join(' ')}
           >
             {option.label}
           </button>

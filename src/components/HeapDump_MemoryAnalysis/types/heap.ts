@@ -5,10 +5,11 @@
  */
 
 /** Internal tab identifiers. These are local UI state, NOT routes. */
-export type HeapDumpTabId = "overview" | "strings" | "secrets" | "search" | "json";
+export type HeapDumpTabId =
+  'overview' | 'strings' | 'secrets' | 'search' | 'json';
 
 /** Detected snapshot format after best-effort inspection of the file. */
-export type HeapSnapshotFormat = "v8-json" | "unknown" | "malformed";
+export type HeapSnapshotFormat = 'v8-json' | 'unknown' | 'malformed';
 
 /** High-level summary produced once a file has been processed. */
 export interface HeapSummary {
@@ -40,18 +41,18 @@ export interface StringsPage {
 }
 
 export type SecretType =
-  | "api_key"
-  | "aws_key"
-  | "jwt"
-  | "private_key"
-  | "password"
-  | "token"
-  | "url"
-  | "endpoint"
-  | "flag"
-  | "generic_secret";
+  | 'api_key'
+  | 'aws_key'
+  | 'jwt'
+  | 'private_key'
+  | 'password'
+  | 'token'
+  | 'url'
+  | 'endpoint'
+  | 'flag'
+  | 'generic_secret';
 
-export type SecretSeverity = "high" | "medium" | "low";
+export type SecretSeverity = 'high' | 'medium' | 'low';
 
 export interface SecretMatch {
   id: number;
@@ -87,7 +88,7 @@ export interface JsonExtractResult {
 /** ---------------- Worker protocol ---------------- */
 
 export interface WorkerParseRequest {
-  type: "parse";
+  type: 'parse';
   requestId: number;
   buffer: ArrayBuffer;
   fileName: string;
@@ -95,7 +96,7 @@ export interface WorkerParseRequest {
 }
 
 export interface WorkerStringsPageRequest {
-  type: "getStringsPage";
+  type: 'getStringsPage';
   requestId: number;
   page: number;
   pageSize: number;
@@ -103,12 +104,12 @@ export interface WorkerStringsPageRequest {
 }
 
 export interface WorkerSecretsRequest {
-  type: "getSecrets";
+  type: 'getSecrets';
   requestId: number;
 }
 
 export interface WorkerRegexSearchRequest {
-  type: "regexSearch";
+  type: 'regexSearch';
   requestId: number;
   pattern: string;
   flags: string;
@@ -116,7 +117,7 @@ export interface WorkerRegexSearchRequest {
 }
 
 export interface WorkerJsonExtractRequest {
-  type: "extractJson";
+  type: 'extractJson';
   requestId: number;
 }
 
@@ -128,45 +129,45 @@ export type WorkerRequest =
   | WorkerJsonExtractRequest;
 
 export interface WorkerProgressMessage {
-  type: "progress";
+  type: 'progress';
   requestId: number;
   stage: string;
   percent: number;
 }
 
 export interface WorkerErrorMessage {
-  type: "error";
+  type: 'error';
   requestId: number;
   message: string;
 }
 
 export interface WorkerParseResponse {
-  type: "parseResult";
+  type: 'parseResult';
   requestId: number;
   summary: HeapSummary;
 }
 
 export interface WorkerStringsPageResponse {
-  type: "stringsPageResult";
+  type: 'stringsPageResult';
   requestId: number;
   page: StringsPage;
 }
 
 export interface WorkerSecretsResponse {
-  type: "secretsResult";
+  type: 'secretsResult';
   requestId: number;
   secrets: SecretMatch[];
 }
 
 export interface WorkerRegexSearchResponse {
-  type: "regexSearchResult";
+  type: 'regexSearchResult';
   requestId: number;
   results: RegexSearchResult[];
   truncated: boolean;
 }
 
 export interface WorkerJsonExtractResponse {
-  type: "jsonExtractResult";
+  type: 'jsonExtractResult';
   requestId: number;
   results: JsonExtractResult[];
 }

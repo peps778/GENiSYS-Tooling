@@ -14,7 +14,7 @@
  *      Firefox-compatible, or otherwise unknown snapshot formats.
  */
 
-import type { HeapSnapshotFormat, HeapSummary } from "../types/heap";
+import type { HeapSnapshotFormat, HeapSummary } from '../types/heap';
 
 export interface ParsedHeapData {
   summary: HeapSummary;
@@ -41,20 +41,21 @@ const LARGE_FILE_WARNING_BYTES = 200 * 1024 * 1024; // 200 MB
  * slightly across Chromium versions.
  */
 export function isV8SnapshotShape(value: unknown): value is V8SnapshotShape {
-  if (typeof value !== "object" || value === null) return false;
+  if (typeof value !== 'object' || value === null) return false;
   const v = value as Record<string, unknown>;
   const hasSnapshotMeta =
-    typeof v.snapshot === "object" &&
+    typeof v.snapshot === 'object' &&
     v.snapshot !== null &&
-    ("node_count" in (v.snapshot as object) || "meta" in (v.snapshot as object));
+    ('node_count' in (v.snapshot as object) ||
+      'meta' in (v.snapshot as object));
   const hasStrings = Array.isArray(v.strings);
   return hasSnapshotMeta && hasStrings;
 }
 
 export type FormatDetectionResult =
-  | { format: "v8-json"; data: V8SnapshotShape }
-  | { format: "unknown" }
-  | { format: "malformed"; reason: string };
+  | { format: 'v8-json'; data: V8SnapshotShape }
+  | { format: 'unknown' }
+  | { format: 'malformed'; reason: string };
 
 /**
  * Detects the snapshot format from raw bytes without throwing.
@@ -63,33 +64,33 @@ export type FormatDetectionResult =
  */
 export function detectFormat(buffer: ArrayBuffer): FormatDetectionResult {
   if (buffer.byteLength === 0) {
-    return { format: "malformed", reason: "Empty file" };
+    return { format: 'malformed', reason: 'Empty file' };
   }
 
   let text: string;
   try {
-    text = new TextDecoder("utf-8", { fatal: false }).decode(buffer);
+    text = new TextDecoder('utf-8', { fatal: false }).decode(buffer);
   } catch (err) {
-    return { format: "unknown" };
+    return { format: 'unknown' };
   }
 
   const trimmed = text.trimStart();
-  const looksLikeJson = trimmed.startsWith("{") || trimmed.startsWith("[");
+  const looksLikeJson = trimmed.startsWith('{') || trimmed.startsWith('[');
   if (!looksLikeJson) {
-    return { format: "unknown" };
+    return { format: 'unknown' };
   }
 
   try {
     const parsed = JSON.parse(text);
     if (isV8SnapshotShape(parsed)) {
-      return { format: "v8-json", data: parsed };
+      return { format: 'v8-json', data: parsed };
     }
     // Valid JSON, but not a recognizable heap-snapshot shape.
-    return { format: "unknown" };
+    return { format: 'unknown' };
   } catch (err) {
     // Looked like JSON but failed to parse: malformed/truncated file.
-    const reason = err instanceof Error ? err.message : "Invalid JSON";
-    return { format: "malformed", reason };
+    const reason = err instanceof Error ? err.message : 'Invalid JSON';
+    return { format: 'malformed', reason };
   }
 }
 
@@ -100,7 +101,7 @@ export function detectFormat(buffer: ArrayBuffer): FormatDetectionResult {
  */
 export function extractV8Strings(data: V8SnapshotShape): string[] {
   if (!Array.isArray(data.strings)) return [];
-  return data.strings.filter((s): s is string => typeof s === "string");
+  return data.strings.filter((s): s is string => typeof s === 'string');
 }
 
 /**
@@ -112,7 +113,7 @@ export function extractV8Strings(data: V8SnapshotShape): string[] {
  */
 export function extractPrintableStrings(
   buffer: ArrayBuffer,
-  minLength: number = MIN_PRINTABLE_RUN
+  minLength: number = MIN_PRINTABLE_RUN,
 ): string[] {
   const bytes = new Uint8Array(buffer);
   const results: string[] = [];
@@ -123,7 +124,7 @@ export function extractPrintableStrings(
       // Build in chunks to avoid blowing the call stack via a spread
       // of a very large array on pathological inputs (e.g. a file
       // with megabytes of contiguous printable bytes).
-      let out = "";
+      let out = '';
       const CHUNK = 8192;
       for (let i = 0; i < current.length; i += CHUNK) {
         out += String.fromCharCode(...current.slice(i, i + CHUNK));
@@ -156,14 +157,14 @@ export function extractPrintableStrings(
 export function parseHeapSnapshot(
   buffer: ArrayBuffer,
   fileName: string,
-  fileSize: number
+  fileSize: number,
 ): ParsedHeapData {
   const startedAt = Date.now();
   const warnings: string[] = [];
 
   if (fileSize > LARGE_FILE_WARNING_BYTES) {
     warnings.push(
-      `File is ${(fileSize / (1024 * 1024)).toFixed(0)} MB. Processing large files may take a while.`
+      `File is ${(fileSize / (1024 * 1024)).toFixed(0)} MB. Processing large files may take a while.`,
     );
   }
 
@@ -174,21 +175,27 @@ export function parseHeapSnapshot(
   let nodeCount: number | undefined;
   let edgeCount: number | undefined;
 
-  if (detection.format === "v8-json") {
-    format = "v8-json";
+  if (detection.format === 'v8-json') {
+    format = 'v8-json';
     strings = extractV8Strings(detection.data);
     nodeCount = detection.data.snapshot?.node_count;
     edgeCount = detection.data.snapshot?.edge_count;
     if (strings.length === 0) {
-      warnings.push("Recognized V8 snapshot shape but found no string table entries.");
+      warnings.push(
+        'Recognized V8 snapshot shape but found no string table entries.',
+      );
     }
   } else {
-    if (detection.format === "malformed") {
-      format = "malformed";
-      warnings.push(`Could not parse as JSON (${detection.reason}). Falling back to raw string extraction.`);
+    if (detection.format === 'malformed') {
+      format = 'malformed';
+      warnings.push(
+        `Could not parse as JSON (${detection.reason}). Falling back to raw string extraction.`,
+      );
     } else {
-      format = "unknown";
-      warnings.push("Snapshot format not recognized as V8 JSON. Falling back to raw string extraction.");
+      format = 'unknown';
+      warnings.push(
+        'Snapshot format not recognized as V8 JSON. Falling back to raw string extraction.',
+      );
     }
     strings = extractPrintableStrings(buffer);
   }

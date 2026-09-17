@@ -8,15 +8,11 @@
  * (multi-hundred-MB) .heapsnapshot files.
  */
 
-import { parseHeapSnapshot } from "../lib/heapSnapshotParser";
-import { detectSecrets } from "../lib/secretDetectors";
-import { searchStrings } from "../lib/regexSearch";
-import { extractJsonFromStrings } from "../lib/jsonExtractor";
-import type {
-  HeapSummary,
-  WorkerRequest,
-  WorkerResponse,
-} from "../types/heap";
+import { parseHeapSnapshot } from '../lib/heapSnapshotParser';
+import { detectSecrets } from '../lib/secretDetectors';
+import { searchStrings } from '../lib/regexSearch';
+import { extractJsonFromStrings } from '../lib/jsonExtractor';
+import type { HeapSummary, WorkerRequest, WorkerResponse } from '../types/heap';
 
 /** Module-level state: the currently loaded snapshot's string table. */
 let currentStrings: string[] = [];
@@ -27,19 +23,35 @@ function post(message: WorkerResponse) {
   (self as unknown as Worker).postMessage(message);
 }
 
-function handleParse(req: Extract<WorkerRequest, { type: "parse" }>) {
-  post({ type: "progress", requestId: req.requestId, stage: "Parsing snapshot", percent: 10 });
+function handleParse(req: Extract<WorkerRequest, { type: 'parse' }>) {
+  post({
+    type: 'progress',
+    requestId: req.requestId,
+    stage: 'Parsing snapshot',
+    percent: 10,
+  });
 
-  const { summary, strings } = parseHeapSnapshot(req.buffer, req.fileName, req.fileSize);
+  const { summary, strings } = parseHeapSnapshot(
+    req.buffer,
+    req.fileName,
+    req.fileSize,
+  );
 
   currentStrings = strings;
   currentSummary = summary;
 
-  post({ type: "progress", requestId: req.requestId, stage: "Done", percent: 100 });
-  post({ type: "parseResult", requestId: req.requestId, summary });
+  post({
+    type: 'progress',
+    requestId: req.requestId,
+    stage: 'Done',
+    percent: 100,
+  });
+  post({ type: 'parseResult', requestId: req.requestId, summary });
 }
 
-function handleGetStringsPage(req: Extract<WorkerRequest, { type: "getStringsPage" }>) {
+function handleGetStringsPage(
+  req: Extract<WorkerRequest, { type: 'getStringsPage' }>,
+) {
   const filterTerm = req.filter?.toLowerCase();
   const filtered = filterTerm
     ? currentStrings.filter((s) => s.toLowerCase().includes(filterTerm))
@@ -52,54 +64,67 @@ function handleGetStringsPage(req: Extract<WorkerRequest, { type: "getStringsPag
   }));
 
   post({
-    type: "stringsPageResult",
+    type: 'stringsPageResult',
     requestId: req.requestId,
-    page: { items, page: req.page, pageSize: req.pageSize, total: filtered.length },
+    page: {
+      items,
+      page: req.page,
+      pageSize: req.pageSize,
+      total: filtered.length,
+    },
   });
 }
 
-function handleGetSecrets(req: Extract<WorkerRequest, { type: "getSecrets" }>) {
+function handleGetSecrets(req: Extract<WorkerRequest, { type: 'getSecrets' }>) {
   const secrets = detectSecrets(currentStrings);
-  post({ type: "secretsResult", requestId: req.requestId, secrets });
+  post({ type: 'secretsResult', requestId: req.requestId, secrets });
 }
 
-function handleRegexSearch(req: Extract<WorkerRequest, { type: "regexSearch" }>) {
-  const outcome = searchStrings(currentStrings, req.pattern, req.flags, { limit: req.limit });
+function handleRegexSearch(
+  req: Extract<WorkerRequest, { type: 'regexSearch' }>,
+) {
+  const outcome = searchStrings(currentStrings, req.pattern, req.flags, {
+    limit: req.limit,
+  });
   if (outcome.error) {
-    post({ type: "error", requestId: req.requestId, message: outcome.error });
+    post({ type: 'error', requestId: req.requestId, message: outcome.error });
     return;
   }
   post({
-    type: "regexSearchResult",
+    type: 'regexSearchResult',
     requestId: req.requestId,
     results: outcome.results,
     truncated: outcome.truncated,
   });
 }
 
-function handleExtractJson(req: Extract<WorkerRequest, { type: "extractJson" }>) {
+function handleExtractJson(
+  req: Extract<WorkerRequest, { type: 'extractJson' }>,
+) {
   const results = extractJsonFromStrings(currentStrings);
-  post({ type: "jsonExtractResult", requestId: req.requestId, results });
+  post({ type: 'jsonExtractResult', requestId: req.requestId, results });
 }
 
 // eslint-disable-next-line no-restricted-globals
-(self as unknown as Worker).onmessage = (event: MessageEvent<WorkerRequest>) => {
+(self as unknown as Worker).onmessage = (
+  event: MessageEvent<WorkerRequest>,
+) => {
   const req = event.data;
   try {
     switch (req.type) {
-      case "parse":
+      case 'parse':
         handleParse(req);
         break;
-      case "getStringsPage":
+      case 'getStringsPage':
         handleGetStringsPage(req);
         break;
-      case "getSecrets":
+      case 'getSecrets':
         handleGetSecrets(req);
         break;
-      case "regexSearch":
+      case 'regexSearch':
         handleRegexSearch(req);
         break;
-      case "extractJson":
+      case 'extractJson':
         handleExtractJson(req);
         break;
       default: {
@@ -109,9 +134,9 @@ function handleExtractJson(req: Extract<WorkerRequest, { type: "extractJson" }>)
     }
   } catch (err) {
     post({
-      type: "error",
+      type: 'error',
       requestId: (req as { requestId?: number }).requestId ?? -1,
-      message: err instanceof Error ? err.message : "Unknown worker error",
+      message: err instanceof Error ? err.message : 'Unknown worker error',
     });
   }
 };

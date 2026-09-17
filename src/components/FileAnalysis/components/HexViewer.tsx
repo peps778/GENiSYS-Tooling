@@ -1,6 +1,12 @@
-import React, { useMemo, useState } from "react";
-import { readHexRange, formatOffset, parseOffsetInput, searchAscii, searchHex } from "../lib/hexReader";
-import { ToolSelector } from "./ToolSelector";
+import React, { useMemo, useState } from 'react';
+import {
+  readHexRange,
+  formatOffset,
+  parseOffsetInput,
+  searchAscii,
+  searchHex,
+} from '../lib/hexReader';
+import { ToolSelector } from './ToolSelector';
 
 interface HexViewerProps {
   data: Uint8Array;
@@ -11,23 +17,31 @@ interface HexViewerProps {
 }
 
 const WINDOW_ROWS = 32;
-const BYTES_PER_ROW_OPTIONS = ["8", "16", "32"] as const;
+const BYTES_PER_ROW_OPTIONS = ['8', '16', '32'] as const;
 
-export function HexViewer({ data, onExportRange, externalJumpOffset, externalJumpNonce }: HexViewerProps) {
-  const [bytesPerRow, setBytesPerRow] = useState<(typeof BYTES_PER_ROW_OPTIONS)[number]>("16");
+export function HexViewer({
+  data,
+  onExportRange,
+  externalJumpOffset,
+  externalJumpNonce,
+}: HexViewerProps) {
+  const [bytesPerRow, setBytesPerRow] =
+    useState<(typeof BYTES_PER_ROW_OPTIONS)[number]>('16');
   const rowWidth = Number(bytesPerRow);
   const windowSize = WINDOW_ROWS * rowWidth;
 
   const [windowStart, setWindowStart] = useState(0);
-  const [offsetInput, setOffsetInput] = useState("");
-  const [searchMode, setSearchMode] = useState<"ascii" | "hex">("ascii");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [offsetInput, setOffsetInput] = useState('');
+  const [searchMode, setSearchMode] = useState<'ascii' | 'hex'>('ascii');
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<number[] | null>(null);
-  const [selectedByteRange, setSelectedByteRange] = useState<[number, number] | null>(null);
+  const [selectedByteRange, setSelectedByteRange] = useState<
+    [number, number] | null
+  >(null);
 
   const range = useMemo(
     () => readHexRange(data, windowStart, windowSize, rowWidth),
-    [data, windowStart, windowSize, rowWidth]
+    [data, windowStart, windowSize, rowWidth],
   );
 
   const maxOffset = Math.max(0, data.length - 1);
@@ -67,13 +81,16 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
       setSearchResults(null);
       return;
     }
-    const results = searchMode === "ascii" ? searchAscii(data, searchQuery) : searchHex(data, searchQuery);
+    const results =
+      searchMode === 'ascii'
+        ? searchAscii(data, searchQuery)
+        : searchHex(data, searchQuery);
     setSearchResults(results);
     if (results.length > 0) jumpTo(results[0]);
   };
 
   const copyRowsAsHex = async () => {
-    const text = range.rows.map((r) => r.hex.join(" ")).join("\n");
+    const text = range.rows.map((r) => r.hex.join(' ')).join('\n');
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -82,7 +99,7 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
   };
 
   const copyRowsAsAscii = async () => {
-    const text = range.rows.map((r) => r.ascii).join("\n");
+    const text = range.rows.map((r) => r.ascii).join('\n');
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -113,20 +130,33 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
           ariaLabel="Bytes per row"
           value={bytesPerRow}
           onChange={setBytesPerRow}
-          options={BYTES_PER_ROW_OPTIONS.map((v) => ({ value: v, label: `${v}/row` }))}
+          options={BYTES_PER_ROW_OPTIONS.map((v) => ({
+            value: v,
+            label: `${v}/row`,
+          }))}
         />
 
         <div className="ml-auto flex items-center gap-2">
-          <button type="button" onClick={copyRowsAsHex} className="text-xs font-medium text-[#16A34A] hover:text-[#15803D]">
+          <button
+            type="button"
+            onClick={copyRowsAsHex}
+            className="text-xs font-medium text-[#16A34A] hover:text-[#15803D]"
+          >
             Copy hex
           </button>
-          <button type="button" onClick={copyRowsAsAscii} className="text-xs font-medium text-[#16A34A] hover:text-[#15803D]">
+          <button
+            type="button"
+            onClick={copyRowsAsAscii}
+            className="text-xs font-medium text-[#16A34A] hover:text-[#15803D]"
+          >
             Copy ASCII
           </button>
           {onExportRange && selectedByteRange && (
             <button
               type="button"
-              onClick={() => onExportRange(selectedByteRange[0], selectedByteRange[1])}
+              onClick={() =>
+                onExportRange(selectedByteRange[0], selectedByteRange[1])
+              }
               className="text-xs font-medium text-[#16A34A] hover:text-[#15803D]"
             >
               Export range
@@ -141,15 +171,19 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
           value={searchMode}
           onChange={setSearchMode}
           options={[
-            { value: "ascii", label: "ASCII" },
-            { value: "hex", label: "Hex" },
+            { value: 'ascii', label: 'ASCII' },
+            { value: 'hex', label: 'Hex' },
           ]}
         />
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && runSearch()}
-          placeholder={searchMode === "ascii" ? "Search text..." : "Search bytes, e.g. FF D8 FF"}
+          onKeyDown={(e) => e.key === 'Enter' && runSearch()}
+          placeholder={
+            searchMode === 'ascii'
+              ? 'Search text...'
+              : 'Search bytes, e.g. FF D8 FF'
+          }
           className="min-w-[180px] flex-1 rounded-[8px] border border-[#E5E7EB] px-3 py-1.5 text-sm font-mono text-[#111827] outline-none focus:border-[#16A34A]"
         />
         <button
@@ -161,7 +195,7 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
         </button>
         {searchResults && (
           <span className="text-xs text-[#6B7280]">
-            {searchResults.length} match{searchResults.length === 1 ? "" : "es"}
+            {searchResults.length} match{searchResults.length === 1 ? '' : 'es'}
           </span>
         )}
       </div>
@@ -178,19 +212,31 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
           <tbody>
             {range.rows.map((row) => {
               const rowEnd = row.offset + row.hex.length;
-              const isSelected = selectedByteRange?.[0] === row.offset && selectedByteRange?.[1] === rowEnd;
+              const isSelected =
+                selectedByteRange?.[0] === row.offset &&
+                selectedByteRange?.[1] === rowEnd;
               return (
                 <tr
                   key={row.offset}
-                  onClick={() => setSelectedByteRange(isSelected ? null : [row.offset, rowEnd])}
+                  onClick={() =>
+                    setSelectedByteRange(
+                      isSelected ? null : [row.offset, rowEnd],
+                    )
+                  }
                   className={[
-                    "cursor-pointer border-b border-[#F9FAFB] hover:bg-[#F9FAFB]",
-                    isSelected ? "bg-[#F0FDF4]" : "",
-                  ].join(" ")}
+                    'cursor-pointer border-b border-[#F9FAFB] hover:bg-[#F9FAFB]',
+                    isSelected ? 'bg-[#F0FDF4]' : '',
+                  ].join(' ')}
                 >
-                  <td className="whitespace-nowrap px-3 py-1 text-[#9CA3AF]">{formatOffset(row.offset)}</td>
-                  <td className="whitespace-nowrap px-3 py-1 text-[#111827]">{row.hex.join(" ")}</td>
-                  <td className="whitespace-nowrap px-3 py-1 text-[#6B7280]">{row.ascii}</td>
+                  <td className="whitespace-nowrap px-3 py-1 text-[#9CA3AF]">
+                    {formatOffset(row.offset)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-1 text-[#111827]">
+                    {row.hex.join(' ')}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-1 text-[#6B7280]">
+                    {row.ascii}
+                  </td>
                 </tr>
               );
             })}
@@ -208,7 +254,8 @@ export function HexViewer({ data, onExportRange, externalJumpOffset, externalJum
           Previous
         </button>
         <span className="font-mono">
-          {formatOffset(range.startOffset)} – {formatOffset(range.endOffset)} of {formatOffset(data.length)}
+          {formatOffset(range.startOffset)} – {formatOffset(range.endOffset)} of{' '}
+          {formatOffset(data.length)}
         </span>
         <button
           type="button"

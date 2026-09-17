@@ -1,1 +1,1 @@
-export { default as DecodingEncodingPage } from "./DecodingEncodingPage";
+export { default as DecodingEncodingPage } from './DecodingEncodingPage';

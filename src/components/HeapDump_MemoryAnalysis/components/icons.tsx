@@ -5,19 +5,19 @@
  * language: precise line strokes, no gradients/glow, currentColor so
  * they inherit text color from their container.
  */
-import type { SVGProps } from "react";
+import type { SVGProps } from 'react';
 
 type IconProps = SVGProps<SVGSVGElement>;
 
 const base: IconProps = {
   width: 16,
   height: 16,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
   strokeWidth: 1.75,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
 };
 
 export function UploadIcon(props: IconProps) {

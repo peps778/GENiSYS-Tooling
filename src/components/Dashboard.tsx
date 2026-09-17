@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 const modules = [
   {
-    code: "01",
-    title: "Reconnaissance",
+    code: '01',
+    title: 'Reconnaissance',
     description:
-      "Discover hosts, services, endpoints, and useful target information.",
-    tools: ["nmap", "dig", "curl", "katana"],
+      'Discover hosts, services, endpoints, and useful target information.',
+    tools: ['nmap', 'dig', 'curl', 'katana'],
   },
   {
-    code: "02",
-    title: "Analysis",
+    code: '02',
+    title: 'Analysis',
     description:
-      "Inspect files, binaries, requests, data, and challenge artifacts.",
-    tools: ["file", "strings", "xxd", "jq"],
+      'Inspect files, binaries, requests, data, and challenge artifacts.',
+    tools: ['file', 'strings', 'xxd', 'jq'],
   },
   {
-    code: "03",
-    title: "Web Security",
+    code: '03',
+    title: 'Web Security',
     description:
-      "Analyze HTTP traffic, endpoints, parameters, APIs, and web targets.",
-    tools: ["httpx", "ffuf", "curl", "jq"],
+      'Analyze HTTP traffic, endpoints, parameters, APIs, and web targets.',
+    tools: ['httpx', 'ffuf', 'curl', 'jq'],
   },
 ];
 
 const bootLines = [
-  "GENiSYS security workspace",
-  "loading modules...",
-  "reconnaissance ........ READY",
-  "file analysis .......... READY",
-  "web security ........... READY",
-  "linux reference ........ READY",
+  'GENiSYS security workspace',
+  'loading modules...',
+  'reconnaissance ........ READY',
+  'file analysis .......... READY',
+  'web security ........... READY',
+  'linux reference ........ READY',
 ];
 
 const Dashboard = () => {
@@ -66,8 +66,8 @@ const Dashboard = () => {
           className="absolute inset-0 opacity-[0.035]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(20,83,45,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(20,83,45,.35) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+              'linear-gradient(rgba(20,83,45,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(20,83,45,.35) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
           }}
         />
 
@@ -169,19 +169,13 @@ const Dashboard = () => {
 
               <h1 className="max-w-4xl text-[clamp(2.25rem,5vw,5.5rem)] font-bold leading-[0.9] tracking-[-0.05em] text-green-950">
                 Security
-                <span className="block text-green-900/85">
-                  starts with
-                </span>
-
-                <span className="block text-emerald-600">
-                  visibility.
-                </span>
+                <span className="block text-green-900/85">starts with</span>
+                <span className="block text-emerald-600">visibility.</span>
               </h1>
 
               <p className="mt-5 max-w-xl text-xs leading-6 text-slate-500 sm:text-sm">
-                A focused security workspace for reconnaissance, analysis,
-                Linux tooling, web security, decoding, and controlled CTF
-                workflows.
+                A focused security workspace for reconnaissance, analysis, Linux
+                tooling, web security, decoding, and controlled CTF workflows.
               </p>
 
               <div className="mt-6 flex items-center gap-3">
@@ -215,16 +209,16 @@ const Dashboard = () => {
                     <div
                       key={line}
                       className={[
-                        "transition-all duration-300",
+                        'transition-all duration-300',
                         visible
-                          ? "translate-x-0 opacity-100"
-                          : "translate-x-2 opacity-0",
+                          ? 'translate-x-0 opacity-100'
+                          : 'translate-x-2 opacity-0',
                         index === 0
-                          ? "text-white/75"
-                          : line.includes("READY")
-                            ? "text-emerald-300/80"
-                            : "text-white/30",
-                      ].join(" ")}
+                          ? 'text-white/75'
+                          : line.includes('READY')
+                            ? 'text-emerald-300/80'
+                            : 'text-white/30',
+                      ].join(' ')}
                     >
                       {line}
                     </div>
@@ -254,7 +248,7 @@ const Dashboard = () => {
               </div>
 
               <span className="font-mono text-[8px] text-slate-400">
-                {String(modules.length).padStart(2, "0")} ACTIVE
+                {String(modules.length).padStart(2, '0')} ACTIVE
               </span>
             </div>
 
@@ -270,41 +264,37 @@ const Dashboard = () => {
                     onFocus={() => setActiveModule(index)}
                     onClick={() => setActiveModule(index)}
                     className={[
-                      "relative min-w-0 overflow-hidden rounded-xl border p-4 text-left",
-                      "transition-all duration-300",
+                      'relative min-w-0 overflow-hidden rounded-xl border p-4 text-left',
+                      'transition-all duration-300',
                       active
-                        ? "border-emerald-500/30 bg-emerald-50 shadow-sm shadow-emerald-900/5"
-                        : "border-emerald-900/10 bg-white/80 hover:border-emerald-300 hover:bg-emerald-50/50",
-                    ].join(" ")}
+                        ? 'border-emerald-500/30 bg-emerald-50 shadow-sm shadow-emerald-900/5'
+                        : 'border-emerald-900/10 bg-white/80 hover:border-emerald-300 hover:bg-emerald-50/50',
+                    ].join(' ')}
                   >
                     <div
                       className={[
-                        "absolute left-0 top-0 h-full w-px transition-all duration-300",
+                        'absolute left-0 top-0 h-full w-px transition-all duration-300',
                         active
-                          ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,.7)]"
-                          : "bg-transparent",
-                      ].join(" ")}
+                          ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,.7)]'
+                          : 'bg-transparent',
+                      ].join(' ')}
                     />
 
                     <div className="flex items-center justify-between">
                       <span
                         className={[
-                          "font-mono text-[9px]",
-                          active
-                            ? "text-emerald-600"
-                            : "text-slate-400",
-                        ].join(" ")}
+                          'font-mono text-[9px]',
+                          active ? 'text-emerald-600' : 'text-slate-400',
+                        ].join(' ')}
                       >
                         {module.code}
                       </span>
 
                       <span
                         className={[
-                          "text-xs transition-all duration-300",
-                          active
-                            ? "text-emerald-600"
-                            : "text-slate-300",
-                        ].join(" ")}
+                          'text-xs transition-all duration-300',
+                          active ? 'text-emerald-600' : 'text-slate-300',
+                        ].join(' ')}
                       >
                         +
                       </span>
@@ -323,11 +313,11 @@ const Dashboard = () => {
                         <span
                           key={tool}
                           className={[
-                            "shrink-0 rounded border px-1.5 py-0.5 font-mono text-[8px]",
+                            'shrink-0 rounded border px-1.5 py-0.5 font-mono text-[8px]',
                             active
-                              ? "border-emerald-500/10 bg-emerald-500/[0.05] text-emerald-700/70"
-                              : "border-slate-200 bg-slate-50 text-slate-400",
-                          ].join(" ")}
+                              ? 'border-emerald-500/10 bg-emerald-500/[0.05] text-emerald-700/70'
+                              : 'border-slate-200 bg-slate-50 text-slate-400',
+                          ].join(' ')}
                         >
                           {tool}
                         </span>

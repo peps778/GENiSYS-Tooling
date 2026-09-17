@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ConversionTableProps {
   rows: { label: string; value: string }[];
@@ -12,7 +12,9 @@ export default function ConversionTable({ rows }: ConversionTableProps) {
       {rows.map((row) => (
         <div key={row.label} className="flex flex-col">
           <dt className="text-xs text-[#6B7280]">{row.label}</dt>
-          <dd className="font-mono text-sm text-[#111827] break-all">{row.value}</dd>
+          <dd className="font-mono text-sm text-[#111827] break-all">
+            {row.value}
+          </dd>
         </div>
       ))}
     </dl>

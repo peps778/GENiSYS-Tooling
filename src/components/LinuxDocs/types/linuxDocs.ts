@@ -1,14 +1,14 @@
 export type CommandCategory =
-  | "core"
-  | "text"
-  | "forensics"
-  | "process"
-  | "network"
-  | "dns"
-  | "web"
-  | "nmap"
-  | "logs"
-  | "security";
+  | 'core'
+  | 'text'
+  | 'forensics'
+  | 'process'
+  | 'network'
+  | 'dns'
+  | 'web'
+  | 'nmap'
+  | 'logs'
+  | 'security';
 
 export interface CommandExample {
   description: string;
@@ -72,7 +72,7 @@ export interface Hack4GovItem {
   title: string;
   purpose: string;
   command: string;
-  phase: "triage" | "web" | "dns" | "forensics" | "logs" | "evidence";
+  phase: 'triage' | 'web' | 'dns' | 'forensics' | 'logs' | 'evidence';
 }
 
 export interface PipelineStep {
@@ -89,16 +89,16 @@ export interface Pipeline {
 }
 
 export type GeneratorPurposeId =
-  | "search-text"
-  | "inspect-binary"
-  | "find-files"
-  | "inspect-http"
-  | "scan-services"
-  | "extract-json"
-  | "search-logs"
-  | "calculate-hash";
+  | 'search-text'
+  | 'inspect-binary'
+  | 'find-files'
+  | 'inspect-http'
+  | 'scan-services'
+  | 'extract-json'
+  | 'search-logs'
+  | 'calculate-hash';
 
-export type GeneratorFieldType = "text" | "select" | "number" | "boolean";
+export type GeneratorFieldType = 'text' | 'select' | 'number' | 'boolean';
 
 export interface GeneratorOption {
   label: string;

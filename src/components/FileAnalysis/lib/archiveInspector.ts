@@ -1,15 +1,15 @@
-import type { ArchiveEntry, ArchiveInformation } from "../types/fileAnalysis";
+import type { ArchiveEntry, ArchiveInformation } from '../types/fileAnalysis';
 
 const EOCD_SIGNATURE = 0x06054b50;
 const CENTRAL_DIR_SIGNATURE = 0x02014b50;
 
 const COMPRESSION_METHODS: Record<number, string> = {
-  0: "Stored (no compression)",
-  8: "Deflate",
-  9: "Deflate64",
-  12: "BZIP2",
-  14: "LZMA",
-  99: "AES-encrypted",
+  0: 'Stored (no compression)',
+  8: 'Deflate',
+  9: 'Deflate64',
+  12: 'BZIP2',
+  14: 'LZMA',
+  99: 'AES-encrypted',
 };
 
 function readUint16LE(data: Uint8Array, offset: number): number {
@@ -18,7 +18,11 @@ function readUint16LE(data: Uint8Array, offset: number): number {
 
 function readUint32LE(data: Uint8Array, offset: number): number {
   return (
-    (data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16) | (data[offset + 3] << 24)) >>> 0
+    (data[offset] |
+      (data[offset + 1] << 8) |
+      (data[offset + 2] << 16) |
+      (data[offset + 3] << 24)) >>>
+    0
   );
 }
 
@@ -44,11 +48,13 @@ export function inspectZipArchive(data: Uint8Array): ArchiveInformation {
 
   if (eocdOffset === null) {
     return {
-      archiveType: "unsupported",
+      archiveType: 'unsupported',
       entryCount: 0,
       entries: [],
       supported: false,
-      limitations: ["End-of-central-directory record not found; not a valid ZIP or file is truncated."],
+      limitations: [
+        'End-of-central-directory record not found; not a valid ZIP or file is truncated.',
+      ],
     };
   }
 
@@ -60,11 +66,15 @@ export function inspectZipArchive(data: Uint8Array): ArchiveInformation {
 
   for (let i = 0; i < totalEntries; i++) {
     if (offset + 46 > data.length) {
-      limitations.push("Central directory truncated before all entries could be read.");
+      limitations.push(
+        'Central directory truncated before all entries could be read.',
+      );
       break;
     }
     if (readUint32LE(data, offset) !== CENTRAL_DIR_SIGNATURE) {
-      limitations.push("Central directory entry signature mismatch; stopped parsing further entries.");
+      limitations.push(
+        'Central directory entry signature mismatch; stopped parsing further entries.',
+      );
       break;
     }
 
@@ -78,24 +88,30 @@ export function inspectZipArchive(data: Uint8Array): ArchiveInformation {
     const nameStart = offset + 46;
     const nameEnd = nameStart + nameLength;
     if (nameEnd > data.length) {
-      limitations.push("Entry filename extends beyond buffer; stopped parsing further entries.");
+      limitations.push(
+        'Entry filename extends beyond buffer; stopped parsing further entries.',
+      );
       break;
     }
-    const name = new TextDecoder("utf-8").decode(data.subarray(nameStart, nameEnd));
+    const name = new TextDecoder('utf-8').decode(
+      data.subarray(nameStart, nameEnd),
+    );
 
     entries.push({
       name,
-      isDirectory: name.endsWith("/"),
+      isDirectory: name.endsWith('/'),
       compressedSize,
       uncompressedSize,
-      compressionMethod: COMPRESSION_METHODS[compressionMethodCode] ?? `Unknown (code ${compressionMethodCode})`,
+      compressionMethod:
+        COMPRESSION_METHODS[compressionMethodCode] ??
+        `Unknown (code ${compressionMethodCode})`,
     });
 
     offset = nameEnd + extraLength + commentLength;
   }
 
   return {
-    archiveType: "zip",
+    archiveType: 'zip',
     entryCount: entries.length,
     entries,
     supported: true,

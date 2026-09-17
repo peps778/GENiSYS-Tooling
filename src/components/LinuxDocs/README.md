@@ -31,7 +31,7 @@ The module exports `LinuxDocsPage` from `index.ts`.
 The existing application router should continue to own `/linux`. Wire the existing `/linux` route to the exported page, for example:
 
 ```tsx
-import LinuxDocsPage from "./components/LinuxDocs";
+import LinuxDocsPage from './components/LinuxDocs';
 ```
 
 Then render `LinuxDocsPage` from the route that already exists.

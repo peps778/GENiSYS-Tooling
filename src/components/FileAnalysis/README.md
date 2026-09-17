@@ -1,5 +1,3 @@
-
-
 ## What was verified in this environment
 
 This sandbox has no network access, so the project's real `vitest`,

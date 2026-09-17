@@ -1,11 +1,10 @@
-Built on top of ASTRO + REACT + TAILWIND 
+Built on top of ASTRO + REACT + TAILWIND
 
 - Components -> Overall react renders
-- Navigation -> Nav related components and UI 
-- Tools -> [STRICT]: Each component should house each tooling and functions, if possible minimize externalization. 
+- Navigation -> Nav related components and UI
+- Tools -> [STRICT]: Each component should house each tooling and functions, if possible minimize externalization.
 
 - USE TS for safety
- 
 
 Built mainly for:
 
@@ -22,16 +21,16 @@ Built mainly for:
    - File magic/signature identification
 
 2. Heap Dump / Memory Analysis [DONE]
-    - Chrome/Chromium heap snapshots
+   - Chrome/Chromium heap snapshots
    - Firefox-compatible inspection
    - Extract strings
    - Search for:
-       - tokens
-       - passwords
-       - API keys
-       - URLs
-       - endpoints
-       - flags
+     - tokens
+     - passwords
+     - API keys
+     - URLs
+     - endpoints
+     - flags
    - JSON/structured-data extraction
    - Regex search
    - Large-file processing
@@ -72,7 +71,7 @@ Built mainly for:
    - jq
    - Python one-liners
    - most common kali linux pen test
-   - msf console 
+   - msf console
    - katana
    - as well as custom linux command generator (select purpose -> select attributes -> generate / add if there are missing process)
 
@@ -123,4 +122,4 @@ Built mainly for:
    - "What do I try next?" checklist
    - Flag/evidence recording
    - Time-management procedure
-    - 
+   -

@@ -9,5 +9,5 @@
  * All internal files (components/, panels/, lib/, workers/, types/)
  * are private implementation details of this module.
  */
-export { default } from "./HeapDumpPage";
-export type { HeapDumpTabId, HeapSummary } from "./types/heap";
+export { default } from './HeapDumpPage';
+export type { HeapDumpTabId, HeapSummary } from './types/heap';

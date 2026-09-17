@@ -1,19 +1,35 @@
-import React, { useState } from "react";
-import type { FormatCandidate } from "../tools/formatDetector";
-import { detectFormats } from "../tools/formatDetector";
+import React, { useState } from 'react';
+import type { FormatCandidate } from '../tools/formatDetector';
+import { detectFormats } from '../tools/formatDetector';
 
 interface SmartDetectPanelProps {
   onUseCandidate: (candidate: FormatCandidate, input: string) => void;
 }
 
-function confidenceLabel(confidence: number): { label: string; className: string } {
-  if (confidence >= 0.8) return { label: "Likely", className: "bg-[#F0FDF4] border-[#BBF7D0] text-[#15803D]" };
-  if (confidence >= 0.5) return { label: "Possible", className: "bg-[#FEFCE8] border-[#FEF08A] text-[#A16207]" };
-  return { label: "Weak match", className: "bg-[#F9FAFB] border-[#E5E7EB] text-[#6B7280]" };
+function confidenceLabel(confidence: number): {
+  label: string;
+  className: string;
+} {
+  if (confidence >= 0.8)
+    return {
+      label: 'Likely',
+      className: 'bg-[#F0FDF4] border-[#BBF7D0] text-[#15803D]',
+    };
+  if (confidence >= 0.5)
+    return {
+      label: 'Possible',
+      className: 'bg-[#FEFCE8] border-[#FEF08A] text-[#A16207]',
+    };
+  return {
+    label: 'Weak match',
+    className: 'bg-[#F9FAFB] border-[#E5E7EB] text-[#6B7280]',
+  };
 }
 
-export default function SmartDetectPanel({ onUseCandidate }: SmartDetectPanelProps) {
-  const [value, setValue] = useState("");
+export default function SmartDetectPanel({
+  onUseCandidate,
+}: SmartDetectPanelProps) {
+  const [value, setValue] = useState('');
   const [candidates, setCandidates] = useState<FormatCandidate[] | null>(null);
 
   function runDetection() {
@@ -23,10 +39,13 @@ export default function SmartDetectPanel({ onUseCandidate }: SmartDetectPanelPro
   return (
     <div className="flex flex-col gap-3 rounded-[12px] border border-[#E5E7EB] bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-1">
-        <h2 className="text-sm font-semibold text-[#111827]">Auto-Detect Format</h2>
+        <h2 className="text-sm font-semibold text-[#111827]">
+          Auto-Detect Format
+        </h2>
         <p className="text-xs text-[#6B7280]">
-          Paste any encoded value. Candidates are ranked heuristically by character set, structure, and
-          decode-success checks — treat this as a strong starting guess, not a certainty, especially for short or
+          Paste any encoded value. Candidates are ranked heuristically by
+          character set, structure, and decode-success checks — treat this as a
+          strong starting guess, not a certainty, especially for short or
           ambiguous inputs.
         </p>
       </div>
@@ -56,7 +75,10 @@ export default function SmartDetectPanel({ onUseCandidate }: SmartDetectPanelPro
       </div>
 
       {candidates && candidates.length === 0 && (
-        <p className="text-sm text-[#6B7280]">No recognizable structured format detected — it may already be plain text.</p>
+        <p className="text-sm text-[#6B7280]">
+          No recognizable structured format detected — it may already be plain
+          text.
+        </p>
       )}
 
       {candidates && candidates.length > 0 && (
@@ -70,7 +92,9 @@ export default function SmartDetectPanel({ onUseCandidate }: SmartDetectPanelPro
               >
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{candidate.toolLabel}</span>
+                    <span className="text-sm font-medium">
+                      {candidate.toolLabel}
+                    </span>
                     <span className="rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                       {label} · {Math.round(candidate.confidence * 100)}%
                     </span>

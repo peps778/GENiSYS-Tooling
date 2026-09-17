@@ -7,7 +7,7 @@
  * function, no DOM/React dependency.
  */
 
-import type { JsonExtractResult } from "../types/heap";
+import type { JsonExtractResult } from '../types/heap';
 
 const MIN_CANDIDATE_LENGTH = 2; // "{}" / "[]"
 /** Avoid pathological scans on extremely long single strings. */
@@ -24,11 +24,11 @@ export function findJsonCandidates(source: string): string[] {
   }
 
   const candidates: string[] = [];
-  const openers: Record<string, string> = { "{": "}", "[": "]" };
+  const openers: Record<string, string> = { '{': '}', '[': ']' };
 
   for (let i = 0; i < source.length; i++) {
     const ch = source[i];
-    if (ch !== "{" && ch !== "[") continue;
+    if (ch !== '{' && ch !== '[') continue;
 
     const closer = openers[ch];
     let depth = 0;
@@ -42,7 +42,7 @@ export function findJsonCandidates(source: string): string[] {
       if (inString) {
         if (escaped) {
           escaped = false;
-        } else if (c === "\\") {
+        } else if (c === '\\') {
           escaped = true;
         } else if (c === '"') {
           inString = false;
@@ -88,12 +88,18 @@ export function extractJsonFromStrings(strings: string[]): JsonExtractResult[] {
     // Fast path: the whole string is itself valid JSON.
     const trimmed = source.trim();
     if (
-      (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-      (trimmed.startsWith("[") && trimmed.endsWith("]"))
+      (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+      (trimmed.startsWith('[') && trimmed.endsWith(']'))
     ) {
       try {
         const parsed = JSON.parse(trimmed);
-        results.push({ id: idCounter++, raw: trimmed, valid: true, parsed, sourceStringId });
+        results.push({
+          id: idCounter++,
+          raw: trimmed,
+          valid: true,
+          parsed,
+          sourceStringId,
+        });
         return;
       } catch {
         // Fall through to sub-candidate scanning below.
@@ -104,9 +110,20 @@ export function extractJsonFromStrings(strings: string[]): JsonExtractResult[] {
     for (const candidate of candidates) {
       try {
         const parsed = JSON.parse(candidate);
-        results.push({ id: idCounter++, raw: candidate, valid: true, parsed, sourceStringId });
+        results.push({
+          id: idCounter++,
+          raw: candidate,
+          valid: true,
+          parsed,
+          sourceStringId,
+        });
       } catch {
-        results.push({ id: idCounter++, raw: candidate, valid: false, sourceStringId });
+        results.push({
+          id: idCounter++,
+          raw: candidate,
+          valid: false,
+          sourceStringId,
+        });
       }
     }
   });

@@ -1,0 +1,15 @@
+export const nmapCommands = [
+  ['nmap TARGET', 'Default scan of a target.'],
+  ['nmap -p 80,443 TARGET', 'Scan selected ports.'],
+  ['nmap -p- TARGET', 'Scan all TCP ports.'],
+  ['nmap -sV TARGET', 'Detect service versions.'],
+  ['nmap -sC TARGET', 'Run default NSE scripts.'],
+  ['nmap -sC -sV TARGET', 'Combine default scripts and version detection.'],
+  ['nmap -Pn TARGET', 'Skip host discovery and treat target as online.'],
+  ['nmap -O TARGET', 'Attempt OS detection.'],
+  ['nmap -A TARGET', 'Enable several advanced detection features.'],
+  ['nmap -sU TARGET', 'UDP scan.'],
+  ['nmap --top-ports 100 TARGET', 'Scan the top 100 ports.'],
+  ['nmap -oN output.txt TARGET', 'Normal text output.'],
+  ['nmap -oX output.xml TARGET', 'XML output.'],
+] as const;

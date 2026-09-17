@@ -1,4 +1,4 @@
-import type { LinuxCommand } from "../types/linuxDocs";
+import type { LinuxCommand } from '../types/linuxDocs';
 
 export const linuxCommands: LinuxCommand[] = [
   {
@@ -8,12 +8,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print the current working directory.',
     syntax: 'pwd',
     examples: [
-    { description: 'Show the current directory', command: 'pwd', authorizedOnly: false }
+      {
+        description: 'Show the current directory',
+        command: 'pwd',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Useful when documenting evidence paths.'],
+    flags: [],
+    notes: ['Useful when documenting evidence paths.'],
     tags: ['path', 'directory'],
   },
   {
@@ -23,13 +25,21 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'List directory contents.',
     syntax: 'ls [OPTIONS] [PATH]',
     examples: [
-    { description: 'Detailed listing', command: 'ls -lah', authorizedOnly: false },
-    { description: 'List a target directory', command: 'ls -la /var/log', authorizedOnly: false }
+      {
+        description: 'Detailed listing',
+        command: 'ls -lah',
+        authorizedOnly: false,
+      },
+      {
+        description: 'List a target directory',
+        command: 'ls -la /var/log',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-l', description: 'Long listing format.' },
-    { flag: '-a', description: 'Include hidden entries.' },
-    { flag: '-h', description: 'Human-readable sizes.' }
+      { flag: '-l', description: 'Long listing format.' },
+      { flag: '-a', description: 'Include hidden entries.' },
+      { flag: '-h', description: 'Human-readable sizes.' },
     ],
     notes: [],
     tags: ['files', 'directory'],
@@ -41,13 +51,19 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Change the current shell directory.',
     syntax: 'cd [PATH]',
     examples: [
-    { description: 'Move to a directory', command: 'cd /var/log', authorizedOnly: false },
-    { description: 'Move to the parent', command: 'cd ..', authorizedOnly: false }
+      {
+        description: 'Move to a directory',
+        command: 'cd /var/log',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Move to the parent',
+        command: 'cd ..',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'A shell builtin; `pwd` verifies the resulting location.'],
+    flags: [],
+    notes: ['A shell builtin; `pwd` verifies the resulting location.'],
     tags: ['navigation', 'shell'],
   },
   {
@@ -57,12 +73,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Display a directory hierarchy.',
     syntax: 'tree [OPTIONS] [PATH]',
     examples: [
-    { description: 'Two-level tree', command: 'tree -L 2 /tmp', authorizedOnly: false }
+      {
+        description: 'Two-level tree',
+        command: 'tree -L 2 /tmp',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-L N', description: 'Limit displayed depth.' }
-    ],
-    notes: [    'Availability depends on whether the `tree` package is installed.'],
+    flags: [{ flag: '-L N', description: 'Limit displayed depth.' }],
+    notes: ['Availability depends on whether the `tree` package is installed.'],
     tags: ['directory', 'layout'],
   },
   {
@@ -72,13 +90,19 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print file contents to standard output.',
     syntax: 'cat [OPTIONS] FILE',
     examples: [
-    { description: 'Read a small text file', command: 'cat notes.txt', authorizedOnly: false },
-    { description: 'Combine evidence snippets', command: 'cat part1.txt part2.txt', authorizedOnly: false }
+      {
+        description: 'Read a small text file',
+        command: 'cat notes.txt',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Combine evidence snippets',
+        command: 'cat part1.txt part2.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Avoid dumping very large files directly into a terminal.'],
+    flags: [],
+    notes: ['Avoid dumping very large files directly into a terminal.'],
     tags: ['read', 'text'],
   },
   {
@@ -88,12 +112,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Paginate text interactively.',
     syntax: 'less FILE',
     examples: [
-    { description: 'Inspect a log', command: 'less /var/log/auth.log', authorizedOnly: false }
+      {
+        description: 'Inspect a log',
+        command: 'less /var/log/auth.log',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Use `/pattern` inside less to search and `q` to exit.'],
+    flags: [],
+    notes: ['Use `/pattern` inside less to search and `q` to exit.'],
     tags: ['read', 'logs'],
   },
   {
@@ -103,11 +129,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show the beginning of a file or stream.',
     syntax: 'head [OPTIONS] FILE',
     examples: [
-    { description: 'First 20 lines', command: 'head -n 20 access.log', authorizedOnly: false }
+      {
+        description: 'First 20 lines',
+        command: 'head -n 20 access.log',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-n N', description: 'Number of lines.' }
-    ],
+    flags: [{ flag: '-n N', description: 'Number of lines.' }],
     notes: [],
     tags: ['preview', 'logs'],
   },
@@ -118,14 +146,22 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show the end of a file or follow appended data.',
     syntax: 'tail [OPTIONS] FILE',
     examples: [
-    { description: 'Last 50 lines', command: 'tail -n 50 app.log', authorizedOnly: false },
-    { description: 'Follow a log', command: 'tail -f app.log', authorizedOnly: false }
+      {
+        description: 'Last 50 lines',
+        command: 'tail -n 50 app.log',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Follow a log',
+        command: 'tail -f app.log',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-n N', description: 'Number of lines.' },
-    { flag: '-f', description: 'Follow appended output.' }
+      { flag: '-n N', description: 'Number of lines.' },
+      { flag: '-f', description: 'Follow appended output.' },
     ],
-    notes: [    'Use `-f` only when live output is useful.'],
+    notes: ['Use `-f` only when live output is useful.'],
     tags: ['logs', 'monitor'],
   },
   {
@@ -135,13 +171,24 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Copy files or directories.',
     syntax: 'cp [OPTIONS] SOURCE DEST',
     examples: [
-    { description: 'Copy a file', command: 'cp report.txt report-copy.txt', authorizedOnly: false },
-    { description: 'Copy a directory', command: 'cp -a evidence evidence-copy', authorizedOnly: false }
+      {
+        description: 'Copy a file',
+        command: 'cp report.txt report-copy.txt',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Copy a directory',
+        command: 'cp -a evidence evidence-copy',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-a', description: 'Archive mode; preserve attributes recursively.' }
+      {
+        flag: '-a',
+        description: 'Archive mode; preserve attributes recursively.',
+      },
     ],
-    notes: [    'Use a separate destination when preserving original evidence.'],
+    notes: ['Use a separate destination when preserving original evidence.'],
     tags: ['copy', 'files'],
   },
   {
@@ -151,12 +198,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Move or rename files.',
     syntax: 'mv SOURCE DEST',
     examples: [
-    { description: 'Rename a file', command: 'mv draft.txt final.txt', authorizedOnly: false }
+      {
+        description: 'Rename a file',
+        command: 'mv draft.txt final.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Be careful when the destination already exists.'],
+    flags: [],
+    notes: ['Be careful when the destination already exists.'],
     tags: ['move', 'rename'],
   },
   {
@@ -166,11 +215,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Create directories.',
     syntax: 'mkdir [OPTIONS] DIRECTORY',
     examples: [
-    { description: 'Create a nested evidence path', command: 'mkdir -p evidence/raw/2026-09-17', authorizedOnly: false }
+      {
+        description: 'Create a nested evidence path',
+        command: 'mkdir -p evidence/raw/2026-09-17',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-p', description: 'Create missing parent directories.' }
-    ],
+    flags: [{ flag: '-p', description: 'Create missing parent directories.' }],
     notes: [],
     tags: ['directory', 'evidence'],
   },
@@ -181,12 +232,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Create an empty file or update timestamps.',
     syntax: 'touch FILE',
     examples: [
-    { description: 'Create a notes file', command: 'touch notes.txt', authorizedOnly: false }
+      {
+        description: 'Create a notes file',
+        command: 'touch notes.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Do not use it on preserved originals when timestamps are evidence.',
     ],
-    notes: [    'Do not use it on preserved originals when timestamps are evidence.'],
     tags: ['files', 'timestamps'],
   },
   {
@@ -196,11 +251,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Write arguments to standard output.',
     syntax: 'echo TEXT',
     examples: [
-    { description: 'Print a variable', command: 'echo "$HOME"', authorizedOnly: false }
+      {
+        description: 'Print a variable',
+        command: 'echo "$HOME"',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['shell', 'output'],
   },
@@ -211,12 +268,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Format and print text.',
     syntax: 'printf FORMAT [ARGUMENTS]',
     examples: [
-    { description: 'Print a stable line', command: "printf '%s\\n' 'finding: example'", authorizedOnly: false }
+      {
+        description: 'Print a stable line',
+        command: "printf '%s\\n' 'finding: example'",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Prefer `printf` when exact formatting matters.'],
+    flags: [],
+    notes: ['Prefer `printf` when exact formatting matters.'],
     tags: ['shell', 'output'],
   },
   {
@@ -226,12 +285,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Copy standard input to a file while also displaying it.',
     syntax: 'tee [OPTIONS] FILE',
     examples: [
-    { description: 'Record command output', command: 'ip addr | tee interfaces.txt', authorizedOnly: false }
+      {
+        description: 'Record command output',
+        command: 'ip addr | tee interfaces.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-a', description: 'Append instead of overwrite.' }
-    ],
-    notes: [    'Useful for creating a transcript while reviewing output.'],
+    flags: [{ flag: '-a', description: 'Append instead of overwrite.' }],
+    notes: ['Useful for creating a transcript while reviewing output.'],
     tags: ['capture', 'evidence'],
   },
   {
@@ -241,11 +302,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print the effective username.',
     syntax: 'whoami',
     examples: [
-    { description: 'Show current identity', command: 'whoami', authorizedOnly: false }
+      {
+        description: 'Show current identity',
+        command: 'whoami',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['identity', 'user'],
   },
@@ -256,12 +319,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Display user and group identity information.',
     syntax: 'id [USER]',
     examples: [
-    { description: 'Inspect current identity', command: 'id', authorizedOnly: false },
-    { description: 'Inspect another local account', command: 'id analyst', authorizedOnly: false }
+      {
+        description: 'Inspect current identity',
+        command: 'id',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Inspect another local account',
+        command: 'id analyst',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['identity', 'groups'],
   },
@@ -272,11 +341,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show group memberships.',
     syntax: 'groups [USER]',
     examples: [
-    { description: 'Show current groups', command: 'groups', authorizedOnly: false }
+      {
+        description: 'Show current groups',
+        command: 'groups',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['identity', 'permissions'],
   },
@@ -287,11 +358,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show or set the system hostname.',
     syntax: 'hostname [OPTION]',
     examples: [
-    { description: 'Show hostname', command: 'hostname', authorizedOnly: false }
+      {
+        description: 'Show hostname',
+        command: 'hostname',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['host', 'identity'],
   },
@@ -302,11 +375,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print system and kernel information.',
     syntax: 'uname [OPTIONS]',
     examples: [
-    { description: 'Kernel and architecture', command: 'uname -a', authorizedOnly: false }
+      {
+        description: 'Kernel and architecture',
+        command: 'uname -a',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-a', description: 'Print available system information.' }
-    ],
+    flags: [{ flag: '-a', description: 'Print available system information.' }],
     notes: [],
     tags: ['kernel', 'os'],
   },
@@ -317,12 +392,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print or run with environment variables.',
     syntax: 'env [OPTION] [COMMAND]',
     examples: [
-    { description: 'Review environment', command: 'env | sort', authorizedOnly: false }
+      {
+        description: 'Review environment',
+        command: 'env | sort',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Treat environment output as potentially sensitive.'],
+    flags: [],
+    notes: ['Treat environment output as potentially sensitive.'],
     tags: ['environment', 'configuration'],
   },
   {
@@ -332,12 +409,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Print environment variables.',
     syntax: 'printenv [VARIABLE]',
     examples: [
-    { description: 'Inspect PATH', command: 'printenv PATH', authorizedOnly: false }
+      {
+        description: 'Inspect PATH',
+        command: 'printenv PATH',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Avoid exposing secrets when copying environment output.'],
+    flags: [],
+    notes: ['Avoid exposing secrets when copying environment output.'],
     tags: ['environment', 'configuration'],
   },
   {
@@ -347,12 +426,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show shell command history.',
     syntax: 'history [N]',
     examples: [
-    { description: 'Review recent commands', command: 'history 50', authorizedOnly: false }
+      {
+        description: 'Review recent commands',
+        command: 'history 50',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'History can contain credentials or tokens; handle it as sensitive evidence.',
     ],
-    notes: [    'History can contain credentials or tokens; handle it as sensitive evidence.'],
     tags: ['shell', 'history'],
   },
   {
@@ -362,12 +445,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Locate an executable in PATH.',
     syntax: 'which COMMAND',
     examples: [
-    { description: 'Locate curl', command: 'which curl', authorizedOnly: false }
+      {
+        description: 'Locate curl',
+        command: 'which curl',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'For shell-aware command lookup, `command -v` is often preferable.',
     ],
-    notes: [    'For shell-aware command lookup, `command -v` is often preferable.'],
     tags: ['path', 'shell'],
   },
   {
@@ -377,10 +464,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Inspect or invoke shell commands and builtins.',
     syntax: 'command [OPTIONS] NAME',
     examples: [
-    { description: 'Locate a command', command: 'command -v nmap', authorizedOnly: false }
+      {
+        description: 'Locate a command',
+        command: 'command -v nmap',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-v', description: 'Print how a name would be interpreted.' }
+      { flag: '-v', description: 'Print how a name would be interpreted.' },
     ],
     notes: [],
     tags: ['shell', 'path'],
@@ -392,12 +483,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: "Run a command with another user's privileges when permitted.",
     syntax: 'sudo COMMAND',
     examples: [
-    { description: 'Run an approved administrative read', command: 'sudo systemctl status ssh', authorizedOnly: false }
+      {
+        description: 'Run an approved administrative read',
+        command: 'sudo systemctl status ssh',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Use only with authorized accounts and approved commands.'],
+    flags: [],
+    notes: ['Use only with authorized accounts and approved commands.'],
     tags: ['privilege', 'admin'],
   },
   {
@@ -407,12 +500,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Change file permission bits.',
     syntax: 'chmod MODE FILE',
     examples: [
-    { description: 'Add owner execute permission', command: 'chmod u+x script.sh', authorizedOnly: false }
+      {
+        description: 'Add owner execute permission',
+        command: 'chmod u+x script.sh',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Changing permissions can alter evidence; work on copies where appropriate.',
     ],
-    notes: [    'Changing permissions can alter evidence; work on copies where appropriate.'],
     tags: ['permissions', 'files'],
   },
   {
@@ -422,12 +519,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Change file ownership.',
     syntax: 'chown OWNER[:GROUP] FILE',
     examples: [
-    { description: 'Change ownership on a working copy', command: 'sudo chown analyst:analyst working-copy', authorizedOnly: false }
+      {
+        description: 'Change ownership on a working copy',
+        command: 'sudo chown analyst:analyst working-copy',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Requires appropriate privileges and can change forensic metadata.',
     ],
-    notes: [    'Requires appropriate privileges and can change forensic metadata.'],
     tags: ['permissions', 'ownership'],
   },
   {
@@ -437,16 +538,26 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Search text using patterns.',
     syntax: 'grep [OPTIONS] PATTERN [FILE...]',
     examples: [
-    { description: 'Find error lines', command: "grep -n 'ERROR' app.log", authorizedOnly: false },
-    { description: 'Regex search', command: "grep -nE 'failed|denied|invalid' auth.log", authorizedOnly: false }
+      {
+        description: 'Find error lines',
+        command: "grep -n 'ERROR' app.log",
+        authorizedOnly: false,
+      },
+      {
+        description: 'Regex search',
+        command: "grep -nE 'failed|denied|invalid' auth.log",
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-n', description: 'Show line numbers.' },
-    { flag: '-i', description: 'Ignore case.' },
-    { flag: '-E', description: 'Use extended regular expressions.' },
-    { flag: '-r', description: 'Search directories recursively.' }
+      { flag: '-n', description: 'Show line numbers.' },
+      { flag: '-i', description: 'Ignore case.' },
+      { flag: '-E', description: 'Use extended regular expressions.' },
+      { flag: '-r', description: 'Search directories recursively.' },
     ],
-    notes: [    'Use `-I` when you want to avoid binary files during recursive searches.'],
+    notes: [
+      'Use `-I` when you want to avoid binary files during recursive searches.',
+    ],
     tags: ['regex', 'search', 'logs'],
   },
   {
@@ -456,12 +567,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Compatibility name for grep extended regular expressions.',
     syntax: 'egrep [OPTIONS] PATTERN [FILE...]',
     examples: [
-    { description: 'Search alternatives', command: "egrep -n 'GET|POST' access.log", authorizedOnly: false }
+      {
+        description: 'Search alternatives',
+        command: "egrep -n 'GET|POST' access.log",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Modern scripts can use `grep -E` instead.'],
+    flags: [],
+    notes: ['Modern scripts can use `grep -E` instead.'],
     tags: ['regex', 'search'],
   },
   {
@@ -471,13 +584,19 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Stream editor for selecting or transforming text.',
     syntax: 'sed [OPTIONS] SCRIPT [FILE...]',
     examples: [
-    { description: 'Print matching lines', command: "sed -n '1,20p' notes.txt", authorizedOnly: false },
-    { description: 'Normalize a delimiter', command: "sed 's/:/ /g' data.txt", authorizedOnly: false }
+      {
+        description: 'Print matching lines',
+        command: "sed -n '1,20p' notes.txt",
+        authorizedOnly: false,
+      },
+      {
+        description: 'Normalize a delimiter',
+        command: "sed 's/:/ /g' data.txt",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Keep originals untouched when transforming evidence.'],
+    flags: [],
+    notes: ['Keep originals untouched when transforming evidence.'],
     tags: ['transform', 'regex'],
   },
   {
@@ -487,13 +606,20 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Pattern scanning and structured text processing language.',
     syntax: "awk 'PROGRAM' [FILE...]",
     examples: [
-    { description: 'Print the first field', command: "awk '{print $1}' access.log", authorizedOnly: false },
-    { description: 'Count status codes', command: "awk '{count[$9]++} END {for (s in count) print s,count[s]}' access.log", authorizedOnly: false }
+      {
+        description: 'Print the first field',
+        command: "awk '{print $1}' access.log",
+        authorizedOnly: false,
+      },
+      {
+        description: 'Count status codes',
+        command:
+          "awk '{count[$9]++} END {for (s in count) print s,count[s]}' access.log",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Field positions depend on the input format.'],
+    flags: [],
+    notes: ['Field positions depend on the input format.'],
     tags: ['parse', 'logs', 'fields'],
   },
   {
@@ -503,11 +629,15 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Remove or select sections of each line.',
     syntax: 'cut [OPTIONS] [FILE...]',
     examples: [
-    { description: 'Select CSV-like fields', command: 'cut -d, -f1,3 data.csv', authorizedOnly: false }
+      {
+        description: 'Select CSV-like fields',
+        command: 'cut -d, -f1,3 data.csv',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-d CHAR', description: 'Field delimiter.' },
-    { flag: '-f LIST', description: 'Selected fields.' }
+      { flag: '-d CHAR', description: 'Field delimiter.' },
+      { flag: '-f LIST', description: 'Selected fields.' },
     ],
     notes: [],
     tags: ['fields', 'parse'],
@@ -519,12 +649,20 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Sort lines of text.',
     syntax: 'sort [OPTIONS] [FILE...]',
     examples: [
-    { description: 'Sort IP-like text', command: 'sort ips.txt', authorizedOnly: false },
-    { description: 'Numeric sort', command: 'sort -n counts.txt', authorizedOnly: false }
+      {
+        description: 'Sort IP-like text',
+        command: 'sort ips.txt',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Numeric sort',
+        command: 'sort -n counts.txt',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-n', description: 'Numeric comparison.' },
-    { flag: '-u', description: 'Unique lines.' }
+      { flag: '-n', description: 'Numeric comparison.' },
+      { flag: '-u', description: 'Unique lines.' },
     ],
     notes: [],
     tags: ['sort', 'text'],
@@ -536,13 +674,17 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Report or omit repeated adjacent lines.',
     syntax: 'uniq [OPTIONS] [INPUT [OUTPUT]]',
     examples: [
-    { description: 'Count repeated values', command: 'sort users.txt | uniq -c', authorizedOnly: false }
+      {
+        description: 'Count repeated values',
+        command: 'sort users.txt | uniq -c',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-c', description: 'Prefix lines with counts.' },
-    { flag: '-d', description: 'Show only duplicates.' }
+      { flag: '-c', description: 'Prefix lines with counts.' },
+      { flag: '-d', description: 'Show only duplicates.' },
     ],
-    notes: [    'Run `sort` first when duplicates are not already adjacent.'],
+    notes: ['Run `sort` first when duplicates are not already adjacent.'],
     tags: ['count', 'dedupe'],
   },
   {
@@ -552,12 +694,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Translate or delete characters.',
     syntax: 'tr [OPTION] SET1 [SET2]',
     examples: [
-    { description: 'Normalize case', command: "tr '[:upper:]' '[:lower:]' < input.txt", authorizedOnly: false },
-    { description: 'Remove CR characters', command: "tr -d '\\r' < file.txt", authorizedOnly: false }
+      {
+        description: 'Normalize case',
+        command: "tr '[:upper:]' '[:lower:]' < input.txt",
+        authorizedOnly: false,
+      },
+      {
+        description: 'Remove CR characters',
+        command: "tr -d '\\r' < file.txt",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['normalize', 'text'],
   },
@@ -568,12 +716,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Count lines, words, bytes, or characters.',
     syntax: 'wc [OPTIONS] [FILE...]',
     examples: [
-    { description: 'Count lines', command: 'wc -l access.log', authorizedOnly: false }
+      {
+        description: 'Count lines',
+        command: 'wc -l access.log',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-l', description: 'Lines.' },
-    { flag: '-w', description: 'Words.' },
-    { flag: '-c', description: 'Bytes.' }
+      { flag: '-l', description: 'Lines.' },
+      { flag: '-w', description: 'Words.' },
+      { flag: '-c', description: 'Bytes.' },
     ],
     notes: [],
     tags: ['count', 'logs'],
@@ -585,12 +737,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Build and execute argument lists from standard input.',
     syntax: 'xargs [OPTIONS] [COMMAND]',
     examples: [
-    { description: 'Pass filenames to file', command: "printf '%s\\n' *.log | xargs file", authorizedOnly: false }
+      {
+        description: 'Pass filenames to file',
+        command: "printf '%s\\n' *.log | xargs file",
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Review generated arguments before using destructive commands.'],
+    flags: [],
+    notes: ['Review generated arguments before using destructive commands.'],
     tags: ['pipeline', 'automation'],
   },
   {
@@ -600,11 +754,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Merge corresponding lines from files.',
     syntax: 'paste [OPTIONS] FILE1 FILE2',
     examples: [
-    { description: 'Join two columns', command: 'paste names.txt counts.txt', authorizedOnly: false }
+      {
+        description: 'Join two columns',
+        command: 'paste names.txt counts.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['merge', 'columns'],
   },
@@ -615,11 +771,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Compare files line by line.',
     syntax: 'diff [OPTIONS] FILE1 FILE2',
     examples: [
-    { description: 'Compare two reports', command: 'diff -u original.txt analyzed.txt', authorizedOnly: false }
+      {
+        description: 'Compare two reports',
+        command: 'diff -u original.txt analyzed.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-u', description: 'Unified diff format.' }
-    ],
+    flags: [{ flag: '-u', description: 'Unified diff format.' }],
     notes: [],
     tags: ['compare', 'evidence'],
   },
@@ -630,12 +788,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Compare two sorted files line by line.',
     syntax: 'comm [OPTIONS] FILE1 FILE2',
     examples: [
-    { description: 'Compare indicator lists', command: 'comm -3 <(sort a.txt) <(sort b.txt)', authorizedOnly: false }
+      {
+        description: 'Compare indicator lists',
+        command: 'comm -3 <(sort a.txt) <(sort b.txt)',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Inputs should be sorted for reliable results.'],
+    flags: [],
+    notes: ['Inputs should be sorted for reliable results.'],
     tags: ['compare', 'sets'],
   },
   {
@@ -645,14 +805,24 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Identify a file from its content and metadata.',
     syntax: 'file [OPTIONS] FILE',
     examples: [
-    { description: 'Identify a binary', command: 'file suspicious.bin', authorizedOnly: false },
-    { description: 'Inspect MIME type', command: 'file --mime suspicious.bin', authorizedOnly: false }
+      {
+        description: 'Identify a binary',
+        command: 'file suspicious.bin',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Inspect MIME type',
+        command: 'file --mime suspicious.bin',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '--mime', description: 'Report MIME type.' },
-    { flag: '-b', description: 'Brief output.' }
+      { flag: '--mime', description: 'Report MIME type.' },
+      { flag: '-b', description: 'Brief output.' },
     ],
-    notes: [    'Magic-byte identification is heuristic; confirm unusual artifacts with multiple methods.'],
+    notes: [
+      'Magic-byte identification is heuristic; confirm unusual artifacts with multiple methods.',
+    ],
     tags: ['binary', 'magic', 'mime'],
   },
   {
@@ -662,14 +832,22 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Extract printable character sequences from a binary.',
     syntax: 'strings [OPTIONS] FILE',
     examples: [
-    { description: 'Extract strings', command: 'strings suspicious.bin', authorizedOnly: false },
-    { description: 'Search extracted strings', command: "strings suspicious.bin | grep -Ei 'flag|token|password'", authorizedOnly: false }
+      {
+        description: 'Extract strings',
+        command: 'strings suspicious.bin',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Search extracted strings',
+        command: "strings suspicious.bin | grep -Ei 'flag|token|password'",
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-a', description: 'Scan the whole file.' },
-    { flag: '-n N', description: 'Minimum string length.' }
+      { flag: '-a', description: 'Scan the whole file.' },
+      { flag: '-n N', description: 'Minimum string length.' },
     ],
-    notes: [    'Do not treat a string match alone as proof of maliciousness.'],
+    notes: ['Do not treat a string match alone as proof of maliciousness.'],
     tags: ['binary', 'strings', 'ctf'],
   },
   {
@@ -679,14 +857,22 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Create a hexadecimal dump or reverse one.',
     syntax: 'xxd [OPTIONS] FILE',
     examples: [
-    { description: 'Preview bytes', command: 'xxd -l 64 suspicious.bin', authorizedOnly: false },
-    { description: 'Search a hex dump', command: 'xxd suspicious.bin | less', authorizedOnly: false }
+      {
+        description: 'Preview bytes',
+        command: 'xxd -l 64 suspicious.bin',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Search a hex dump',
+        command: 'xxd suspicious.bin | less',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-l N', description: 'Limit bytes read.' },
-    { flag: '-g N', description: 'Group bytes.' }
+      { flag: '-l N', description: 'Limit bytes read.' },
+      { flag: '-g N', description: 'Group bytes.' },
     ],
-    notes: [    'Hex output is for inspection; preserve the original file.'],
+    notes: ['Hex output is for inspection; preserve the original file.'],
     tags: ['hex', 'binary'],
   },
   {
@@ -696,11 +882,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Display file contents in hexadecimal and other formats.',
     syntax: 'hexdump [OPTIONS] FILE',
     examples: [
-    { description: 'Canonical hex view', command: 'hexdump -C suspicious.bin', authorizedOnly: false }
+      {
+        description: 'Canonical hex view',
+        command: 'hexdump -C suspicious.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-C', description: 'Canonical hex+ASCII display.' }
-    ],
+    flags: [{ flag: '-C', description: 'Canonical hex+ASCII display.' }],
     notes: [],
     tags: ['hex', 'binary'],
   },
@@ -708,14 +896,17 @@ export const linuxCommands: LinuxCommand[] = [
     id: 'od',
     name: 'od',
     category: 'forensics',
-    description: 'Display file contents in octal, hexadecimal, decimal, or other formats.',
+    description:
+      'Display file contents in octal, hexadecimal, decimal, or other formats.',
     syntax: 'od [OPTIONS] FILE',
     examples: [
-    { description: 'Hexadecimal bytes', command: 'od -Ax -tx1z suspicious.bin', authorizedOnly: false }
+      {
+        description: 'Hexadecimal bytes',
+        command: 'od -Ax -tx1z suspicious.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['hex', 'binary'],
   },
@@ -723,18 +914,27 @@ export const linuxCommands: LinuxCommand[] = [
     id: 'find',
     name: 'find',
     category: 'forensics',
-    description: 'Search directory trees using names, types, times, and other predicates.',
+    description:
+      'Search directory trees using names, types, times, and other predicates.',
     syntax: 'find PATH [TESTS] [ACTIONS]',
     examples: [
-    { description: 'Find recent files', command: 'find /var/log -type f -mtime -2', authorizedOnly: false },
-    { description: 'Find binaries', command: 'find . -type f -perm /111', authorizedOnly: false }
+      {
+        description: 'Find recent files',
+        command: 'find /var/log -type f -mtime -2',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Find binaries',
+        command: 'find . -type f -perm /111',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-type', description: 'Filter by file type.' },
-    { flag: '-mtime', description: 'Filter by modification age.' },
-    { flag: '-name', description: 'Filter by name.' }
+      { flag: '-type', description: 'Filter by file type.' },
+      { flag: '-mtime', description: 'Filter by modification age.' },
+      { flag: '-name', description: 'Filter by name.' },
     ],
-    notes: [    'Prefer read-only predicates during evidence triage.'],
+    notes: ['Prefer read-only predicates during evidence triage.'],
     tags: ['files', 'search', 'forensics'],
   },
   {
@@ -744,12 +944,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Search a prebuilt file-name database.',
     syntax: 'locate [OPTIONS] PATTERN',
     examples: [
-    { description: 'Find a filename', command: 'locate suspicious.bin', authorizedOnly: false }
+      {
+        description: 'Find a filename',
+        command: 'locate suspicious.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    "Database freshness depends on the system's locate service."],
+    flags: [],
+    notes: ["Database freshness depends on the system's locate service."],
     tags: ['files', 'search'],
   },
   {
@@ -759,12 +961,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Display detailed file status and timestamps.',
     syntax: 'stat [OPTIONS] FILE',
     examples: [
-    { description: 'Inspect metadata', command: 'stat suspicious.bin', authorizedOnly: false }
+      {
+        description: 'Inspect metadata',
+        command: 'stat suspicious.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Record timestamps before changing the file.'],
+    flags: [],
+    notes: ['Record timestamps before changing the file.'],
     tags: ['metadata', 'timestamps'],
   },
   {
@@ -774,11 +978,15 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Estimate file and directory space usage.',
     syntax: 'du [OPTIONS] [PATH]',
     examples: [
-    { description: 'Find large directories', command: 'du -sh ./* | sort -h', authorizedOnly: false }
+      {
+        description: 'Find large directories',
+        command: 'du -sh ./* | sort -h',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-s', description: 'Summarize.' },
-    { flag: '-h', description: 'Human-readable.' }
+      { flag: '-s', description: 'Summarize.' },
+      { flag: '-h', description: 'Human-readable.' },
     ],
     notes: [],
     tags: ['disk', 'files'],
@@ -790,11 +998,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Report filesystem disk-space usage.',
     syntax: 'df [OPTIONS] [PATH]',
     examples: [
-    { description: 'Review mounted filesystems', command: 'df -h', authorizedOnly: false }
+      {
+        description: 'Review mounted filesystems',
+        command: 'df -h',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-h', description: 'Human-readable.' }
-    ],
+    flags: [{ flag: '-h', description: 'Human-readable.' }],
     notes: [],
     tags: ['disk', 'filesystem'],
   },
@@ -805,15 +1015,25 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Create or extract tar archives.',
     syntax: 'tar [OPTIONS] ARCHIVE [FILES]',
     examples: [
-    { description: 'List archive contents', command: 'tar -tf evidence.tar', authorizedOnly: false },
-    { description: 'Extract to a working directory', command: 'tar -xf evidence.tar -C work/', authorizedOnly: false }
+      {
+        description: 'List archive contents',
+        command: 'tar -tf evidence.tar',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Extract to a working directory',
+        command: 'tar -xf evidence.tar -C work/',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-t', description: 'List contents.' },
-    { flag: '-x', description: 'Extract.' },
-    { flag: '-f', description: 'Archive file.' }
+      { flag: '-t', description: 'List contents.' },
+      { flag: '-x', description: 'Extract.' },
+      { flag: '-f', description: 'Archive file.' },
     ],
-    notes: [    'Inspect archive contents before extraction when the source is untrusted.'],
+    notes: [
+      'Inspect archive contents before extraction when the source is untrusted.',
+    ],
     tags: ['archive', 'evidence'],
   },
   {
@@ -823,14 +1043,22 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'List or extract ZIP archives.',
     syntax: 'unzip [OPTIONS] ARCHIVE',
     examples: [
-    { description: 'List files', command: 'unzip -l evidence.zip', authorizedOnly: false },
-    { description: 'Extract to a working directory', command: 'unzip evidence.zip -d work/', authorizedOnly: false }
+      {
+        description: 'List files',
+        command: 'unzip -l evidence.zip',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Extract to a working directory',
+        command: 'unzip evidence.zip -d work/',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-l', description: 'List contents.' },
-    { flag: '-d', description: 'Destination directory.' }
+      { flag: '-l', description: 'List contents.' },
+      { flag: '-d', description: 'Destination directory.' },
     ],
-    notes: [    'Extract untrusted archives into an isolated working directory.'],
+    notes: ['Extract untrusted archives into an isolated working directory.'],
     tags: ['archive', 'zip'],
   },
   {
@@ -840,11 +1068,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Create ZIP archives.',
     syntax: 'zip [OPTIONS] ARCHIVE FILES',
     examples: [
-    { description: 'Archive a working copy', command: 'zip -r evidence-copy.zip evidence-copy/', authorizedOnly: false }
+      {
+        description: 'Archive a working copy',
+        command: 'zip -r evidence-copy.zip evidence-copy/',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-r', description: 'Recurse into directories.' }
-    ],
+    flags: [{ flag: '-r', description: 'Recurse into directories.' }],
     notes: [],
     tags: ['archive', 'zip'],
   },
@@ -855,11 +1085,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Compress files using gzip.',
     syntax: 'gzip [OPTIONS] FILE',
     examples: [
-    { description: 'Compress a copy', command: 'gzip -k report.txt', authorizedOnly: false }
+      {
+        description: 'Compress a copy',
+        command: 'gzip -k report.txt',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-k', description: 'Keep original.' }
-    ],
+    flags: [{ flag: '-k', description: 'Keep original.' }],
     notes: [],
     tags: ['compression', 'archive'],
   },
@@ -870,11 +1102,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Decompress gzip files.',
     syntax: 'gunzip [OPTIONS] FILE.gz',
     examples: [
-    { description: 'Decompress a working copy', command: 'gunzip -k artifact.gz', authorizedOnly: false }
+      {
+        description: 'Decompress a working copy',
+        command: 'gunzip -k artifact.gz',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-k', description: 'Keep compressed input.' }
-    ],
+    flags: [{ flag: '-k', description: 'Keep compressed input.' }],
     notes: [],
     tags: ['compression', 'archive'],
   },
@@ -885,13 +1119,19 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Calculate or verify SHA-256 checksums.',
     syntax: 'sha256sum [OPTIONS] FILE',
     examples: [
-    { description: 'Hash an artifact', command: 'sha256sum suspicious.bin', authorizedOnly: false },
-    { description: 'Verify a manifest', command: 'sha256sum -c SHA256SUMS', authorizedOnly: false }
+      {
+        description: 'Hash an artifact',
+        command: 'sha256sum suspicious.bin',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Verify a manifest',
+        command: 'sha256sum -c SHA256SUMS',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-c', description: 'Read checksum lines and verify.' }
-    ],
-    notes: [    'Hash the original before analysis and record the exact output.'],
+    flags: [{ flag: '-c', description: 'Read checksum lines and verify.' }],
+    notes: ['Hash the original before analysis and record the exact output.'],
     tags: ['hash', 'evidence', 'sha256'],
   },
   {
@@ -901,12 +1141,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Calculate or verify SHA-1 checksums.',
     syntax: 'sha1sum [OPTIONS] FILE',
     examples: [
-    { description: 'Calculate a legacy checksum', command: 'sha1sum artifact.bin', authorizedOnly: false }
+      {
+        description: 'Calculate a legacy checksum',
+        command: 'sha1sum artifact.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'SHA-1 is retained for legacy identification; prefer SHA-256 for evidence integrity.',
     ],
-    notes: [    'SHA-1 is retained for legacy identification; prefer SHA-256 for evidence integrity.'],
     tags: ['hash', 'sha1'],
   },
   {
@@ -916,28 +1160,39 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Calculate or verify MD5 checksums.',
     syntax: 'md5sum [OPTIONS] FILE',
     examples: [
-    { description: 'Calculate a legacy checksum', command: 'md5sum artifact.bin', authorizedOnly: false }
+      {
+        description: 'Calculate a legacy checksum',
+        command: 'md5sum artifact.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'MD5 is not collision-resistant and should not be the sole integrity mechanism.',
     ],
-    notes: [    'MD5 is not collision-resistant and should not be the sole integrity mechanism.'],
     tags: ['hash', 'md5'],
   },
   {
     id: 'openssl',
     name: 'openssl',
     category: 'forensics',
-    description: 'Use OpenSSL for cryptographic, certificate, and encoding operations.',
+    description:
+      'Use OpenSSL for cryptographic, certificate, and encoding operations.',
     syntax: 'openssl COMMAND [OPTIONS]',
     examples: [
-    { description: 'Inspect a PEM certificate', command: 'openssl x509 -in cert.pem -noout -subject -issuer -dates', authorizedOnly: false },
-    { description: 'Calculate a digest', command: 'openssl dgst -sha256 artifact.bin', authorizedOnly: false }
+      {
+        description: 'Inspect a PEM certificate',
+        command: 'openssl x509 -in cert.pem -noout -subject -issuer -dates',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Calculate a digest',
+        command: 'openssl dgst -sha256 artifact.bin',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Use the specific OpenSSL subcommand appropriate to the artifact.'],
+    flags: [],
+    notes: ['Use the specific OpenSSL subcommand appropriate to the artifact.'],
     tags: ['crypto', 'certificate', 'hash'],
   },
   {
@@ -947,12 +1202,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Report running processes.',
     syntax: 'ps [OPTIONS]',
     examples: [
-    { description: 'Full process snapshot', command: 'ps aux', authorizedOnly: false },
-    { description: 'Process tree', command: 'ps -ef --forest', authorizedOnly: false }
+      {
+        description: 'Full process snapshot',
+        command: 'ps aux',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Process tree',
+        command: 'ps -ef --forest',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['processes', 'triage'],
   },
@@ -963,11 +1224,15 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Find processes by name or attributes.',
     syntax: 'pgrep [OPTIONS] PATTERN',
     examples: [
-    { description: 'Find an application process', command: 'pgrep -a nginx', authorizedOnly: false }
+      {
+        description: 'Find an application process',
+        command: 'pgrep -a nginx',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-a', description: 'Show command line.' },
-    { flag: '-f', description: 'Match full command line.' }
+      { flag: '-a', description: 'Show command line.' },
+      { flag: '-f', description: 'Match full command line.' },
     ],
     notes: [],
     tags: ['processes', 'search'],
@@ -979,13 +1244,19 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Send a signal to matching processes.',
     syntax: 'pkill [OPTIONS] PATTERN',
     examples: [
-    { description: 'Terminate a lab process', command: "pkill -TERM -f 'test-service'", authorizedOnly: false }
+      {
+        description: 'Terminate a lab process',
+        command: "pkill -TERM -f 'test-service'",
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-TERM', description: 'Request graceful termination.' },
-    { flag: '-f', description: 'Match full command line.' }
+      { flag: '-TERM', description: 'Request graceful termination.' },
+      { flag: '-f', description: 'Match full command line.' },
     ],
-    notes: [    'Potentially disruptive; use only on approved systems and processes.'],
+    notes: [
+      'Potentially disruptive; use only on approved systems and processes.',
+    ],
     tags: ['processes', 'admin'],
   },
   {
@@ -995,12 +1266,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Interactive process and resource monitor.',
     syntax: 'top',
     examples: [
-    { description: 'Review CPU and memory use', command: 'top', authorizedOnly: false }
+      {
+        description: 'Review CPU and memory use',
+        command: 'top',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'For a static snapshot, `ps` may be easier to document.'],
+    flags: [],
+    notes: ['For a static snapshot, `ps` may be easier to document.'],
     tags: ['processes', 'resources'],
   },
   {
@@ -1010,12 +1283,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'List open files, sockets, and process associations.',
     syntax: 'lsof [OPTIONS]',
     examples: [
-    { description: 'List listening network files', command: 'lsof -nP -iTCP -sTCP:LISTEN', authorizedOnly: false },
-    { description: 'Inspect a file holder', command: 'lsof -- /var/log/app.log', authorizedOnly: false }
+      {
+        description: 'List listening network files',
+        command: 'lsof -nP -iTCP -sTCP:LISTEN',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Inspect a file holder',
+        command: 'lsof -- /var/log/app.log',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['sockets', 'processes', 'files'],
   },
@@ -1026,17 +1305,25 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Inspect network sockets.',
     syntax: 'ss [OPTIONS]',
     examples: [
-    { description: 'Listening TCP/UDP sockets', command: 'ss -lntup', authorizedOnly: false },
-    { description: 'Established TCP connections', command: 'ss -tn state established', authorizedOnly: false }
+      {
+        description: 'Listening TCP/UDP sockets',
+        command: 'ss -lntup',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Established TCP connections',
+        command: 'ss -tn state established',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-l', description: 'Listening.' },
-    { flag: '-n', description: 'Do not resolve names.' },
-    { flag: '-t', description: 'TCP.' },
-    { flag: '-u', description: 'UDP.' },
-    { flag: '-p', description: 'Show process information.' }
+      { flag: '-l', description: 'Listening.' },
+      { flag: '-n', description: 'Do not resolve names.' },
+      { flag: '-t', description: 'TCP.' },
+      { flag: '-u', description: 'UDP.' },
+      { flag: '-p', description: 'Show process information.' },
     ],
-    notes: [    'Some process details require elevated privileges.'],
+    notes: ['Some process details require elevated privileges.'],
     tags: ['network', 'sockets'],
   },
   {
@@ -1046,13 +1333,21 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Inspect and manage systemd services.',
     syntax: 'systemctl COMMAND [UNIT]',
     examples: [
-    { description: 'Inspect service state', command: 'systemctl status ssh', authorizedOnly: false },
-    { description: 'List failed units', command: 'systemctl --failed', authorizedOnly: false }
+      {
+        description: 'Inspect service state',
+        command: 'systemctl status ssh',
+        authorizedOnly: false,
+      },
+      {
+        description: 'List failed units',
+        command: 'systemctl --failed',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Changing service state is administrative; status/list operations are read-only.',
     ],
-    notes: [    'Changing service state is administrative; status/list operations are read-only.'],
     tags: ['systemd', 'services'],
   },
   {
@@ -1062,13 +1357,21 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Query the systemd journal.',
     syntax: 'journalctl [OPTIONS]',
     examples: [
-    { description: 'Recent authentication-related entries', command: 'journalctl -n 100 --no-pager', authorizedOnly: false },
-    { description: 'Boot errors', command: 'journalctl -b -p err', authorizedOnly: false }
+      {
+        description: 'Recent authentication-related entries',
+        command: 'journalctl -n 100 --no-pager',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Boot errors',
+        command: 'journalctl -b -p err',
+        authorizedOnly: false,
+      },
     ],
     flags: [
-    { flag: '-b', description: 'Current boot.' },
-    { flag: '-p', description: 'Priority filter.' },
-    { flag: '-n N', description: 'Recent N entries.' }
+      { flag: '-b', description: 'Current boot.' },
+      { flag: '-p', description: 'Priority filter.' },
+      { flag: '-n N', description: 'Recent N entries.' },
     ],
     notes: [],
     tags: ['logs', 'systemd'],
@@ -1080,11 +1383,13 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Display memory usage.',
     syntax: 'free [OPTIONS]',
     examples: [
-    { description: 'Human-readable memory usage', command: 'free -h', authorizedOnly: false }
+      {
+        description: 'Human-readable memory usage',
+        command: 'free -h',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-h', description: 'Human-readable.' }
-    ],
+    flags: [{ flag: '-h', description: 'Human-readable.' }],
     notes: [],
     tags: ['memory', 'resources'],
   },
@@ -1095,11 +1400,9 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show system uptime and load averages.',
     syntax: 'uptime',
     examples: [
-    { description: 'Check uptime', command: 'uptime', authorizedOnly: false }
+      { description: 'Check uptime', command: 'uptime', authorizedOnly: false },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['system', 'resources'],
   },
@@ -1110,13 +1413,17 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show and manipulate interfaces, addresses, and routes.',
     syntax: 'ip OBJECT COMMAND',
     examples: [
-    { description: 'List interfaces and addresses', command: 'ip addr', authorizedOnly: true },
-    { description: 'Show routes', command: 'ip route', authorizedOnly: true }
+      {
+        description: 'List interfaces and addresses',
+        command: 'ip addr',
+        authorizedOnly: true,
+      },
+      { description: 'Show routes', command: 'ip route', authorizedOnly: true },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Changing network configuration is administrative; use read-only subcommands during triage.',
     ],
-    notes: [    'Changing network configuration is administrative; use read-only subcommands during triage.'],
     tags: ['network', 'interfaces', 'routes'],
   },
   {
@@ -1126,12 +1433,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Test IP reachability with ICMP echo requests.',
     syntax: 'ping [OPTIONS] HOST',
     examples: [
-    { description: 'Check an approved host', command: 'ping -c 4 192.0.2.10', authorizedOnly: true }
+      {
+        description: 'Check an approved host',
+        command: 'ping -c 4 192.0.2.10',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-    { flag: '-c N', description: 'Send N requests.' }
-    ],
-    notes: [    'Use only against systems you are authorized to test.'],
+    flags: [{ flag: '-c N', description: 'Send N requests.' }],
+    notes: ['Use only against systems you are authorized to test.'],
     tags: ['network', 'connectivity'],
   },
   {
@@ -1141,12 +1450,14 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Trace a network path toward a destination.',
     syntax: 'traceroute [OPTIONS] HOST',
     examples: [
-    { description: 'Trace an approved destination', command: 'traceroute 192.0.2.10', authorizedOnly: true }
+      {
+        description: 'Trace an approved destination',
+        command: 'traceroute 192.0.2.10',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Network devices may filter or rate-limit probes.'],
+    flags: [],
+    notes: ['Network devices may filter or rate-limit probes.'],
     tags: ['network', 'routing'],
   },
   {
@@ -1156,27 +1467,32 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Trace a path and discover path MTU information.',
     syntax: 'tracepath HOST',
     examples: [
-    { description: 'Trace an approved destination', command: 'tracepath 192.0.2.10', authorizedOnly: true }
+      {
+        description: 'Trace an approved destination',
+        command: 'tracepath 192.0.2.10',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Use within authorized network troubleshooting or assessment.'],
+    flags: [],
+    notes: ['Use within authorized network troubleshooting or assessment.'],
     tags: ['network', 'routing'],
   },
   {
     id: 'arp',
     name: 'arp',
     category: 'network',
-    description: 'Display or manipulate the ARP cache on systems that provide the utility.',
+    description:
+      'Display or manipulate the ARP cache on systems that provide the utility.',
     syntax: 'arp [OPTIONS]',
     examples: [
-    { description: 'Review ARP entries', command: 'arp -a', authorizedOnly: true }
+      {
+        description: 'Review ARP entries',
+        command: 'arp -a',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Modern Linux commonly uses `ip neigh` instead.'],
+    flags: [],
+    notes: ['Modern Linux commonly uses `ip neigh` instead.'],
     tags: ['network', 'arp'],
   },
   {
@@ -1186,12 +1502,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Show or manipulate the IP routing table.',
     syntax: 'route [OPTIONS]',
     examples: [
-    { description: 'Review routes', command: 'route -n', authorizedOnly: true }
+      {
+        description: 'Review routes',
+        command: 'route -n',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Read-only route inspection is preferred during triage; modern systems commonly use `ip route`.',
     ],
-    notes: [    'Read-only route inspection is preferred during triage; modern systems commonly use `ip route`.'],
     tags: ['network', 'routes'],
   },
   {
@@ -1201,13 +1521,17 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Read and write data across network connections.',
     syntax: 'nc [OPTIONS] HOST PORT',
     examples: [
-    { description: 'Check an approved TCP service', command: 'nc -vz 192.0.2.10 443', authorizedOnly: true }
+      {
+        description: 'Check an approved TCP service',
+        command: 'nc -vz 192.0.2.10 443',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-v', description: 'Verbose.' },
-    { flag: '-z', description: 'Scan without sending application data.' }
+      { flag: '-v', description: 'Verbose.' },
+      { flag: '-z', description: 'Scan without sending application data.' },
     ],
-    notes: [    'Use only against approved hosts and ports.'],
+    notes: ['Use only against approved hosts and ports.'],
     tags: ['network', 'tcp'],
   },
   {
@@ -1217,20 +1541,36 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Transfer data and inspect HTTP or other supported protocols.',
     syntax: 'curl [OPTIONS] URL',
     examples: [
-    { description: 'Inspect response headers', command: 'curl -I https://example.test/', authorizedOnly: true },
-    { description: 'Fetch JSON', command: "curl -sS -H 'Accept: application/json' https://example.test/api/status", authorizedOnly: true },
-    { description: 'Send JSON in an authorized test', command: 'curl -sS -X POST -H \'Content-Type: application/json\' -d \'{"name":"test"}\' https://example.test/api/items', authorizedOnly: true }
+      {
+        description: 'Inspect response headers',
+        command: 'curl -I https://example.test/',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Fetch JSON',
+        command:
+          "curl -sS -H 'Accept: application/json' https://example.test/api/status",
+        authorizedOnly: true,
+      },
+      {
+        description: 'Send JSON in an authorized test',
+        command:
+          'curl -sS -X POST -H \'Content-Type: application/json\' -d \'{"name":"test"}\' https://example.test/api/items',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-I', description: 'Headers only.' },
-    { flag: '-i', description: 'Include response headers.' },
-    { flag: '-L', description: 'Follow redirects.' },
-    { flag: '-H', description: 'Add a header.' },
-    { flag: '-X', description: 'Select method.' },
-    { flag: '-d', description: 'Request body.' },
-    { flag: '-b', description: 'Send cookies.' }
+      { flag: '-I', description: 'Headers only.' },
+      { flag: '-i', description: 'Include response headers.' },
+      { flag: '-L', description: 'Follow redirects.' },
+      { flag: '-H', description: 'Add a header.' },
+      { flag: '-X', description: 'Select method.' },
+      { flag: '-d', description: 'Request body.' },
+      { flag: '-b', description: 'Send cookies.' },
     ],
-    notes: [    'Bearer tokens and cookies are credentials; never paste real secrets into shared notes.'],
+    notes: [
+      'Bearer tokens and cookies are credentials; never paste real secrets into shared notes.',
+    ],
     tags: ['http', 'headers', 'json', 'api'],
   },
   {
@@ -1240,13 +1580,17 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Retrieve resources over HTTP and related protocols.',
     syntax: 'wget [OPTIONS] URL',
     examples: [
-    { description: 'Fetch a public test resource', command: 'wget -S -O response.html https://example.test/', authorizedOnly: true }
+      {
+        description: 'Fetch a public test resource',
+        command: 'wget -S -O response.html https://example.test/',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-S', description: 'Print server response.' },
-    { flag: '-O', description: 'Write to a chosen output file.' }
+      { flag: '-S', description: 'Print server response.' },
+      { flag: '-O', description: 'Write to a chosen output file.' },
     ],
-    notes: [    'Use only for authorized resources and controlled downloads.'],
+    notes: ['Use only for authorized resources and controlled downloads.'],
     tags: ['http', 'download'],
   },
   {
@@ -1256,18 +1600,44 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Query DNS records.',
     syntax: 'dig [@SERVER] NAME [TYPE]',
     examples: [
-    { description: 'A record', command: 'dig example.test A', authorizedOnly: false },
-    { description: 'AAAA record', command: 'dig example.test AAAA', authorizedOnly: false },
-    { description: 'MX record', command: 'dig example.test MX', authorizedOnly: false },
-    { description: 'TXT record', command: 'dig example.test TXT', authorizedOnly: false },
-    { description: 'NS record', command: 'dig example.test NS', authorizedOnly: false },
-    { description: 'CNAME record', command: 'dig www.example.test CNAME', authorizedOnly: false },
-    { description: 'Reverse lookup', command: 'dig -x 192.0.2.10', authorizedOnly: false }
+      {
+        description: 'A record',
+        command: 'dig example.test A',
+        authorizedOnly: false,
+      },
+      {
+        description: 'AAAA record',
+        command: 'dig example.test AAAA',
+        authorizedOnly: false,
+      },
+      {
+        description: 'MX record',
+        command: 'dig example.test MX',
+        authorizedOnly: false,
+      },
+      {
+        description: 'TXT record',
+        command: 'dig example.test TXT',
+        authorizedOnly: false,
+      },
+      {
+        description: 'NS record',
+        command: 'dig example.test NS',
+        authorizedOnly: false,
+      },
+      {
+        description: 'CNAME record',
+        command: 'dig www.example.test CNAME',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Reverse lookup',
+        command: 'dig -x 192.0.2.10',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'DNS answers can vary by resolver and time.'],
+    flags: [],
+    notes: ['DNS answers can vary by resolver and time.'],
     tags: ['dns', 'a', 'aaaa', 'mx', 'txt', 'ns', 'cname', 'reverse'],
   },
   {
@@ -1277,12 +1647,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Query DNS records using a simple interface.',
     syntax: 'nslookup [OPTIONS] NAME [SERVER]',
     examples: [
-    { description: 'A lookup', command: 'nslookup example.test', authorizedOnly: false },
-    { description: 'Reverse lookup', command: 'nslookup 192.0.2.10', authorizedOnly: false }
+      {
+        description: 'A lookup',
+        command: 'nslookup example.test',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Reverse lookup',
+        command: 'nslookup 192.0.2.10',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
+    flags: [],
     notes: [],
     tags: ['dns', 'reverse'],
   },
@@ -1293,12 +1669,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Perform DNS lookups from the command line.',
     syntax: 'host [OPTIONS] NAME [SERVER]',
     examples: [
-    { description: 'MX lookup', command: 'host -t MX example.test', authorizedOnly: false },
-    { description: 'Reverse lookup', command: 'host 192.0.2.10', authorizedOnly: false }
+      {
+        description: 'MX lookup',
+        command: 'host -t MX example.test',
+        authorizedOnly: false,
+      },
+      {
+        description: 'Reverse lookup',
+        command: 'host 192.0.2.10',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-    { flag: '-t TYPE', description: 'Select DNS record type.' }
-    ],
+    flags: [{ flag: '-t TYPE', description: 'Select DNS record type.' }],
     notes: [],
     tags: ['dns', 'records'],
   },
@@ -1309,31 +1691,43 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Query registration information for supported domains or IPs.',
     syntax: 'whois NAME',
     examples: [
-    { description: 'Inspect registration data', command: 'whois example.test', authorizedOnly: false }
+      {
+        description: 'Inspect registration data',
+        command: 'whois example.test',
+        authorizedOnly: false,
+      },
     ],
-    flags: [
-
-    ],
-    notes: [    'Availability and response format depend on registry and service.'],
+    flags: [],
+    notes: ['Availability and response format depend on registry and service.'],
     tags: ['dns', 'registration'],
   },
   {
     id: 'httpx',
     name: 'httpx',
     category: 'web',
-    description: 'Probe HTTP services and print structured response information.',
+    description:
+      'Probe HTTP services and print structured response information.',
     syntax: 'httpx [OPTIONS] -u URL',
     examples: [
-    { description: 'Inspect a known authorized URL', command: 'httpx -u https://example.test -status-code -title -tech-detect', authorizedOnly: true },
-    { description: 'Read URLs from a file', command: 'httpx -l urls.txt -status-code -follow-redirects', authorizedOnly: true }
+      {
+        description: 'Inspect a known authorized URL',
+        command:
+          'httpx -u https://example.test -status-code -title -tech-detect',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Read URLs from a file',
+        command: 'httpx -l urls.txt -status-code -follow-redirects',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-status-code', description: 'Print status code.' },
-    { flag: '-title', description: 'Print page title.' },
-    { flag: '-tech-detect', description: 'Attempt technology detection.' },
-    { flag: '-follow-redirects', description: 'Follow redirects.' }
+      { flag: '-status-code', description: 'Print status code.' },
+      { flag: '-title', description: 'Print page title.' },
+      { flag: '-tech-detect', description: 'Attempt technology detection.' },
+      { flag: '-follow-redirects', description: 'Follow redirects.' },
     ],
-    notes: [    'Use only against approved targets.'],
+    notes: ['Use only against approved targets.'],
     tags: ['http', 'recon', 'authorized'],
   },
   {
@@ -1343,12 +1737,16 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Identify web technologies from HTTP responses.',
     syntax: 'whatweb [OPTIONS] URL',
     examples: [
-    { description: 'Identify technologies on an approved host', command: 'whatweb https://example.test', authorizedOnly: true }
+      {
+        description: 'Identify technologies on an approved host',
+        command: 'whatweb https://example.test',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Technology detection is indicative, not proof of a specific backend version.',
     ],
-    notes: [    'Technology detection is indicative, not proof of a specific backend version.'],
     tags: ['http', 'technology'],
   },
   {
@@ -1358,14 +1756,22 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Fuzz web requests for content or parameter discovery.',
     syntax: 'ffuf [OPTIONS]',
     examples: [
-    { description: 'Discover paths on an authorized lab target', command: 'ffuf -u https://example.test/FUZZ -w words.txt -mc 200,204,301,302,307,308', authorizedOnly: true }
+      {
+        description: 'Discover paths on an authorized lab target',
+        command:
+          'ffuf -u https://example.test/FUZZ -w words.txt -mc 200,204,301,302,307,308',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-u', description: 'Target URL containing FUZZ or another keyword.' },
-    { flag: '-w', description: 'Wordlist input.' },
-    { flag: '-mc', description: 'Match status codes.' }
+      {
+        flag: '-u',
+        description: 'Target URL containing FUZZ or another keyword.',
+      },
+      { flag: '-w', description: 'Wordlist input.' },
+      { flag: '-mc', description: 'Match status codes.' },
     ],
-    notes: [    'Use conservative rates and only authorized targets.'],
+    notes: ['Use conservative rates and only authorized targets.'],
     tags: ['http', 'content-discovery', 'authorized'],
   },
   {
@@ -1375,14 +1781,18 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Perform content and related discovery using wordlists.',
     syntax: 'gobuster dir -u URL -w WORDLIST',
     examples: [
-    { description: 'Discover directories on an approved lab host', command: 'gobuster dir -u https://example.test -w words.txt -t 10', authorizedOnly: true }
+      {
+        description: 'Discover directories on an approved lab host',
+        command: 'gobuster dir -u https://example.test -w words.txt -t 10',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-u', description: 'Target URL.' },
-    { flag: '-w', description: 'Wordlist.' },
-    { flag: '-t', description: 'Concurrent threads.' }
+      { flag: '-u', description: 'Target URL.' },
+      { flag: '-w', description: 'Wordlist.' },
+      { flag: '-t', description: 'Concurrent threads.' },
     ],
-    notes: [    'Keep concurrency reasonable and follow the engagement rules.'],
+    notes: ['Keep concurrency reasonable and follow the engagement rules.'],
     tags: ['http', 'directories', 'authorized'],
   },
   {
@@ -1392,29 +1802,40 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Perform recursive content discovery against web targets.',
     syntax: 'feroxbuster -u URL [OPTIONS]',
     examples: [
-    { description: 'Discover content on an approved host', command: 'feroxbuster -u https://example.test -w words.txt --depth 2', authorizedOnly: true }
+      {
+        description: 'Discover content on an approved host',
+        command: 'feroxbuster -u https://example.test -w words.txt --depth 2',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-u', description: 'Target URL.' },
-    { flag: '-w', description: 'Wordlist.' },
-    { flag: '--depth', description: 'Maximum recursion depth.' }
+      { flag: '-u', description: 'Target URL.' },
+      { flag: '-w', description: 'Wordlist.' },
+      { flag: '--depth', description: 'Maximum recursion depth.' },
     ],
-    notes: [    'Use only on approved targets; recursion can create substantial traffic.'],
+    notes: [
+      'Use only on approved targets; recursion can create substantial traffic.',
+    ],
     tags: ['http', 'directories', 'authorized'],
   },
   {
     id: 'nikto',
     name: 'nikto',
     category: 'web',
-    description: 'Check a web server for common configuration and known-file issues.',
+    description:
+      'Check a web server for common configuration and known-file issues.',
     syntax: 'nikto -h HOST',
     examples: [
-    { description: 'Assess an authorized test server', command: 'nikto -h https://example.test', authorizedOnly: true }
+      {
+        description: 'Assess an authorized test server',
+        command: 'nikto -h https://example.test',
+        authorizedOnly: true,
+      },
     ],
-    flags: [
-
+    flags: [],
+    notes: [
+      'Use only with explicit authorization; scanning can generate many requests.',
     ],
-    notes: [    'Use only with explicit authorization; scanning can generate many requests.'],
     tags: ['http', 'scanner', 'authorized'],
   },
   {
@@ -1424,28 +1845,69 @@ export const linuxCommands: LinuxCommand[] = [
     description: 'Network discovery and service enumeration tool.',
     syntax: 'nmap [OPTIONS] TARGET',
     examples: [
-    { description: 'Host discovery on an approved subnet', command: 'nmap -sn 192.0.2.0/24', authorizedOnly: true },
-    { description: 'Basic TCP scan', command: 'nmap 192.0.2.10', authorizedOnly: true },
-    { description: 'Selected ports', command: 'nmap -p 22,80,443 192.0.2.10', authorizedOnly: true },
-    { description: 'Service/version detection', command: 'nmap -sV 192.0.2.10', authorizedOnly: true },
-    { description: 'Default scripts', command: 'nmap -sC 192.0.2.10', authorizedOnly: true },
-    { description: 'Skip host discovery', command: 'nmap -Pn 192.0.2.10', authorizedOnly: true },
-    { description: 'Top ports', command: 'nmap --top-ports 100 192.0.2.10', authorizedOnly: true },
-    { description: 'Normal output', command: 'nmap -oN scan.txt 192.0.2.10', authorizedOnly: true },
-    { description: 'Grepable output', command: 'nmap -oG scan.gnmap 192.0.2.10', authorizedOnly: true }
+      {
+        description: 'Host discovery on an approved subnet',
+        command: 'nmap -sn 192.0.2.0/24',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Basic TCP scan',
+        command: 'nmap 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Selected ports',
+        command: 'nmap -p 22,80,443 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Service/version detection',
+        command: 'nmap -sV 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Default scripts',
+        command: 'nmap -sC 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Skip host discovery',
+        command: 'nmap -Pn 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Top ports',
+        command: 'nmap --top-ports 100 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Normal output',
+        command: 'nmap -oN scan.txt 192.0.2.10',
+        authorizedOnly: true,
+      },
+      {
+        description: 'Grepable output',
+        command: 'nmap -oG scan.gnmap 192.0.2.10',
+        authorizedOnly: true,
+      },
     ],
     flags: [
-    { flag: '-sn', description: 'Host discovery without a port scan.' },
-    { flag: '-p', description: 'Select ports.' },
-    { flag: '-sV', description: 'Service/version detection.' },
-    { flag: '-sC', description: 'Default NSE scripts.' },
-    { flag: '-Pn', description: 'Treat hosts as online; skip discovery.' },
-    { flag: '--top-ports N', description: 'Scan N common ports.' },
-    { flag: '-oN FILE', description: 'Normal output.' },
-    { flag: '-oG FILE', description: 'Grepable output.' },
-    { flag: '-T0..5', description: 'Timing template; higher values can increase traffic.' }
+      { flag: '-sn', description: 'Host discovery without a port scan.' },
+      { flag: '-p', description: 'Select ports.' },
+      { flag: '-sV', description: 'Service/version detection.' },
+      { flag: '-sC', description: 'Default NSE scripts.' },
+      { flag: '-Pn', description: 'Treat hosts as online; skip discovery.' },
+      { flag: '--top-ports N', description: 'Scan N common ports.' },
+      { flag: '-oN FILE', description: 'Normal output.' },
+      { flag: '-oG FILE', description: 'Grepable output.' },
+      {
+        flag: '-T0..5',
+        description: 'Timing template; higher values can increase traffic.',
+      },
     ],
-    notes: [    'Use only against authorized systems. Start with narrow, low-impact scans and expand only when the engagement permits it.'],
+    notes: [
+      'Use only against authorized systems. Start with narrow, low-impact scans and expand only when the engagement permits it.',
+    ],
     tags: ['network', 'ports', 'services', 'recon', 'authorized'],
-  }
+  },
 ];

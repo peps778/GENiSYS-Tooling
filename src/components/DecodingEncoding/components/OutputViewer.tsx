@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface OutputViewerProps {
   id: string;
@@ -9,7 +9,14 @@ interface OutputViewerProps {
   downloadFileName?: string;
 }
 
-export default function OutputViewer({ id, label, value, error, rows = 8, downloadFileName }: OutputViewerProps) {
+export default function OutputViewer({
+  id,
+  label,
+  value,
+  error,
+  rows = 8,
+  downloadFileName,
+}: OutputViewerProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -25,11 +32,11 @@ export default function OutputViewer({ id, label, value, error, rows = 8, downlo
 
   function handleDownload() {
     if (!value) return;
-    const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([value], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
+    const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = downloadFileName ?? "output.txt";
+    anchor.download = downloadFileName ?? 'output.txt';
     anchor.click();
     URL.revokeObjectURL(url);
   }
@@ -47,7 +54,7 @@ export default function OutputViewer({ id, label, value, error, rows = 8, downlo
             disabled={!value}
             className="rounded-[10px] border border-[#E5E7EB] px-2.5 py-1 text-xs font-medium text-[#374151] hover:border-[#16A34A] hover:text-[#15803D] disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]"
           >
-            {copied ? "Copied" : "Copy"}
+            {copied ? 'Copied' : 'Copy'}
           </button>
           {downloadFileName && (
             <button
@@ -69,13 +76,16 @@ export default function OutputViewer({ id, label, value, error, rows = 8, downlo
         spellCheck={false}
         aria-invalid={!!error}
         className={[
-          "w-full resize-y rounded-[10px] border bg-[#F9FAFB] px-3 py-2.5 font-mono text-sm text-[#111827]",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]",
-          error ? "border-[#FCA5A5]" : "border-[#E5E7EB]",
-        ].join(" ")}
+          'w-full resize-y rounded-[10px] border bg-[#F9FAFB] px-3 py-2.5 font-mono text-sm text-[#111827]',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]',
+          error ? 'border-[#FCA5A5]' : 'border-[#E5E7EB]',
+        ].join(' ')}
       />
       {error && (
-        <p role="alert" className="rounded-[10px] border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-sm text-[#B91C1C]">
+        <p
+          role="alert"
+          className="rounded-[10px] border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-sm text-[#B91C1C]"
+        >
           {error}
         </p>
       )}

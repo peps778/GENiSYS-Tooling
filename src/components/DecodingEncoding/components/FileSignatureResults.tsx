@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface FileSignatureViewModel {
   fileName: string;
@@ -21,14 +21,16 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function FileSignatureResults({ data }: FileSignatureResultsProps) {
+export default function FileSignatureResults({
+  data,
+}: FileSignatureResultsProps) {
   const rows: { label: string; value: string }[] = [
-    { label: "Filename", value: data.fileName },
-    { label: "File size", value: formatBytes(data.fileSize) },
-    { label: "Detected type", value: data.detectedType },
-    { label: "MIME type", value: data.mime },
-    { label: "Common extension", value: data.extension },
-    { label: "Signature offset", value: `${data.offset}` },
+    { label: 'Filename', value: data.fileName },
+    { label: 'File size', value: formatBytes(data.fileSize) },
+    { label: 'Detected type', value: data.detectedType },
+    { label: 'MIME type', value: data.mime },
+    { label: 'Common extension', value: data.extension },
+    { label: 'Signature offset', value: `${data.offset}` },
   ];
 
   return (
@@ -37,7 +39,9 @@ export default function FileSignatureResults({ data }: FileSignatureResultsProps
         {rows.map((row) => (
           <div key={row.label} className="flex flex-col">
             <dt className="text-xs text-[#6B7280]">{row.label}</dt>
-            <dd className="font-mono text-sm text-[#111827] break-all">{row.value}</dd>
+            <dd className="font-mono text-sm text-[#111827] break-all">
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>

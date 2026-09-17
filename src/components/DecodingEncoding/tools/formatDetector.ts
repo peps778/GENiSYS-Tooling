@@ -1,7 +1,7 @@
-import type { ToolId } from "../types/decoding";
-import { base64Decode } from "./base64";
-import { base32Decode } from "./base32";
-import { matchFileSignature } from "./fileSignatures";
+import type { ToolId } from '../types/decoding';
+import { base64Decode } from './base64';
+import { base32Decode } from './base32';
+import { matchFileSignature } from './fileSignatures';
 
 /**
  * Heuristic format auto-detection.
@@ -16,8 +16,8 @@ export interface FormatCandidate {
   /** 0-1. Relative confidence ranking, not an accuracy percentage. */
   confidence: number;
   reason: string;
-  suggestedMode?: "encode" | "decode";
-  suggestedDirection?: "forward" | "reverse";
+  suggestedMode?: 'encode' | 'decode';
+  suggestedDirection?: 'forward' | 'reverse';
   suggestedShift?: number;
 }
 
@@ -51,35 +51,35 @@ const ENGLISH_FREQ: Record<string, number> = {
 };
 
 const COMMON_ENGLISH_WORDS = new Set([
-  "a",
-  "an",
-  "and",
-  "are",
-  "as",
-  "at",
-  "be",
-  "by",
-  "for",
-  "from",
-  "has",
-  "have",
-  "hello",
-  "in",
-  "is",
-  "it",
-  "message",
-  "of",
-  "on",
-  "or",
-  "test",
-  "that",
-  "the",
-  "this",
-  "to",
-  "was",
-  "we",
-  "with",
-  "world",
+  'a',
+  'an',
+  'and',
+  'are',
+  'as',
+  'at',
+  'be',
+  'by',
+  'for',
+  'from',
+  'has',
+  'have',
+  'hello',
+  'in',
+  'is',
+  'it',
+  'message',
+  'of',
+  'on',
+  'or',
+  'test',
+  'that',
+  'the',
+  'this',
+  'to',
+  'was',
+  'we',
+  'with',
+  'world',
 ]);
 
 function englishnessScore(text: string): number {
@@ -106,9 +106,7 @@ function englishnessScore(text: string): number {
 }
 
 function wordScore(text: string): number {
-  const words = text
-    .toLowerCase()
-    .match(/[a-z]+/g);
+  const words = text.toLowerCase().match(/[a-z]+/g);
 
   if (!words || words.length === 0) return 0;
 
@@ -131,22 +129,18 @@ function combinedEnglishnessScore(text: string): number {
 }
 
 function shiftLetter(char: string, shift: number): string {
-  const isUpper = char >= "A" && char <= "Z";
-  const isLower = char >= "a" && char <= "z";
+  const isUpper = char >= 'A' && char <= 'Z';
+  const isLower = char >= 'a' && char <= 'z';
 
   if (!isUpper && !isLower) return char;
 
   const base = isUpper ? 65 : 97;
   const code = char.charCodeAt(0) - base;
 
-  return String.fromCharCode(
-    (((code - shift) % 26) + 26) % 26 + base,
-  );
+  return String.fromCharCode(((((code - shift) % 26) + 26) % 26) + base);
 }
 
-function bestCaesarShift(
-  input: string,
-): { shift: number; score: number } {
+function bestCaesarShift(input: string): { shift: number; score: number } {
   let best = {
     shift: 0,
     score: -Infinity,
@@ -155,7 +149,7 @@ function bestCaesarShift(
   for (let shift = 1; shift <= 25; shift++) {
     const attempt = Array.from(input)
       .map((char) => shiftLetter(char, shift))
-      .join("");
+      .join('');
 
     const score = combinedEnglishnessScore(attempt);
 
@@ -195,7 +189,7 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
 
   if (input.length === 0) return candidates;
 
-  const stripped = input.replace(/\s+/g, "");
+  const stripped = input.replace(/\s+/g, '');
   const letters = (input.match(/[a-zA-Z]/g) ?? []).length;
   const alphaRatio = letters / input.length;
 
@@ -212,11 +206,11 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
       const ratio = printableRatio(bytes);
 
       candidates.push({
-        toolId: "base64",
-        toolLabel: "Base64",
+        toolId: 'base64',
+        toolLabel: 'Base64',
         confidence: Math.min(0.97, 0.55 + ratio * 0.42),
         reason: `Decodes cleanly to ${Math.round(ratio * 100)}% printable text.`,
-        suggestedMode: "decode",
+        suggestedMode: 'decode',
       });
     }
   }
@@ -234,17 +228,17 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
       const ratio = printableRatio(bytes);
 
       candidates.push({
-        toolId: "base32",
-        toolLabel: "Base32",
+        toolId: 'base32',
+        toolLabel: 'Base32',
         confidence: Math.min(0.9, 0.4 + ratio * 0.4),
         reason: `Decodes cleanly to ${Math.round(ratio * 100)}% printable text.`,
-        suggestedMode: "decode",
+        suggestedMode: 'decode',
       });
     }
   }
 
   // --- Hex family (Base16 / Hex-ASCII / file signature / hash) ---
-  const hexCandidate = stripped.replace(/^0x/i, "");
+  const hexCandidate = stripped.replace(/^0x/i, '');
 
   if (
     /^[0-9a-fA-F]+$/.test(hexCandidate) &&
@@ -254,18 +248,15 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
     const bytes = new Uint8Array(hexCandidate.length / 2);
 
     for (let i = 0; i < hexCandidate.length; i += 2) {
-      bytes[i / 2] = parseInt(
-        hexCandidate.slice(i, i + 2),
-        16,
-      );
+      bytes[i / 2] = parseInt(hexCandidate.slice(i, i + 2), 16);
     }
 
     const sig = matchFileSignature(bytes);
 
     if (sig) {
       candidates.push({
-        toolId: "file-signature",
-        toolLabel: "File Signature",
+        toolId: 'file-signature',
+        toolLabel: 'File Signature',
         confidence: 0.95,
         reason: `Matches the known magic bytes for ${sig.definition.name}.`,
       });
@@ -275,19 +266,20 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
 
     if (ratio > 0.7) {
       candidates.push({
-        toolId: "hex-ascii",
-        toolLabel: "Hex / ASCII",
+        toolId: 'hex-ascii',
+        toolLabel: 'Hex / ASCII',
         confidence: Math.min(0.9, 0.4 + ratio * 0.45),
         reason: `Hex bytes decode to ${Math.round(ratio * 100)}% printable ASCII.`,
-        suggestedDirection: "forward",
+        suggestedDirection: 'forward',
       });
     } else if (!sig) {
       candidates.push({
-        toolId: "base16",
-        toolLabel: "Base16",
+        toolId: 'base16',
+        toolLabel: 'Base16',
         confidence: 0.45,
-        reason: "Valid hexadecimal, but decoded bytes are mostly non-printable.",
-        suggestedMode: "decode",
+        reason:
+          'Valid hexadecimal, but decoded bytes are mostly non-printable.',
+        suggestedMode: 'decode',
       });
     }
 
@@ -302,13 +294,10 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
       128: 0.75,
     };
 
-    if (
-      hashLengths[hexCandidate.length] !== undefined &&
-      !/\s/.test(input)
-    ) {
+    if (hashLengths[hexCandidate.length] !== undefined && !/\s/.test(input)) {
       candidates.push({
-        toolId: "hash-identifier",
-        toolLabel: "Hash Identifier",
+        toolId: 'hash-identifier',
+        toolLabel: 'Hash Identifier',
         confidence: hashLengths[hexCandidate.length],
         reason: `${hexCandidate.length} hex characters is a common fixed-length digest size.`,
       });
@@ -322,10 +311,10 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
     /^\$6\$/.test(input)
   ) {
     candidates.push({
-      toolId: "hash-identifier",
-      toolLabel: "Hash Identifier",
+      toolId: 'hash-identifier',
+      toolLabel: 'Hash Identifier',
       confidence: 0.97,
-      reason: "Matches a recognized crypt-style hash prefix.",
+      reason: 'Matches a recognized crypt-style hash prefix.',
     });
   }
 
@@ -336,11 +325,11 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
     stripped.length % 8 === 0
   ) {
     candidates.push({
-      toolId: "binary",
-      toolLabel: "Binary",
+      toolId: 'binary',
+      toolLabel: 'Binary',
       confidence: 0.85,
       reason: `${stripped.length} bits, a clean multiple of 8.`,
-      suggestedDirection: "forward",
+      suggestedDirection: 'forward',
     });
   }
 
@@ -349,31 +338,26 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
 
   if (percentMatches && percentMatches.length > 0) {
     candidates.push({
-      toolId: "url",
-      toolLabel: "URL Encoding",
-      confidence: Math.min(
-        0.92,
-        0.5 + percentMatches.length * 0.08,
-      ),
+      toolId: 'url',
+      toolLabel: 'URL Encoding',
+      confidence: Math.min(0.92, 0.5 + percentMatches.length * 0.08),
       reason: `Found ${percentMatches.length} percent-encoded sequence(s).`,
-      suggestedMode: "decode",
+      suggestedMode: 'decode',
     });
   }
 
   // --- Decimal code point list ---
   if (/^\d+(\s+\d+)+$/.test(input)) {
     const tokens = input.split(/\s+/);
-    const allValid = tokens.every(
-      (token) => Number(token) <= 0x10ffff,
-    );
+    const allValid = tokens.every((token) => Number(token) <= 0x10ffff);
 
     if (allValid) {
       candidates.push({
-        toolId: "decimal-character",
-        toolLabel: "Decimal / Character",
+        toolId: 'decimal-character',
+        toolLabel: 'Decimal / Character',
         confidence: 0.8,
         reason: `${tokens.length} space-separated numeric values, all valid code points.`,
-        suggestedDirection: "forward",
+        suggestedDirection: 'forward',
       });
     }
   }
@@ -383,14 +367,10 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
     const plainScore = combinedEnglishnessScore(input);
     const { shift, score } = bestCaesarShift(input);
 
-    if (
-      shift !== 0 &&
-      score > 0.45 &&
-      score > plainScore + 0.03
-    ) {
+    if (shift !== 0 && score > 0.45 && score > plainScore + 0.03) {
       candidates.push({
-        toolId: "caesar",
-        toolLabel: "ROT / Caesar",
+        toolId: 'caesar',
+        toolLabel: 'ROT / Caesar',
         confidence: Math.min(0.85, score),
         reason: `Shifting back by ${shift} produces more English-like text (heuristic, not definitive).`,
         suggestedShift: shift,
@@ -405,16 +385,15 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
 
     if (ratio > 0.85) {
       candidates.push({
-        toolId: "base64",
-        toolLabel: "Plain text (no encoding detected)",
+        toolId: 'base64',
+        toolLabel: 'Plain text (no encoding detected)',
         confidence: 0.3,
-        reason: "Input already looks like readable text — try Encode instead of Decode.",
-        suggestedMode: "encode",
+        reason:
+          'Input already looks like readable text — try Encode instead of Decode.',
+        suggestedMode: 'encode',
       });
     }
   }
 
-  return candidates
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, 6);
+  return candidates.sort((a, b) => b.confidence - a.confidence).slice(0, 6);
 }

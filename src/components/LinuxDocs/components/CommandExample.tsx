@@ -1,5 +1,5 @@
-import type { CommandExample } from "../types/linuxDocs";
-import { CopyCommandButton } from "./CopyCommandButton";
+import type { CommandExample } from '../types/linuxDocs';
+import { CopyCommandButton } from './CopyCommandButton';
 
 export function CommandExample({ example }: { example: CommandExample }) {
   return (
@@ -8,8 +8,14 @@ export function CommandExample({ example }: { example: CommandExample }) {
         <p className="text-xs text-slate-600">{example.description}</p>
         <CopyCommandButton command={example.command} />
       </div>
-      <pre className="min-w-0 overflow-x-auto rounded bg-slate-950 p-3 text-xs leading-5 text-slate-100"><code>{example.command}</code></pre>
-      {example.authorizedOnly && <p className="mt-2 text-[11px] font-medium text-amber-700">Authorized testing only.</p>}
+      <pre className="min-w-0 overflow-x-auto rounded bg-slate-950 p-3 text-xs leading-5 text-slate-100">
+        <code>{example.command}</code>
+      </pre>
+      {example.authorizedOnly && (
+        <p className="mt-2 text-[11px] font-medium text-amber-700">
+          Authorized testing only.
+        </p>
+      )}
     </div>
   );
 }

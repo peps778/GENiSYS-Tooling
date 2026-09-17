@@ -5,36 +5,32 @@
  */
 
 export type ToolCategoryId =
-  | "encode-decode"
-  | "text-numbers"
-  | "ciphers"
-  | "hashes"
-  | "files";
+  'encode-decode' | 'text-numbers' | 'ciphers' | 'hashes' | 'files';
 
 export type ToolId =
-  | "base64"
-  | "base32"
-  | "base16"
-  | "url"
-  | "hex-ascii"
-  | "binary"
-  | "decimal-character"
-  | "caesar"
-  | "xor"
-  | "cipher-helpers"
-  | "hash-identifier"
-  | "file-signature";
+  | 'base64'
+  | 'base32'
+  | 'base16'
+  | 'url'
+  | 'hex-ascii'
+  | 'binary'
+  | 'decimal-character'
+  | 'caesar'
+  | 'xor'
+  | 'cipher-helpers'
+  | 'hash-identifier'
+  | 'file-signature';
 
 export type SupportedIOKind =
-  | "text"
-  | "hex"
-  | "binary"
-  | "base64"
-  | "base32"
-  | "base16"
-  | "decimal"
-  | "file"
-  | "hash";
+  | 'text'
+  | 'hex'
+  | 'binary'
+  | 'base64'
+  | 'base32'
+  | 'base16'
+  | 'decimal'
+  | 'file'
+  | 'hash';
 
 export interface ToolCategory {
   id: ToolCategoryId;
@@ -52,113 +48,124 @@ export interface ToolDefinition {
 }
 
 export const TOOL_CATEGORIES: ToolCategory[] = [
-  { id: "encode-decode", label: "Encode / Decode", shortLabel: "Encode / Decode" },
-  { id: "text-numbers", label: "Text & Numbers", shortLabel: "Text & Numbers" },
-  { id: "ciphers", label: "Ciphers", shortLabel: "Ciphers" },
-  { id: "hashes", label: "Hashes", shortLabel: "Hashes" },
-  { id: "files", label: "Files", shortLabel: "Files" },
+  {
+    id: 'encode-decode',
+    label: 'Encode / Decode',
+    shortLabel: 'Encode / Decode',
+  },
+  { id: 'text-numbers', label: 'Text & Numbers', shortLabel: 'Text & Numbers' },
+  { id: 'ciphers', label: 'Ciphers', shortLabel: 'Ciphers' },
+  { id: 'hashes', label: 'Hashes', shortLabel: 'Hashes' },
+  { id: 'files', label: 'Files', shortLabel: 'Files' },
 ];
 
 export const TOOL_REGISTRY: ToolDefinition[] = [
   {
-    id: "base64",
-    category: "encode-decode",
-    label: "Base64",
-    description: "Encode or decode Base64 data.",
-    supportedInput: ["text", "base64"],
-    supportedOutput: ["text", "base64"],
+    id: 'base64',
+    category: 'encode-decode',
+    label: 'Base64',
+    description: 'Encode or decode Base64 data.',
+    supportedInput: ['text', 'base64'],
+    supportedOutput: ['text', 'base64'],
   },
   {
-    id: "base32",
-    category: "encode-decode",
-    label: "Base32",
-    description: "Encode or decode RFC 4648 Base32 data.",
-    supportedInput: ["text", "base32"],
-    supportedOutput: ["text", "base32"],
+    id: 'base32',
+    category: 'encode-decode',
+    label: 'Base32',
+    description: 'Encode or decode RFC 4648 Base32 data.',
+    supportedInput: ['text', 'base32'],
+    supportedOutput: ['text', 'base32'],
   },
   {
-    id: "base16",
-    category: "encode-decode",
-    label: "Base16",
-    description: "Encode or decode Base16 (hexadecimal) data.",
-    supportedInput: ["text", "base16"],
-    supportedOutput: ["text", "base16"],
+    id: 'base16',
+    category: 'encode-decode',
+    label: 'Base16',
+    description: 'Encode or decode Base16 (hexadecimal) data.',
+    supportedInput: ['text', 'base16'],
+    supportedOutput: ['text', 'base16'],
   },
   {
-    id: "url",
-    category: "encode-decode",
-    label: "URL Encoding",
-    description: "Percent-encode or decode URL components.",
-    supportedInput: ["text"],
-    supportedOutput: ["text"],
+    id: 'url',
+    category: 'encode-decode',
+    label: 'URL Encoding',
+    description: 'Percent-encode or decode URL components.',
+    supportedInput: ['text'],
+    supportedOutput: ['text'],
   },
   {
-    id: "hex-ascii",
-    category: "text-numbers",
-    label: "Hex / ASCII",
-    description: "Convert between hexadecimal byte sequences and ASCII text.",
-    supportedInput: ["text", "hex"],
-    supportedOutput: ["text", "hex"],
+    id: 'hex-ascii',
+    category: 'text-numbers',
+    label: 'Hex / ASCII',
+    description: 'Convert between hexadecimal byte sequences and ASCII text.',
+    supportedInput: ['text', 'hex'],
+    supportedOutput: ['text', 'hex'],
   },
   {
-    id: "binary",
-    category: "text-numbers",
-    label: "Binary",
-    description: "Convert between binary byte sequences and text.",
-    supportedInput: ["text", "binary"],
-    supportedOutput: ["text", "binary"],
+    id: 'binary',
+    category: 'text-numbers',
+    label: 'Binary',
+    description: 'Convert between binary byte sequences and text.',
+    supportedInput: ['text', 'binary'],
+    supportedOutput: ['text', 'binary'],
   },
   {
-    id: "decimal-character",
-    category: "text-numbers",
-    label: "Decimal / Character",
-    description: "Convert between space-separated decimal code points and characters.",
-    supportedInput: ["text", "decimal"],
-    supportedOutput: ["text", "decimal"],
+    id: 'decimal-character',
+    category: 'text-numbers',
+    label: 'Decimal / Character',
+    description:
+      'Convert between space-separated decimal code points and characters.',
+    supportedInput: ['text', 'decimal'],
+    supportedOutput: ['text', 'decimal'],
   },
   {
-    id: "caesar",
-    category: "ciphers",
-    label: "ROT / Caesar",
-    description: "Shift alphabetic (and optionally numeric) characters by a configurable amount.",
-    supportedInput: ["text"],
-    supportedOutput: ["text"],
+    id: 'caesar',
+    category: 'ciphers',
+    label: 'ROT / Caesar',
+    description:
+      'Shift alphabetic (and optionally numeric) characters by a configurable amount.',
+    supportedInput: ['text'],
+    supportedOutput: ['text'],
   },
   {
-    id: "xor",
-    category: "ciphers",
-    label: "XOR",
-    description: "Apply a repeating-key XOR transformation to the input.",
-    supportedInput: ["text", "hex", "binary"],
-    supportedOutput: ["text", "hex", "binary"],
+    id: 'xor',
+    category: 'ciphers',
+    label: 'XOR',
+    description: 'Apply a repeating-key XOR transformation to the input.',
+    supportedInput: ['text', 'hex', 'binary'],
+    supportedOutput: ['text', 'hex', 'binary'],
   },
   {
-    id: "cipher-helpers",
-    category: "ciphers",
-    label: "Cipher Helpers",
-    description: "Lightweight classical transformations: Atbash, reverse, and character swap utilities.",
-    supportedInput: ["text"],
-    supportedOutput: ["text"],
+    id: 'cipher-helpers',
+    category: 'ciphers',
+    label: 'Cipher Helpers',
+    description:
+      'Lightweight classical transformations: Atbash, reverse, and character swap utilities.',
+    supportedInput: ['text'],
+    supportedOutput: ['text'],
   },
   {
-    id: "hash-identifier",
-    category: "hashes",
-    label: "Hash Identifier",
-    description: "Identify likely hash algorithms from a hash's length and character set.",
-    supportedInput: ["hash"],
-    supportedOutput: ["text"],
+    id: 'hash-identifier',
+    category: 'hashes',
+    label: 'Hash Identifier',
+    description:
+      "Identify likely hash algorithms from a hash's length and character set.",
+    supportedInput: ['hash'],
+    supportedOutput: ['text'],
   },
   {
-    id: "file-signature",
-    category: "files",
-    label: "File Signature",
-    description: "Identify a file's type from its magic bytes rather than its extension.",
-    supportedInput: ["file", "hex"],
-    supportedOutput: ["text"],
+    id: 'file-signature',
+    category: 'files',
+    label: 'File Signature',
+    description:
+      "Identify a file's type from its magic bytes rather than its extension.",
+    supportedInput: ['file', 'hex'],
+    supportedOutput: ['text'],
   },
 ];
 
-export function getToolsForCategory(category: ToolCategoryId): ToolDefinition[] {
+export function getToolsForCategory(
+  category: ToolCategoryId,
+): ToolDefinition[] {
   return TOOL_REGISTRY.filter((tool) => tool.category === category);
 }
 

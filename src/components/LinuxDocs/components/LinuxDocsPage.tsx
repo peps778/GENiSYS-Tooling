@@ -1,1 +1,1 @@
-export { LinuxDocsPage as default, LinuxDocsPage } from "../LinuxDocsPage";
+export { LinuxDocsPage as default, LinuxDocsPage } from '../LinuxDocsPage';

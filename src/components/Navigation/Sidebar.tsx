@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationItem {
   label: string;
@@ -16,27 +16,27 @@ interface NavigationItem {
  */
 const navigationItems: NavigationItem[] = [
   {
-    label: "Decoding / Encoding",
-    href: "/decode",
-    icon: "decode",
+    label: 'Decoding / Encoding',
+    href: '/decode',
+    icon: 'decode',
     // title: "GENiSYS | Decoder/Encoder"
   },
   {
-    label: "File Analysis",
-    href: "/files",
-    icon: "file",
+    label: 'File Analysis',
+    href: '/files',
+    icon: 'file',
     // title: "GENiSYS | File Analyzer"
   },
   {
-    label: "Heap Dump / Memory",
-    href: "/heap",
-    icon: "memory",
+    label: 'Heap Dump / Memory',
+    href: '/heap',
+    icon: 'memory',
     // title: "GENiSYS | Memory Dump"
   },
   {
-    label: "Linux Docs",
-    href: "/linux",
-    icon: "terminal",
+    label: 'Linux Docs',
+    href: '/linux',
+    icon: 'terminal',
     // title: "GENiSYS | Create Linux Commands"
   },
   // {
@@ -45,27 +45,27 @@ const navigationItems: NavigationItem[] = [
   //   icon: "navigation",
   // },
   {
-    label: "Networking",
-    href: "/networking",
-    icon: "network",
+    label: 'Networking',
+    href: '/networking',
+    icon: 'network',
     // title: "GENiSYS | Networking Docs and Tools"
   },
   {
-    label: "Notes / SOP",
-    href: "/notes",
-    icon: "notes",
-    title: "GENiSYS | SOP for exploit and manuals"
+    label: 'Notes / SOP',
+    href: '/notes',
+    icon: 'notes',
+    title: 'GENiSYS | SOP for exploit and manuals',
   },
   {
-    label: "OSINT",
-    href: "/osint",
-    icon: "search",
+    label: 'OSINT',
+    href: '/osint',
+    icon: 'search',
     // title: "GENiSYS | OSINT Resources"
   },
   {
-    label: "Web Automation / Exploit",
-    href: "/web",
-    icon: "web",
+    label: 'Web Automation / Exploit',
+    href: '/web',
+    icon: 'web',
     // title: "GENiSYS | Automate Web Exploit"
   },
 ];
@@ -77,21 +77,35 @@ const navigationItems: NavigationItem[] = [
  * keeping the navigation bundle lightweight and deterministic.
  */
 function Icon({ name }: { name: string }) {
-  const common = "h-4 w-4 shrink-0 stroke-[1.8]";
+  const common = 'h-4 w-4 shrink-0 stroke-[1.8]';
 
   switch (name) {
-    case "decode":
+    case 'decode':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M8 8l-3 4 3 4" />
           <path d="M16 8l3 4-3 4" />
           <path d="M14 5l-4 14" />
         </svg>
       );
 
-    case "file":
+    case 'file':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <path d="M14 2v6h6" />
           <path d="M8 13h8" />
@@ -99,9 +113,16 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
-    case "memory":
+    case 'memory':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <rect x="4" y="6" width="16" height="12" rx="2" />
           <path d="M8 10h8v4H8z" />
           <path d="M8 2v4M12 2v4M16 2v4" />
@@ -109,18 +130,32 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
-    case "terminal":
+    case 'terminal':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <rect x="3" y="4" width="18" height="16" rx="2" />
           <path d="m7 9 3 3-3 3" />
           <path d="M13 15h4" />
         </svg>
       );
 
-    case "navigation":
+    case 'navigation':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M12 2v20" />
           <path d="m8 6 4-4 4 4" />
           <path d="M5 8h14" />
@@ -128,9 +163,16 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
-    case "network":
+    case 'network':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="12" cy="5" r="2.5" />
           <circle cx="5" cy="18" r="2.5" />
           <circle cx="19" cy="18" r="2.5" />
@@ -140,9 +182,16 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
-    case "notes":
+    case 'notes':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M5 4h14v16H5z" />
           <path d="M8 8h8" />
           <path d="M8 12h8" />
@@ -150,17 +199,31 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
-    case "search":
+    case 'search':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="11" cy="11" r="6.5" />
           <path d="m16 16 5 5" />
         </svg>
       );
 
-    case "web":
+    case 'web':
       return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="12" cy="12" r="9" />
           <path d="M3 12h18" />
           <path d="M12 3c2.2 2.4 3.3 5.4 3.3 9s-1.1 6.6-3.3 9" />
@@ -181,7 +244,7 @@ export default function Sidebar() {
    * React Router owns the current path. This keeps active navigation
    * synchronized with client-side route changes without full reloads.
    */
-  const currentPath = location.pathname.replace(/\/$/, "") || "/";
+  const currentPath = location.pathname.replace(/\/$/, '') || '/';
 
   return (
     <>
@@ -194,11 +257,23 @@ export default function Sidebar() {
         className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-green-300 hover:text-green-700 lg:hidden"
       >
         {mobileOpen ? (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <svg
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
             <path d="M6 6l12 12M18 6 6 18" />
           </svg>
         ) : (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <svg
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
             <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
         )}
@@ -216,12 +291,12 @@ export default function Sidebar() {
 
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col",
-          "border-r border-gray-200 bg-white",
-          "transition-transform duration-200",
-          mobileOpen ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0",
-        ].join(" ")}
+          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col',
+          'border-r border-gray-200 bg-white',
+          'transition-transform duration-200',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full',
+          'lg:translate-x-0',
+        ].join(' ')}
       >
         {/* Brand */}
         <div className="flex h-20 items-center border-b border-gray-200 px-6">
@@ -252,32 +327,31 @@ export default function Sidebar() {
 
           <div className="space-y-1">
             {navigationItems.map((item) => {
-              const itemPath = item.href.replace(/\/$/, "");
+              const itemPath = item.href.replace(/\/$/, '');
 
               const isActive =
                 currentPath === itemPath ||
-                (itemPath !== "/" &&
-                  currentPath.startsWith(`${itemPath}/`));
+                (itemPath !== '/' && currentPath.startsWith(`${itemPath}/`));
 
               return (
                 <Link
                   key={item.href}
                   to={item.href}
                   onClick={() => setMobileOpen(false)}
-                  aria-current={isActive ? "page" : undefined}
+                  aria-current={isActive ? 'page' : undefined}
                   className={[
-                    "group flex items-center gap-3 rounded-lg px-3 py-2.5",
-                    "text-sm font-medium transition-colors duration-150",
+                    'group flex items-center gap-3 rounded-lg px-3 py-2.5',
+                    'text-sm font-medium transition-colors duration-150',
                     isActive
-                      ? "bg-green-50 text-green-700"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-950",
-                  ].join(" ")}
+                      ? 'bg-green-50 text-green-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-950',
+                  ].join(' ')}
                 >
                   <span
                     className={
                       isActive
-                        ? "text-green-600"
-                        : "text-gray-400 group-hover:text-gray-600"
+                        ? 'text-green-600'
+                        : 'text-gray-400 group-hover:text-gray-600'
                     }
                   >
                     <Icon name={item.icon} />
