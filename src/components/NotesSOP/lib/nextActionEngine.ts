@@ -1,10 +1,10 @@
-import type { SOPCase } from "../types/notesSop";
+import type { SOPCase } from '../types/notesSop';
 
 export interface NextAction {
   title: string;
   reason: string;
   caseId?: string;
-  source: "branch" | "alternative" | "related";
+  source: 'branch' | 'alternative' | 'related';
 }
 
 export function getNextActions(
@@ -20,27 +20,32 @@ export function getNextActions(
       title: branch.nextAction,
       reason: `Branch: ${branch.condition}`,
       caseId: branch.nextCaseId,
-      source: "branch" as const,
+      source: 'branch' as const,
     })),
     ...currentCase.alternativePaths.map((path) => ({
       title: path,
-      reason: "Alternative path for when the current branch is blocked or inconclusive.",
-      source: "alternative" as const,
+      reason:
+        'Alternative path for when the current branch is blocked or inconclusive.',
+      source: 'alternative' as const,
     })),
     ...currentCase.relatedCases.map((id) => ({
       title: id,
-      reason: "Related investigation case.",
+      reason: 'Related investigation case.',
       caseId: id,
-      source: "related" as const,
+      source: 'related' as const,
     })),
   ];
 
   const seen = new Set<string>();
-  return candidates.filter((candidate) => {
-    const key = candidate.title.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return !completed.some((item) => key.includes(item) || item.includes(key))
-      && !dead.some((item) => key.includes(item) || item.includes(key));
-  }).slice(0, 6);
+  return candidates
+    .filter((candidate) => {
+      const key = candidate.title.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return (
+        !completed.some((item) => key.includes(item) || item.includes(key)) &&
+        !dead.some((item) => key.includes(item) || item.includes(key))
+      );
+    })
+    .slice(0, 6);
 }

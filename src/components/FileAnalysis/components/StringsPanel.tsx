@@ -108,7 +108,10 @@ export function StringsPanel({
                     </p>
                     <p className="font-mono text-xs text-[#9CA3AF]">
                       0x
-                      {match.offset.toString(16).toUpperCase().padStart(8, '0')}{' '}
+                      {match.offset
+                        .toString(16)
+                        .toUpperCase()
+                        .padStart(8, '0')}{' '}
                       · {match.length} bytes · {match.encoding.toUpperCase()}
                     </p>
                   </div>

@@ -1,17 +1,17 @@
 export type SOPCategoryId =
-  | "enumeration"
-  | "web"
-  | "network"
-  | "forensics"
-  | "stego"
-  | "encoding"
-  | "next"
-  | "evidence"
-  | "time"
-  | "vulnerabilities";
+  | 'enumeration'
+  | 'web'
+  | 'network'
+  | 'forensics'
+  | 'stego'
+  | 'encoding'
+  | 'next'
+  | 'evidence'
+  | 'time'
+  | 'vulnerabilities';
 
-export type Confidence = "low" | "medium" | "high" | "confirmed";
-export type Difficulty = "beginner" | "intermediate" | "advanced";
+export type Confidence = 'low' | 'medium' | 'high' | 'confirmed';
+export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
 export interface SOPBranch {
   id: string;
@@ -69,7 +69,7 @@ export interface EvidenceFinding {
   offset?: string;
   hash?: string;
   relatedCase?: string;
-  status: "candidate" | "confirmed" | "dead-end";
+  status: 'candidate' | 'confirmed' | 'dead-end';
   notes?: string;
 }
 

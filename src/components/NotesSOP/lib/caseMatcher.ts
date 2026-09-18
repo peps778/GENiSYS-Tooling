@@ -1,4 +1,4 @@
-import type { SOPCase } from "../types/notesSop";
+import type { SOPCase } from '../types/notesSop';
 
 export function matchCases(cases: SOPCase[], observation: string): SOPCase[] {
   const q = observation.trim().toLowerCase();
@@ -9,11 +9,20 @@ export function matchCases(cases: SOPCase[], observation: string): SOPCase[] {
   return cases
     .map((item) => {
       const haystack = [
-        item.title, item.summary, ...item.tags, ...item.observations,
-        ...item.whenToUse, ...item.initialChecks,
-      ].join(" ").toLowerCase();
+        item.title,
+        item.summary,
+        ...item.tags,
+        ...item.observations,
+        ...item.whenToUse,
+        ...item.initialChecks,
+      ]
+        .join(' ')
+        .toLowerCase();
 
-      const score = words.reduce((total, word) => total + (haystack.includes(word) ? 1 : 0), 0);
+      const score = words.reduce(
+        (total, word) => total + (haystack.includes(word) ? 1 : 0),
+        0,
+      );
       return { item, score };
     })
     .filter(({ score }) => score > 0)
