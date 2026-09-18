@@ -51,7 +51,7 @@ export function FileInfoPanel({
   const identification = summary.identification;
 
   return (
-    <div className="rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
+    <div className="rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
       <div className="mb-2">
         <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
           Loaded File
@@ -74,7 +74,7 @@ export function FileInfoPanel({
         />
         <Row
           label="MIME"
-          value={identification?.mime || summary.reportedMime || 'Unknown'}
+          value={identification?.mime ?? (summary.reportedMime || 'Unknown')}
           mono
         />
         <Row

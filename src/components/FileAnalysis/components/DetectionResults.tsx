@@ -1,8 +1,15 @@
 import React from 'react';
-import type { FileIdentification, Confidence } from '../types/fileAnalysis';
+import type {
+  EncodedContentCandidate,
+  FileIdentification,
+  Confidence,
+} from '../types/fileAnalysis';
 
 interface DetectionResultsProps {
   identification: FileIdentification;
+  encodedContent?: EncodedContentCandidate | null;
+  onOpenDecodedContent?: () => void;
+  onExportDecodedContent?: () => void;
 }
 
 const CONFIDENCE_STYLES: Record<Confidence, string> = {
@@ -27,12 +34,71 @@ function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
   );
 }
 
-export function DetectionResults({ identification }: DetectionResultsProps) {
+export function DetectionResults({
+  identification,
+  encodedContent,
+  onOpenDecodedContent,
+  onExportDecodedContent,
+}: DetectionResultsProps) {
   const { signature, candidates, reportedExtension, extensionMismatch } =
     identification;
 
   return (
     <div className="space-y-4">
+      {encodedContent && (
+        <div className="rounded-[12px] border border-[#BBF7D0] bg-[#F0FDF4] p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-[#15803D]">
+            Text-Encoded Binary Detected
+          </p>
+          <p className="mt-2 text-sm text-[#111827]">
+            This file's raw bytes are ASCII{' '}
+            <span className="font-mono">'0'</span>/
+            <span className="font-mono">'1'</span> characters — a
+            bit-per-character text encoding of another file, not binary
+            image/document data. No byte-level signature scan can see the real
+            file's magic bytes until this is decoded (every 8 characters → 1
+            byte).
+          </p>
+          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            <dt className="text-[#6B7280]">Encoded length</dt>
+            <dd className="text-right font-mono text-[#111827]">
+              {encodedContent.originalLength.toLocaleString()} characters
+            </dd>
+            <dt className="text-[#6B7280]">Decoded length</dt>
+            <dd className="text-right font-mono text-[#111827]">
+              {encodedContent.decodedLength.toLocaleString()} bytes
+            </dd>
+            <dt className="text-[#6B7280]">Decoded content identifies as</dt>
+            <dd className="text-right text-[#111827]">
+              {encodedContent.decodedIdentification.detectedType}
+              {encodedContent.decodedIdentification.confidence === 'confirmed'
+                ? ' (confirmed)'
+                : ' (probable)'}
+            </dd>
+          </dl>
+          <div className="mt-3 flex gap-3">
+            {onOpenDecodedContent && (
+              <button
+                type="button"
+                onClick={onOpenDecodedContent}
+                className="rounded-[8px] border border-[#16A34A] bg-white px-3 py-1.5 text-xs font-medium text-[#15803D] hover:bg-[#F0FDF4]"
+              >
+                Open decoded file as new analysis
+              </button>
+            )}
+            {onExportDecodedContent && (
+              <button
+                type="button"
+                onClick={onExportDecodedContent}
+                className="rounded-[8px] border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-[#111827] hover:border-[#BBF7D0] hover:bg-[#F0FDF4]"
+              >
+                Export decoded file
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">

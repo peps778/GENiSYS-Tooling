@@ -118,6 +118,20 @@ export function exportCandidateAsFile(
   );
 }
 
+export function exportDecodedContent(
+  fileSummary: LoadedFileSummary,
+  decodedBytes: Uint8Array,
+  extension: string,
+  mime: string | null,
+) {
+  const name = `${fileSummary.name}.decoded${extension}`;
+  downloadBlob(
+    name,
+    decodedBytes as unknown as BlobPart,
+    mime ?? 'application/octet-stream',
+  );
+}
+
 function ActionButton({
   label,
   onClick,

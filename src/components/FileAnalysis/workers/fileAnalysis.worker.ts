@@ -20,6 +20,7 @@ import { findEmbeddedCandidates } from '../lib/fileReconstructor';
 import { inspectForAnomalies } from '../lib/steganography';
 import { inspectZipArchive, looksLikeZip } from '../lib/archiveInspector';
 import { readHexRange } from '../lib/hexReader';
+import { decodeAsciiBitstream } from '../lib/binaryTextDecoder';
 import type {
   AnalysisResult,
   AnalysisStage,
@@ -94,6 +95,31 @@ async function handleAnalyze(
     archive = inspectZipArchive(data);
   }
 
+  progress(
+    requestId,
+    'scanning',
+    95,
+    'Checking for text-encoded binary content...',
+  );
+  let encodedContent = null;
+  // Only worth attempting when the raw bytes didn't already resolve to a
+  // confident, known format -- a real JPEG/PNG/etc. is never also a valid
+  // all-'0'/'1' ASCII bitstream, so this is cheap to skip in the common case.
+  if (identification.confidence !== 'confirmed') {
+    const decoded = decodeAsciiBitstream(data);
+    if (decoded && decoded.length > 0) {
+      const decodedIdentification = identifyFile(decoded, filename);
+      if (decodedIdentification.confidence !== 'unknown') {
+        encodedContent = {
+          encoding: 'ascii-binary-text' as const,
+          originalLength: data.length,
+          decodedLength: decoded.length,
+          decodedIdentification,
+        };
+      }
+    }
+  }
+
   progress(requestId, 'ready', 100, 'Analysis complete.');
 
   const result: AnalysisResult = {
@@ -106,6 +132,7 @@ async function handleAnalyze(
     archive,
     image: null, // image preview/objectURL is created on the main thread
     sha256: null,
+    encodedContent,
   };
 
   post({ type: 'result', requestId, result });

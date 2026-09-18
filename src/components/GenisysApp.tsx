@@ -6,7 +6,7 @@ import Dashboard from './Dashboard';
 import { FileAnalysisPage } from '../components/FileAnalysis';
 import LinuxDocs from '../components/LinuxDocs/';
 import Networking from '../components/Networking/';
-
+import NotesSOP from './NotesSOP';
 export default function GenisysApp() {
   return (
     <BrowserRouter>
@@ -24,7 +24,7 @@ export default function GenisysApp() {
             <Route path="/files" element={<FileAnalysisPage />} />
             <Route path="/linux" element={<LinuxDocs />} />
             <Route path="/networking" element={<Networking />} />
-            {/* <Route path="/notes" element={<NotesSOP />} /> */}
+            <Route path="/notes" element={<NotesSOP />} />
             {/* <Route path="/osint" element={<OSINT />} /> */}
             {/* <Route path="/web" element={<WebAutomation />} /> */}
           </Routes>

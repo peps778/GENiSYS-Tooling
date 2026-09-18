@@ -122,4 +122,4 @@ Built mainly for:
    - "What do I try next?" checklist
    - Flag/evidence recording
    - Time-management procedure
-   -
+   - Common Vulnerabilities (SQLi SSTI IDOR Broken Access etc...)

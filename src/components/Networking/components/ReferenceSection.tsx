@@ -14,7 +14,11 @@ export default function ReferenceSection({
 }) {
   return (
     <div className="nr-section">
-      <SectionHeader eyebrow={eyebrow} title={title} description={description} />
+      <SectionHeader
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+      />
       {children}
     </div>
   );

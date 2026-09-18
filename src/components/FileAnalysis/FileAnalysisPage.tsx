@@ -20,9 +20,12 @@ import {
   ExportActions,
   exportCandidateAsFile,
   exportStringsAsText,
+  exportDecodedContent,
 } from './components/ExportActions';
+
 import { FileAnalysisWorkerClient } from './lib/fileAnalysisWorkerClient';
 import { analyzeImage } from './lib/imageAnalyzer';
+import { decodeAsciiBitstream } from './lib/binaryTextDecoder';
 
 import type {
   AnalysisProgress,
@@ -282,6 +285,37 @@ export function FileAnalysisPage() {
     [fileSummary, rawData],
   );
 
+  const handleOpenDecodedContent = useCallback(() => {
+    if (!rawData || !fileSummary || !result?.encodedContent) return;
+    const decoded = decodeAsciiBitstream(rawData);
+    if (!decoded) return;
+    const decodedIdentification = result.encodedContent.decodedIdentification;
+    const extension = decodedIdentification.expectedExtensions[0] ?? '.bin';
+    const mime = decodedIdentification.mime ?? 'application/octet-stream';
+    const decodedFile = new File(
+      [decoded as unknown as BlobPart],
+      `${fileSummary.name}.decoded${extension}`,
+      {
+        type: mime,
+      },
+    );
+    handleFileSelected(decodedFile);
+  }, [rawData, fileSummary, result, handleFileSelected]);
+
+  const handleExportDecodedContent = useCallback(() => {
+    if (!rawData || !fileSummary || !result?.encodedContent) return;
+    const decoded = decodeAsciiBitstream(rawData);
+    if (!decoded) return;
+    const decodedIdentification = result.encodedContent.decodedIdentification;
+    const extension = decodedIdentification.expectedExtensions[0] ?? '.bin';
+    exportDecodedContent(
+      fileSummary,
+      decoded,
+      extension,
+      decodedIdentification.mime,
+    );
+  }, [rawData, fileSummary, result]);
+
   const identification =
     result?.identification ?? fileSummary?.identification ?? null;
   const isImage = identification
@@ -374,7 +408,12 @@ export function FileAnalysisPage() {
                 <OverviewTab fileSummary={fileSummary} result={result} />
               )}
               {activeTab === 'identification' && (
-                <DetectionResults identification={result.identification} />
+                <DetectionResults
+                  identification={result.identification}
+                  encodedContent={result.encodedContent}
+                  onOpenDecodedContent={handleOpenDecodedContent}
+                  onExportDecodedContent={handleExportDecodedContent}
+                />
               )}
               {activeTab === 'metadata' && (
                 <MetadataPanel metadata={result.metadata} />
@@ -441,6 +480,11 @@ function OverviewTab({
     : `Extension matches detected format`;
 
   const findings: string[] = [extensionNote];
+  if (result.encodedContent) {
+    findings.push(
+      `File content is ASCII binary-text; decoded bytes identify as ${result.encodedContent.decodedIdentification.detectedType} — see Identification tab`,
+    );
+  }
   if (result.embeddedCandidates.length > 0) {
     findings.push(
       `${result.embeddedCandidates.length} embedded signature candidate(s) detected`,

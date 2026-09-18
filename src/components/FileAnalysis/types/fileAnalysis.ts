@@ -264,6 +264,19 @@ export interface LoadedFileSummary {
 }
 
 // ---------------------------------------------------------------------------
+// Encoded/obfuscated content (e.g. ASCII binary-text encoding of a real file)
+// ---------------------------------------------------------------------------
+
+export type EncodedContentEncoding = 'ascii-binary-text';
+
+export interface EncodedContentCandidate {
+  encoding: EncodedContentEncoding;
+  originalLength: number;
+  decodedLength: number;
+  decodedIdentification: FileIdentification;
+}
+
+// ---------------------------------------------------------------------------
 // Aggregate analysis result (what the worker resolves with)
 // ---------------------------------------------------------------------------
 
@@ -277,4 +290,5 @@ export interface AnalysisResult {
   archive: ArchiveInformation | null;
   image: ImageInformation | null;
   sha256: string | null;
+  encodedContent: EncodedContentCandidate | null;
 }

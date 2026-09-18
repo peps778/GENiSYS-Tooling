@@ -282,25 +282,33 @@ const styles = `
   }
 `;
 
-
 const searchText: Record<SectionId, string> = {
-  overview: 'network overview osi layers transport protocols common ports recon tools client dns router firewall nat server traffic flow investigation sequence',
-  'ip-mac': 'ip mac ipv4 ipv6 arp addressing private public loopback network broadcast commands ip addr ip link ip neigh arp -a',
-  'tcp-udp': 'tcp udp transport protocols handshake syn ack socket connection reliability ordering ss netstat lsof',
+  overview:
+    'network overview osi layers transport protocols common ports recon tools client dns router firewall nat server traffic flow investigation sequence',
+  'ip-mac':
+    'ip mac ipv4 ipv6 arp addressing private public loopback network broadcast commands ip addr ip link ip neigh arp -a',
+  'tcp-udp':
+    'tcp udp transport protocols handshake syn ack socket connection reliability ordering ss netstat lsof',
   dns: 'dns domain name resolution resolver root tld authoritative a aaaa cname mx ns txt ptr dig nslookup host',
   http: 'http https web requests response headers methods cookies status codes tls get post put patch delete head options',
   ports: `common ports tcp udp ftp ssh telnet smtp dns dhcp http pop3 ntp imap snmp ldap https smb rdp mysql postgresql redis mongodb ${ports.map((p) => `${p.port} ${p.service} ${p.purpose} ${p.reconNotes}`).join(' ')}`,
   cidr: 'cidr calculator subnet ipv4 network broadcast subnet mask prefix host range address planning /24 /16 /8',
-  routing: 'routing routes gateway forwarding longest prefix metric next hop ip route traceroute tracert',
+  routing:
+    'routing routes gateway forwarding longest prefix metric next hop ip route traceroute tracert',
   nat: 'nat snat dnat pat source destination address translation port forwarding private public',
-  firewall: 'firewall filtering traffic policy stateful stateless allow deny drop reject iptables nft ufw',
-  proxy: 'forward proxy proxy client internet outbound filtering caching access control socks',
-  'reverse-proxy': 'reverse proxy backend server tls termination routing caching load balancing nginx haproxy',
+  firewall:
+    'firewall filtering traffic policy stateful stateless allow deny drop reject iptables nft ufw',
+  proxy:
+    'forward proxy proxy client internet outbound filtering caching access control socks',
+  'reverse-proxy':
+    'reverse proxy backend server tls termination routing caching load balancing nginx haproxy',
   curl: `curl inspection http headers redirects cookies request body verbose status timing ${curlCommands.flat().join(' ')}`,
   nmap: `nmap reference host discovery port scan service version os detection scripts output ${nmapCommands.flat().join(' ')}`,
   packets: `packet analysis tcpdump tshark pcap filters ethernet ip tcp udp dns tls http retransmission ${packetCommands.flat().join(' ')}`,
-  workflows: 'recon workflows investigation triage connectivity service exposure dns http packet level evidence collection',
-  'quick-reference': 'quick reference commands syntax ip ss dig nslookup curl nmap tcpdump tshark route ufw iptables nft',
+  workflows:
+    'recon workflows investigation triage connectivity service exposure dns http packet level evidence collection',
+  'quick-reference':
+    'quick reference commands syntax ip ss dig nslookup curl nmap tcpdump tshark route ufw iptables nft',
 };
 
 function OverviewSection({ onSelect }: { onSelect: (id: SectionId) => void }) {
@@ -313,13 +321,32 @@ function OverviewSection({ onSelect }: { onSelect: (id: SectionId) => void }) {
       />
 
       <div className="nr-stat-grid">
-        <StatCard label="OSI Layers" value="7" description="Conceptual networking model" />
-        <StatCard label="Transport Protocols" value="2" description="TCP and UDP" />
-        <StatCard label="Common Ports" value="20+" description="Frequently encountered services" />
-        <StatCard label="Recon Tools" value="6+" description="CLI and packet-analysis utilities" />
+        <StatCard
+          label="OSI Layers"
+          value="7"
+          description="Conceptual networking model"
+        />
+        <StatCard
+          label="Transport Protocols"
+          value="2"
+          description="TCP and UDP"
+        />
+        <StatCard
+          label="Common Ports"
+          value="20+"
+          description="Frequently encountered services"
+        />
+        <StatCard
+          label="Recon Tools"
+          value="6+"
+          description="CLI and packet-analysis utilities"
+        />
       </div>
 
-      <ConceptCard title="What happens when a client connects to a service?" description="A simplified end-to-end request path">
+      <ConceptCard
+        title="What happens when a client connects to a service?"
+        description="A simplified end-to-end request path"
+      >
         <NetworkDiagram
           nodes={[
             { title: 'Client', subtitle: 'Browser / CLI' },
@@ -331,12 +358,23 @@ function OverviewSection({ onSelect }: { onSelect: (id: SectionId) => void }) {
         />
       </ConceptCard>
 
-      <ConceptCard title="Core investigation sequence" description="A repeatable educational workflow for working from basic connectivity toward packet evidence.">
+      <ConceptCard
+        title="Core investigation sequence"
+        description="A repeatable educational workflow for working from basic connectivity toward packet evidence."
+      >
         <WorkflowDiagram
-          steps={['Identify target', 'Resolve DNS', 'Check routing', 'Inspect ports', 'Identify services', 'Inspect HTTP/TLS', 'Capture/analyze packets', 'Document findings']}
+          steps={[
+            'Identify target',
+            'Resolve DNS',
+            'Check routing',
+            'Inspect ports',
+            'Identify services',
+            'Inspect HTTP/TLS',
+            'Capture/analyze packets',
+            'Document findings',
+          ]}
         />
       </ConceptCard>
-
     </div>
   );
 }
@@ -344,17 +382,28 @@ function OverviewSection({ onSelect }: { onSelect: (id: SectionId) => void }) {
 function ReverseProxySection() {
   return (
     <div className="nr-section">
-      <SectionHeader eyebrow="INTERMEDIARIES" title="Reverse Proxy" description="A reverse proxy represents the server side of a connection and can terminate, route, cache, or balance application traffic." />
-      <ConceptCard title="Request path" description="A simple server-facing intermediary model.">
-        <NetworkDiagram nodes={[
-          { title: 'Client', subtitle: 'Browser / API client' },
-          { title: 'Reverse Proxy', subtitle: 'TLS / routing' },
-          { title: 'Backend Server', subtitle: 'Application service' },
-        ]} />
+      <SectionHeader
+        eyebrow="INTERMEDIARIES"
+        title="Reverse Proxy"
+        description="A reverse proxy represents the server side of a connection and can terminate, route, cache, or balance application traffic."
+      />
+      <ConceptCard
+        title="Request path"
+        description="A simple server-facing intermediary model."
+      >
+        <NetworkDiagram
+          nodes={[
+            { title: 'Client', subtitle: 'Browser / API client' },
+            { title: 'Reverse Proxy', subtitle: 'TLS / routing' },
+            { title: 'Backend Server', subtitle: 'Application service' },
+          ]}
+        />
       </ConceptCard>
       <ConceptCard title="Common responsibilities">
         <ul className="nr-list">
-          <li>Terminate TLS connections and forward requests to upstream services.</li>
+          <li>
+            Terminate TLS connections and forward requests to upstream services.
+          </li>
           <li>Route requests by host, path, or other application metadata.</li>
           <li>Balance traffic across backend instances where configured.</li>
           <li>Cache selected responses or apply request/response policy.</li>
@@ -366,24 +415,61 @@ function ReverseProxySection() {
 
 function QuickReferenceSection() {
   const commands = [
-    { command: 'ip addr', description: 'Display network interfaces and assigned addresses.' },
-    { command: 'ip route', description: 'Inspect the routing table and default gateway.' },
-    { command: 'ip neigh', description: 'Inspect the local neighbor/ARP table.' },
-    { command: 'ss -tulpen', description: 'Inspect listening TCP/UDP sockets and process details.' },
+    {
+      command: 'ip addr',
+      description: 'Display network interfaces and assigned addresses.',
+    },
+    {
+      command: 'ip route',
+      description: 'Inspect the routing table and default gateway.',
+    },
+    {
+      command: 'ip neigh',
+      description: 'Inspect the local neighbor/ARP table.',
+    },
+    {
+      command: 'ss -tulpen',
+      description: 'Inspect listening TCP/UDP sockets and process details.',
+    },
     { command: 'dig example.com', description: 'Query DNS records.' },
-    { command: 'curl -I https://example.com', description: 'Inspect HTTP response headers.' },
-    { command: 'nmap -sV TARGET', description: 'Identify services and versions on an authorized target.' },
-    { command: 'tcpdump -i eth0', description: 'Capture packets on a selected interface.' },
-    { command: 'tshark -r capture.pcap -Y "dns"', description: 'Filter DNS packets from a saved capture.' },
+    {
+      command: 'curl -I https://example.com',
+      description: 'Inspect HTTP response headers.',
+    },
+    {
+      command: 'nmap -sV TARGET',
+      description: 'Identify services and versions on an authorized target.',
+    },
+    {
+      command: 'tcpdump -i eth0',
+      description: 'Capture packets on a selected interface.',
+    },
+    {
+      command: 'tshark -r capture.pcap -Y "dns"',
+      description: 'Filter DNS packets from a saved capture.',
+    },
   ];
   return (
     <div className="nr-section">
-      <SectionHeader eyebrow="QUICK REFERENCE" title="Quick Reference" description="Frequently used commands and syntax for network inspection and authorized reconnaissance." />
-      <ConceptCard title="Command reference" description="Commands are displayed for study and copying; this module does not execute them.">
-        {commands.map((item) => <CommandBlock key={item.command} {...item} />)}
+      <SectionHeader
+        eyebrow="QUICK REFERENCE"
+        title="Quick Reference"
+        description="Frequently used commands and syntax for network inspection and authorized reconnaissance."
+      />
+      <ConceptCard
+        title="Command reference"
+        description="Commands are displayed for study and copying; this module does not execute them."
+      >
+        {commands.map((item) => (
+          <CommandBlock key={item.command} {...item} />
+        ))}
       </ConceptCard>
       <ConceptCard title="Operational reminder">
-        <p className="nr-muted">Ports and command output provide evidence, not guarantees. Validate the actual service, context, and authorization before drawing conclusions or testing a system.</p>
+        <p className="nr-muted">
+          Ports and command output provide evidence, not guarantees. Validate
+          the actual service, context, and authorization before drawing
+          conclusions or testing a system.
+        </p>
       </ConceptCard>
     </div>
   );
@@ -392,9 +478,24 @@ function QuickReferenceSection() {
 function WorkflowsSection() {
   return (
     <div className="nr-section">
-      <SectionHeader eyebrow="OPERATIONAL PLAYBOOKS" title="Recon Workflows" description="Repeatable workflows for diagnosing and documenting network behavior." />
+      <SectionHeader
+        eyebrow="OPERATIONAL PLAYBOOKS"
+        title="Recon Workflows"
+        description="Repeatable workflows for diagnosing and documenting network behavior."
+      />
       <ConceptCard title="Core workflow">
-        <WorkflowDiagram steps={['Identify target', 'Resolve DNS', 'Check routing', 'Inspect ports', 'Identify services', 'Inspect HTTP/TLS', 'Capture/analyze packets', 'Document findings']} />
+        <WorkflowDiagram
+          steps={[
+            'Identify target',
+            'Resolve DNS',
+            'Check routing',
+            'Inspect ports',
+            'Identify services',
+            'Inspect HTTP/TLS',
+            'Capture/analyze packets',
+            'Document findings',
+          ]}
+        />
       </ConceptCard>
       <ConceptCard title="Evidence collection checklist">
         <ul className="nr-list">
@@ -412,23 +513,40 @@ function WorkflowsSection() {
 
 function renderSection(section: SectionId, onSelect: (id: SectionId) => void) {
   switch (section) {
-    case 'overview': return <OverviewSection onSelect={onSelect} />;
-    case 'ip-mac': return <IpMacPanel />;
-    case 'tcp-udp': return <TcpUdpPanel />;
-    case 'dns': return <DnsPanel />;
-    case 'http': return <HttpPanel />;
-    case 'ports': return <PortsPanel />;
-    case 'cidr': return <CidrPanel />;
-    case 'routing': return <RoutingPanel />;
-    case 'nat': return <NatPanel />;
-    case 'firewall': return <FirewallPanel />;
-    case 'proxy': return <ProxyPanel />;
-    case 'reverse-proxy': return <ReverseProxySection />;
-    case 'curl': return <CurlReference />;
-    case 'nmap': return <NmapReference />;
-    case 'packets': return <PacketAnalysis />;
-    case 'workflows': return <WorkflowsSection />;
-    case 'quick-reference': return <QuickReferenceSection />;
+    case 'overview':
+      return <OverviewSection onSelect={onSelect} />;
+    case 'ip-mac':
+      return <IpMacPanel />;
+    case 'tcp-udp':
+      return <TcpUdpPanel />;
+    case 'dns':
+      return <DnsPanel />;
+    case 'http':
+      return <HttpPanel />;
+    case 'ports':
+      return <PortsPanel />;
+    case 'cidr':
+      return <CidrPanel />;
+    case 'routing':
+      return <RoutingPanel />;
+    case 'nat':
+      return <NatPanel />;
+    case 'firewall':
+      return <FirewallPanel />;
+    case 'proxy':
+      return <ProxyPanel />;
+    case 'reverse-proxy':
+      return <ReverseProxySection />;
+    case 'curl':
+      return <CurlReference />;
+    case 'nmap':
+      return <NmapReference />;
+    case 'packets':
+      return <PacketAnalysis />;
+    case 'workflows':
+      return <WorkflowsSection />;
+    case 'quick-reference':
+      return <QuickReferenceSection />;
   }
 }
 
@@ -443,7 +561,9 @@ export default function NetworkReconPage() {
     return reconSections.filter(({ id }) => {
       const concept = concepts.find((item) => item.section === id);
       const section = reconSections.find((item) => item.id === id);
-      return `${section?.title ?? ''} ${section?.description ?? ''} ${searchText[id]} ${concept?.description ?? ''} ${concept?.tags.join(' ') ?? ''}`.toLowerCase().includes(q);
+      return `${section?.title ?? ''} ${section?.description ?? ''} ${searchText[id]} ${concept?.description ?? ''} ${concept?.tags.join(' ') ?? ''}`
+        .toLowerCase()
+        .includes(q);
     });
   }, [search]);
 
@@ -466,27 +586,51 @@ export default function NetworkReconPage() {
             <header className="nr-header">
               <div className="nr-header-brand">
                 <h1 className="nr-header-title">Networking</h1>
-                <p className="nr-header-subtitle">Network reference &amp; investigation</p>
+                <p className="nr-header-subtitle">
+                  Network reference &amp; investigation
+                </p>
               </div>
-              <SearchBar value={search} onChange={(value) => { setSearch(value); setSearchOpen(Boolean(value.trim())); }} onFocus={() => setSearchOpen(Boolean(search.trim()))} />
+              <SearchBar
+                value={search}
+                onChange={(value) => {
+                  setSearch(value);
+                  setSearchOpen(Boolean(value.trim()));
+                }}
+                onFocus={() => setSearchOpen(Boolean(search.trim()))}
+              />
             </header>
 
             <ReconSidebar active={activeSection} onSelect={selectSection} />
 
             {searchOpen && search.trim() && (
               <div className="nr-search-results">
-                {results.length > 0 ? results.map((result) => (
-                  <button key={result.id} type="button" className="nr-search-result" onClick={() => selectSection(result.id)}>
-                    <strong>{result.number} · {result.title}</strong>
-                    <span>{result.description}</span>
-                  </button>
-                )) : <div className="nr-reference-empty">No matching reference content.</div>}
+                {results.length > 0 ? (
+                  results.map((result) => (
+                    <button
+                      key={result.id}
+                      type="button"
+                      className="nr-search-result"
+                      onClick={() => selectSection(result.id)}
+                    >
+                      <strong>
+                        {result.number} · {result.title}
+                      </strong>
+                      <span>{result.description}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="nr-reference-empty">
+                    No matching reference content.
+                  </div>
+                )}
               </div>
             )}
 
             <div className="nr-content">
               {renderSection(activeSection, selectSection)}
-              <footer className="nr-footer">Networking reference · offline-first documentation</footer>
+              <footer className="nr-footer">
+                Networking reference · offline-first documentation
+              </footer>
             </div>
           </main>
         </div>

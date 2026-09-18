@@ -1,3 +1,39 @@
+# GENiSYS Tooling — Forensics / File Analysis module
+
+Drop-in feature module for `src/components/FileAnalysis/` in the GENiSYS
+Astro + React + Tailwind SPA.
+
+## Integration
+
+1. Copy this entire folder to `src/components/FileAnalysis/` in the GENiSYS
+   repo.
+2. In `GenisysApp.tsx` (or wherever the shell wires up routes), import and
+   render the page inside the existing main content area:
+
+   ```tsx
+   import { FileAnalysisPage } from "@/components/FileAnalysis";
+
+   // ...inside the existing route switch:
+   case "forensics":
+     return <FileAnalysisPage />;
+   ```
+
+   No `BrowserRouter`, shell, or sidebar changes are needed — the module owns
+   no routing or layout chrome beyond its own content.
+
+3. Make sure your bundler is configured to load `.worker.ts` files as Web
+   Workers. Vite (which Astro uses) supports this out of the box via
+   `new Worker(new URL(...), { type: "module" })`, which is exactly the
+   pattern used in `lib/fileAnalysisWorkerClient.ts` — no extra Vite config
+   should be required, but if your project pins a non-default `worker`
+   format, confirm `format: "es"` is set for module workers.
+
+4. If your project's `tsconfig.json` doesn't already include both the `DOM`
+   and separate `WebWorker` typings for worker files, add (or confirm) a
+   worker-specific TS project reference. The worker file already declares
+   `/// <reference lib="webworker" />` at the top, which is sufficient for
+   most Vite + TS setups without further config.
+
 ## What was verified in this environment
 
 This sandbox has no network access, so the project's real `vitest`,
