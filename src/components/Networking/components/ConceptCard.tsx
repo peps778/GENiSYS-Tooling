@@ -9,9 +9,11 @@ export default function ConceptCard({
 }) {
   return (
     <section className="nr-card">
-      <h2>{title}</h2>
-      {description && <p className="nr-muted">{description}</p>}
-      {children}
+      <div className="nr-card-heading">
+        <h2>{title}</h2>
+        {description && <p>{description}</p>}
+      </div>
+      {children && <div className="nr-card-body">{children}</div>}
     </section>
   );
 }

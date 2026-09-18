@@ -1,19 +1,23 @@
 import { SearchIcon } from './icons';
+
 export default function SearchBar({
   value,
   onChange,
+  onFocus,
 }: {
   value: string;
-  onChange: (v: string) => void;
+  onChange: (value: string) => void;
+  onFocus?: () => void;
 }) {
   return (
-    <label className="nr-search">
+    <label className="nr-search-field">
       <SearchIcon />
       <input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Search concepts, commands, ports, protocols..."
-        aria-label="Search network reference"
+        onChange={(event) => onChange(event.target.value)}
+        onFocus={onFocus}
+        placeholder="Search networking reference..."
+        aria-label="Search reference sections"
       />
     </label>
   );
