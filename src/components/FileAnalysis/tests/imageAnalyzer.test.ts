@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { readImageDimensions, analyzeImage } from '../lib/imageAnalyzer';
+import { describe, it, expect } from "vitest";
+import { readImageDimensions, analyzeImage } from "../lib/imageAnalyzer";
 
 function pngHeaderWithDims(width: number, height: number): Uint8Array {
   const data = new Uint8Array(33);
@@ -30,47 +30,41 @@ function gifHeaderWithDims(width: number, height: number): Uint8Array {
   return data;
 }
 
-describe('readImageDimensions', () => {
-  it('reads valid PNG dimensions', () => {
+describe("readImageDimensions", () => {
+  it("reads valid PNG dimensions", () => {
     const data = pngHeaderWithDims(800, 600);
-    expect(readImageDimensions(data, 'PNG image')).toEqual({
-      width: 800,
-      height: 600,
-    });
+    expect(readImageDimensions(data, "PNG image")).toEqual({ width: 800, height: 600 });
   });
 
-  it('reads valid GIF dimensions', () => {
+  it("reads valid GIF dimensions", () => {
     const data = gifHeaderWithDims(320, 240);
-    expect(readImageDimensions(data, 'GIF image')).toEqual({
-      width: 320,
-      height: 240,
-    });
+    expect(readImageDimensions(data, "GIF image")).toEqual({ width: 320, height: 240 });
   });
 
-  it('returns null for invalid/malformed image data', () => {
+  it("returns null for invalid/malformed image data", () => {
     const data = new Uint8Array([0x89, 0x50]); // truncated
-    expect(readImageDimensions(data, 'PNG image')).toBeNull();
+    expect(readImageDimensions(data, "PNG image")).toBeNull();
   });
 
-  it('returns null for unsupported formats', () => {
+  it("returns null for unsupported formats", () => {
     const data = new Uint8Array(20);
-    expect(readImageDimensions(data, 'SQLite database')).toBeNull();
+    expect(readImageDimensions(data, "SQLite database")).toBeNull();
   });
 });
 
-describe('analyzeImage', () => {
-  it('builds full image information for a valid PNG', () => {
+describe("analyzeImage", () => {
+  it("builds full image information for a valid PNG", () => {
     const data = pngHeaderWithDims(100, 50);
-    const info = analyzeImage(data, 'PNG image', 'image/png', null);
+    const info = analyzeImage(data, "PNG image", "image/png", null);
     expect(info.width).toBe(100);
     expect(info.height).toBe(50);
     expect(info.hasAlpha).toBe(true);
-    expect(info.colorInfo).toBe('Truecolor + alpha (RGBA)');
+    expect(info.colorInfo).toBe("Truecolor + alpha (RGBA)");
   });
 
-  it('reports null dimensions gracefully for invalid image data', () => {
+  it("reports null dimensions gracefully for invalid image data", () => {
     const data = new Uint8Array([0x89, 0x50]);
-    const info = analyzeImage(data, 'PNG image', 'image/png', null);
+    const info = analyzeImage(data, "PNG image", "image/png", null);
     expect(info.width).toBeNull();
     expect(info.height).toBeNull();
   });

@@ -5,7 +5,7 @@ import type {
   HexRange,
   StringEncoding,
   StringExtractionResult,
-} from '../types/fileAnalysis';
+} from "../types/fileAnalysis";
 
 // ---------------------------------------------------------------------------
 // Protocol: requests (main thread -> worker)
@@ -16,26 +16,26 @@ interface BaseRequest {
 }
 
 export interface AnalyzeRequest extends BaseRequest {
-  type: 'analyze';
+  type: "analyze";
   buffer: ArrayBuffer;
   filename: string;
   mime: string;
 }
 
 export interface HashRequest extends BaseRequest {
-  type: 'hash';
+  type: "hash";
   buffer: ArrayBuffer;
 }
 
 export interface ExtractStringsRequest extends BaseRequest {
-  type: 'extract-strings';
+  type: "extract-strings";
   buffer: ArrayBuffer;
   minLength: number;
   encoding: StringEncoding;
 }
 
 export interface ReadRangeRequest extends BaseRequest {
-  type: 'read-range';
+  type: "read-range";
   buffer: ArrayBuffer;
   offset: number;
   length: number;
@@ -43,12 +43,12 @@ export interface ReadRangeRequest extends BaseRequest {
 }
 
 export interface InspectArchiveRequest extends BaseRequest {
-  type: 'inspect-archive';
+  type: "inspect-archive";
   buffer: ArrayBuffer;
 }
 
 export interface CancelRequest extends BaseRequest {
-  type: 'cancel';
+  type: "cancel";
 }
 
 export type WorkerRequest =
@@ -64,7 +64,7 @@ export type WorkerRequest =
 // ---------------------------------------------------------------------------
 
 export interface ProgressResponse {
-  type: 'progress';
+  type: "progress";
   requestId: string;
   stage: AnalysisStage;
   percent: number | null;
@@ -72,43 +72,43 @@ export interface ProgressResponse {
 }
 
 export interface ResultResponse {
-  type: 'result';
+  type: "result";
   requestId: string;
   result: AnalysisResult;
 }
 
 export interface HashResultResponse {
-  type: 'hash-result';
+  type: "hash-result";
   requestId: string;
   sha256: string;
 }
 
 export interface StringsResultResponse {
-  type: 'strings-result';
+  type: "strings-result";
   requestId: string;
   result: StringExtractionResult;
 }
 
 export interface HexRangeResultResponse {
-  type: 'hex-range-result';
+  type: "hex-range-result";
   requestId: string;
   range: HexRange;
 }
 
 export interface ArchiveResultResponse {
-  type: 'archive-result';
+  type: "archive-result";
   requestId: string;
   archive: ArchiveInformation;
 }
 
 export interface ErrorResponse {
-  type: 'error';
+  type: "error";
   requestId: string;
   message: string;
 }
 
 export interface CancelledResponse {
-  type: 'cancelled';
+  type: "cancelled";
   requestId: string;
 }
 
@@ -160,11 +160,11 @@ function nextRequestId(): string {
 }
 
 type PendingEntry =
-  | { kind: 'analyze'; callbacks: AnalysisWorkerCallbacks }
-  | { kind: 'hash'; callbacks: HashCallbacks }
-  | { kind: 'strings'; callbacks: StringsCallbacks }
-  | { kind: 'range'; callbacks: HexRangeCallbacks }
-  | { kind: 'archive'; callbacks: ArchiveCallbacks };
+  | { kind: "analyze"; callbacks: AnalysisWorkerCallbacks }
+  | { kind: "hash"; callbacks: HashCallbacks }
+  | { kind: "strings"; callbacks: StringsCallbacks }
+  | { kind: "range"; callbacks: HexRangeCallbacks }
+  | { kind: "archive"; callbacks: ArchiveCallbacks };
 
 /**
  * Lifecycle-managed wrapper around the forensics Web Worker. Owns exactly
@@ -179,13 +179,10 @@ export class FileAnalysisWorkerClient {
 
   private ensureWorker(): Worker {
     if (!this.worker) {
-      this.worker = new Worker(
-        new URL('../workers/fileAnalysis.worker.ts', import.meta.url),
-        {
-          type: 'module',
-        },
-      );
-      this.worker.addEventListener('message', this.handleMessage);
+      this.worker = new Worker(new URL("../workers/fileAnalysis.worker.ts", import.meta.url), {
+        type: "module",
+      });
+      this.worker.addEventListener("message", this.handleMessage);
     }
     return this.worker;
   }
@@ -196,35 +193,35 @@ export class FileAnalysisWorkerClient {
     if (!entry) return; // stale/unknown response, ignore
 
     switch (msg.type) {
-      case 'progress':
-        if (entry.kind === 'analyze') entry.callbacks.onProgress?.(msg);
+      case "progress":
+        if (entry.kind === "analyze") entry.callbacks.onProgress?.(msg);
         break;
-      case 'result':
-        if (entry.kind === 'analyze') entry.callbacks.onResult?.(msg.result);
+      case "result":
+        if (entry.kind === "analyze") entry.callbacks.onResult?.(msg.result);
         this.pending.delete(msg.requestId);
         break;
-      case 'hash-result':
-        if (entry.kind === 'hash') entry.callbacks.onResult?.(msg.sha256);
+      case "hash-result":
+        if (entry.kind === "hash") entry.callbacks.onResult?.(msg.sha256);
         this.pending.delete(msg.requestId);
         break;
-      case 'strings-result':
-        if (entry.kind === 'strings') entry.callbacks.onResult?.(msg.result);
+      case "strings-result":
+        if (entry.kind === "strings") entry.callbacks.onResult?.(msg.result);
         this.pending.delete(msg.requestId);
         break;
-      case 'hex-range-result':
-        if (entry.kind === 'range') entry.callbacks.onResult?.(msg.range);
+      case "hex-range-result":
+        if (entry.kind === "range") entry.callbacks.onResult?.(msg.range);
         this.pending.delete(msg.requestId);
         break;
-      case 'archive-result':
-        if (entry.kind === 'archive') entry.callbacks.onResult?.(msg.archive);
+      case "archive-result":
+        if (entry.kind === "archive") entry.callbacks.onResult?.(msg.archive);
         this.pending.delete(msg.requestId);
         break;
-      case 'error':
+      case "error":
         entry.callbacks.onError?.(msg.message);
         this.pending.delete(msg.requestId);
         break;
-      case 'cancelled':
-        if (entry.kind === 'analyze') entry.callbacks.onCancelled?.();
+      case "cancelled":
+        if (entry.kind === "analyze") entry.callbacks.onCancelled?.();
         this.pending.delete(msg.requestId);
         break;
       default:
@@ -233,22 +230,11 @@ export class FileAnalysisWorkerClient {
   };
 
   /** Runs a full analysis pass. The buffer is transferred (zero-copy). */
-  analyze(
-    buffer: ArrayBuffer,
-    filename: string,
-    mime: string,
-    callbacks: AnalysisWorkerCallbacks,
-  ): string {
+  analyze(buffer: ArrayBuffer, filename: string, mime: string, callbacks: AnalysisWorkerCallbacks): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'analyze', callbacks });
-    const request: AnalyzeRequest = {
-      type: 'analyze',
-      requestId,
-      buffer,
-      filename,
-      mime,
-    };
+    this.pending.set(requestId, { kind: "analyze", callbacks });
+    const request: AnalyzeRequest = { type: "analyze", requestId, buffer, filename, mime };
     worker.postMessage(request, [buffer]);
     return requestId;
   }
@@ -257,31 +243,20 @@ export class FileAnalysisWorkerClient {
   hash(data: Uint8Array, callbacks: HashCallbacks): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'hash', callbacks });
+    this.pending.set(requestId, { kind: "hash", callbacks });
     const buffer = data.slice().buffer as ArrayBuffer;
-    const request: HashRequest = { type: 'hash', requestId, buffer };
+    const request: HashRequest = { type: "hash", requestId, buffer };
     worker.postMessage(request, [buffer]);
     return requestId;
   }
 
   /** Re-extracts strings with a new minimum length / encoding without a full re-analysis. */
-  extractStrings(
-    data: Uint8Array,
-    minLength: number,
-    encoding: StringEncoding,
-    callbacks: StringsCallbacks,
-  ): string {
+  extractStrings(data: Uint8Array, minLength: number, encoding: StringEncoding, callbacks: StringsCallbacks): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'strings', callbacks });
+    this.pending.set(requestId, { kind: "strings", callbacks });
     const buffer = data.slice().buffer as ArrayBuffer;
-    const request: ExtractStringsRequest = {
-      type: 'extract-strings',
-      requestId,
-      buffer,
-      minLength,
-      encoding,
-    };
+    const request: ExtractStringsRequest = { type: "extract-strings", requestId, buffer, minLength, encoding };
     worker.postMessage(request, [buffer]);
     return requestId;
   }
@@ -289,17 +264,15 @@ export class FileAnalysisWorkerClient {
   /** Cancels the currently active analyze request, if any. */
   cancel(requestId?: string) {
     if (!this.worker) return;
-    const targetId =
-      requestId ??
-      [...this.pending.entries()].find(([, e]) => e.kind === 'analyze')?.[0];
+    const targetId = requestId ?? [...this.pending.entries()].find(([, e]) => e.kind === "analyze")?.[0];
     if (!targetId) return;
-    const request: CancelRequest = { type: 'cancel', requestId: targetId };
+    const request: CancelRequest = { type: "cancel", requestId: targetId };
     this.worker.postMessage(request);
   }
 
   /** Terminates the worker outright. Call on unmount / file change. */
   terminate() {
-    this.worker?.removeEventListener('message', this.handleMessage);
+    this.worker?.removeEventListener("message", this.handleMessage);
     this.worker?.terminate();
     this.worker = null;
     this.pending.clear();

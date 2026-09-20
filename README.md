@@ -35,7 +35,7 @@ Built mainly for:
    - Regex search
    - Large-file processing
 
-3. Web Security / CTF Automation
+3. Web Security / CTF Automation [ONQUE]
    - HTTP request builder
    - Headers / cookies / tokens
    - Endpoint enumeration
@@ -48,8 +48,12 @@ Built mainly for:
    - Request/response comparison
    - Common CTF web checks
    - Evidence/output logging
+   - SQLi Command generator (All and most possible cases)
+   - SSTI Command generator (All and most possible cases) JS/PHP or other possible way
 
-4. Linux Docs / Command Reference
+
+
+4. Linux Docs / Command Reference [FOR-REVIEW]
    - grep
    - sed
    - awk
@@ -75,7 +79,7 @@ Built mainly for:
    - katana
    - as well as custom linux command generator (select purpose -> select attributes -> generate / add if there are missing process)
 
-5. Network / Recon Reference
+5. Network / Recon Reference [FOR-REVIEW]
    - IP / MAC
    - TCP / UDP
    - DNS
@@ -91,7 +95,7 @@ Built mainly for:
    - nmap syntax
    - packet-analysis commands
 
-6. Forensics / File Analysis [ONGOING]
+6. Forensics / File Analysis [QA]
    - file identification
    - metadata
    - strings extraction
@@ -102,7 +106,7 @@ Built mainly for:
    - deleted/recovered data concepts
    - .bin to image/vid/text/etc convert bin files into its readable file
 
-7. OSINT Reference
+7. OSINT Reference [PARTIAL]
    - DNS enumeration
    - WHOIS
    - subdomain concepts
@@ -112,7 +116,7 @@ Built mainly for:
    - username/email investigation techniques
    - public-source evidence collection
 
-8. Notes / SOP
+8. Notes / SOP [ON-PROCESS]
    - Enumeration SOP
    - Web testing SOP
    - Network investigation SOP
@@ -123,3 +127,7 @@ Built mainly for:
    - Flag/evidence recording
    - Time-management procedure
    - Common Vulnerabilities (SQLi SSTI IDOR Broken Access etc...)
+   - BURP SUITE 
+   - ZAP
+   - Wireshark
+   - Other beneficial PEN tools

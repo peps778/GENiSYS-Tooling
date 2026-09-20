@@ -30,9 +30,7 @@ export interface AsciiBitstreamDetection {
  * Reports the character-composition of `data` without decoding it. Useful
  * for explaining *why* something was or wasn't treated as a candidate.
  */
-export function detectAsciiBitstream(
-  data: Uint8Array,
-): AsciiBitstreamDetection {
+export function detectAsciiBitstream(data: Uint8Array): AsciiBitstreamDetection {
   let bitCharCount = 0;
   let whitespaceCount = 0;
   let otherCount = 0;
@@ -44,19 +42,9 @@ export function detectAsciiBitstream(
     else otherCount++;
   }
 
-  const isBitstream =
-    data.length > 0 &&
-    otherCount === 0 &&
-    bitCharCount > 0 &&
-    bitCharCount % 8 === 0;
+  const isBitstream = data.length > 0 && otherCount === 0 && bitCharCount > 0 && bitCharCount % 8 === 0;
 
-  return {
-    isBitstream,
-    totalBytes: data.length,
-    bitCharCount,
-    whitespaceCount,
-    otherCount,
-  };
+  return { isBitstream, totalBytes: data.length, bitCharCount, whitespaceCount, otherCount };
 }
 
 /**

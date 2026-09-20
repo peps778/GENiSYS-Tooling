@@ -1,1 +1,46 @@
 @import 'tailwindcss';
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e transparent;
+}
+
+/* Chromium / WebKit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #15803d;
+  background-clip: padding-box;
+}
+
+/* Smooth scrolling throughout the application */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal scrollbar caused by accidental overflow */
+html,
+body {
+  overflow-x: hidden;
+}

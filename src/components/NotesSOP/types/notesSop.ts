@@ -8,7 +8,9 @@ export type SOPCategoryId =
   | 'next'
   | 'evidence'
   | 'time'
-  | 'vulnerabilities';
+  | 'vulnerabilities'
+  | 'reference'
+  | 'logbook';
 
 export type Confidence = 'low' | 'medium' | 'high' | 'confirmed';
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
@@ -96,4 +98,21 @@ export interface SOPSection {
   number: string;
   title: string;
   description: string;
+}
+
+
+export type FlagLogStatus = 'candidate' | 'confirmed' | 'duplicate' | 'rejected';
+
+export interface FlagLogEntry {
+  id: string;
+  timestamp: string;
+  category: SOPCategoryId;
+  source: string;
+  location: string;
+  flag: string;
+  status: FlagLogStatus;
+  confidence: Confidence;
+  evidence: string;
+  verification: string;
+  notes: string;
 }

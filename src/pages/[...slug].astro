@@ -1,0 +1,29 @@
+---
+export const prerender = false;
+
+import GenisysApp from "../components/GenisysApp";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <meta
+      name="description"
+      content="GENiSYS Tooling cybersecurity analysis workspace."
+    />
+
+    <title>GENiSYS Tooling</title>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-950 antialiased">
+    <GenisysApp client:only="react" />
+  </body>
+</html>

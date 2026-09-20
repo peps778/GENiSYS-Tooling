@@ -2,6 +2,12 @@ import type { SOPSection } from '../types/notesSop';
 
 export const SOP_SECTIONS: SOPSection[] = [
   {
+    id: 'reference',
+    number: '00',
+    title: 'Quick Reference',
+    description: 'High-value triage, protocol, evidence, and tool references.',
+  },
+  {
     id: 'enumeration',
     number: '01',
     title: 'Enumeration SOP',
@@ -46,18 +52,24 @@ export const SOP_SECTIONS: SOPSection[] = [
   {
     id: 'evidence',
     number: '08',
-    title: 'Flag / Evidence',
-    description: 'Structured findings, candidates, and confirmation.',
+    title: 'Evidence Capture',
+    description: 'Separate observations, interpretations, and verification.',
+  },
+  {
+    id: 'logbook',
+    number: '09',
+    title: 'Flag Logbook',
+    description: 'Track flag candidates, verification, provenance, and status.',
   },
   {
     id: 'time',
-    number: '09',
+    number: '10',
     title: 'Time Management',
-    description: 'Pivot and time-boxing cases.',
+    description: 'Time-boxing, pivots, dead ends, and final verification.',
   },
   {
     id: 'vulnerabilities',
-    number: '10',
+    number: '11',
     title: 'Common Vulnerabilities',
     description: 'Case-based vulnerability investigation references.',
   },

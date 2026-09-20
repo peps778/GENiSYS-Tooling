@@ -7,6 +7,10 @@ import { FileAnalysisPage } from '../components/FileAnalysis';
 import LinuxDocs from '../components/LinuxDocs/';
 import Networking from '../components/Networking/';
 import NotesSOP from './NotesSOP';
+import OSINT from './OSINT'
+import {WebSecurityCTFPage} from './WebAutomation_Exploit'
+
+
 export default function GenisysApp() {
   return (
     <BrowserRouter>
@@ -25,8 +29,8 @@ export default function GenisysApp() {
             <Route path="/linux" element={<LinuxDocs />} />
             <Route path="/networking" element={<Networking />} />
             <Route path="/notes" element={<NotesSOP />} />
-            {/* <Route path="/osint" element={<OSINT />} /> */}
-            {/* <Route path="/web" element={<WebAutomation />} /> */}
+            <Route path="/osint" element={<OSINT />} /> 
+            <Route path="/web" element={<WebSecurityCTFPage />} />
           </Routes>
         </main>
       </div>

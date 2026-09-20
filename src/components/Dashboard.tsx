@@ -22,6 +22,7 @@ const modules = [
       'Analyze HTTP traffic, endpoints, parameters, APIs, and web targets.',
     tools: ['httpx', 'ffuf', 'curl', 'jq'],
   },
+  
 ];
 
 const bootLines = [
@@ -126,13 +127,13 @@ const Dashboard = () => {
         {/* Header */}
         <header className="flex shrink-0 items-center justify-between border-b border-emerald-900/10 pb-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-50">
+            {/* <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-50">
               <span className="absolute h-3 w-3 rounded-full bg-emerald-500/10 animate-ping" />
 
               <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
-            </div>
+            </div> */}
 
-            <div className="min-w-0">
+            {/* <div className="min-w-0">
               <p className="truncate text-[10px] font-bold uppercase tracking-[0.25em] text-green-950">
                 GENiSYS
               </p>
@@ -140,7 +141,7 @@ const Dashboard = () => {
               <p className="truncate text-[9px] text-slate-400">
                 Security Toolkit
               </p>
-            </div>
+            </div> */}
           </div>
 
           <div className="hidden shrink-0 items-center gap-5 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-400 sm:flex">

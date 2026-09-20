@@ -1,8 +1,4 @@
-import type {
-  StringEncoding,
-  StringExtractionResult,
-  StringMatch,
-} from '../types/fileAnalysis';
+import type { StringEncoding, StringExtractionResult, StringMatch } from "../types/fileAnalysis";
 
 export interface StringExtractionOptions {
   minLength?: number;
@@ -22,11 +18,7 @@ function isPrintableAsciiByte(b: number): boolean {
  * Extracts printable ASCII strings from a buffer. This is the fast,
  * dependency-free path and is always safe to run on arbitrary binary data.
  */
-function extractAsciiStrings(
-  data: Uint8Array,
-  minLength: number,
-  maxMatches: number,
-) {
+function extractAsciiStrings(data: Uint8Array, minLength: number, maxMatches: number) {
   const matches: StringMatch[] = [];
   let runStart = -1;
   let id = 0;
@@ -38,14 +30,8 @@ function extractAsciiStrings(
       totalFound++;
       if (matches.length < maxMatches) {
         const bytes = data.subarray(runStart, runEnd);
-        const value = new TextDecoder('ascii').decode(bytes);
-        matches.push({
-          id: id++,
-          value,
-          offset: runStart,
-          length,
-          encoding: 'ascii',
-        });
+        const value = new TextDecoder("ascii").decode(bytes);
+        matches.push({ id: id++, value, offset: runStart, length, encoding: "ascii" });
       }
     }
     runStart = -1;
@@ -68,17 +54,13 @@ function extractAsciiStrings(
  * sequence that fails to decode as valid UTF-8 simply ends the current run
  * rather than throwing.
  */
-function extractUtf8Strings(
-  data: Uint8Array,
-  minLength: number,
-  maxMatches: number,
-) {
+function extractUtf8Strings(data: Uint8Array, minLength: number, maxMatches: number) {
   const matches: StringMatch[] = [];
   let id = 0;
   let totalFound = 0;
   let runStart = -1;
-  let runText = '';
-  const decoder = new TextDecoder('utf-8', { fatal: true });
+  let runText = "";
+  const decoder = new TextDecoder("utf-8", { fatal: true });
 
   const flushRun = (runEndByteOffset: number) => {
     if (runText.length >= minLength) {
@@ -89,12 +71,12 @@ function extractUtf8Strings(
           value: runText,
           offset: runStart,
           length: runEndByteOffset - runStart,
-          encoding: 'utf8',
+          encoding: "utf8",
         });
       }
     }
     runStart = -1;
-    runText = '';
+    runText = "";
   };
 
   let i = 0;
@@ -120,10 +102,7 @@ function extractUtf8Strings(
 
     try {
       const chunk = decoder.decode(slice);
-      const printable =
-        seqLen === 1
-          ? isPrintableAsciiByte(byte)
-          : chunk.trim().length > 0 || chunk.length > 0;
+      const printable = seqLen === 1 ? isPrintableAsciiByte(byte) : chunk.trim().length > 0 || chunk.length > 0;
       if (!printable) {
         if (runStart !== -1) flushRun(i);
         i += seqLen;
@@ -144,14 +123,14 @@ function extractUtf8Strings(
 
 export function extractStrings(
   data: Uint8Array,
-  options: StringExtractionOptions = {},
+  options: StringExtractionOptions = {}
 ): StringExtractionResult {
   const minLength = options.minLength ?? DEFAULT_MIN_LENGTH;
-  const encoding = options.encoding ?? 'ascii';
+  const encoding = options.encoding ?? "ascii";
   const maxMatches = options.maxMatches ?? DEFAULT_MAX_MATCHES;
 
   const { matches, totalFound } =
-    encoding === 'utf8'
+    encoding === "utf8"
       ? extractUtf8Strings(data, minLength, maxMatches)
       : extractAsciiStrings(data, minLength, maxMatches);
 

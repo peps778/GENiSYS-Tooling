@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from "react";
 
 interface FileDropzoneProps {
   onFileSelected: (file: File) => void;
@@ -16,14 +16,14 @@ export function FileDropzone({ onFileSelected, disabled }: FileDropzoneProps) {
     (file: File) => {
       if (file.size > LARGE_FILE_WARNING_BYTES) {
         setPendingWarning(
-          `${file.name} is ${(file.size / (1024 * 1024)).toFixed(0)} MB. Large files may take longer to analyze; processing runs in a background worker to keep the interface responsive.`,
+          `${file.name} is ${(file.size / (1024 * 1024)).toFixed(0)} MB. Large files may take longer to analyze; processing runs in a background worker to keep the interface responsive.`
         );
       } else {
         setPendingWarning(null);
       }
       onFileSelected(file);
     },
-    [onFileSelected],
+    [onFileSelected]
   );
 
   const onDrop = useCallback(
@@ -34,16 +34,16 @@ export function FileDropzone({ onFileSelected, disabled }: FileDropzoneProps) {
       const file = e.dataTransfer.files?.[0];
       if (file) handleFile(file);
     },
-    [disabled, handleFile],
+    [disabled, handleFile]
   );
 
   const onInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) handleFile(file);
-      e.target.value = ''; // allow re-selecting the same file
+      e.target.value = ""; // allow re-selecting the same file
     },
-    [handleFile],
+    [handleFile]
   );
 
   return (
@@ -54,8 +54,7 @@ export function FileDropzone({ onFileSelected, disabled }: FileDropzoneProps) {
         aria-label="Select a file to analyze"
         onClick={() => !disabled && inputRef.current?.click()}
         onKeyDown={(e) => {
-          if (!disabled && (e.key === 'Enter' || e.key === ' '))
-            inputRef.current?.click();
+          if (!disabled && (e.key === "Enter" || e.key === " ")) inputRef.current?.click();
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -64,20 +63,14 @@ export function FileDropzone({ onFileSelected, disabled }: FileDropzoneProps) {
         onDragLeave={() => setIsDragActive(false)}
         onDrop={onDrop}
         className={[
-          'flex flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed px-6 py-10 text-center transition-colors cursor-pointer',
-          disabled ? 'opacity-50 cursor-not-allowed' : '',
+          "flex flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed px-6 py-10 text-center transition-colors cursor-pointer",
+          disabled ? "opacity-50 cursor-not-allowed" : "",
           isDragActive
-            ? 'border-[#16A34A] bg-[#F0FDF4]'
-            : 'border-[#E5E7EB] bg-white hover:border-[#BBF7D0] hover:bg-[#F0FDF4]/40',
-        ].join(' ')}
+            ? "border-[#16A34A] bg-[#F0FDF4]"
+            : "border-[#E5E7EB] bg-white hover:border-[#BBF7D0] hover:bg-[#F0FDF4]/40",
+        ].join(" ")}
       >
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"
             stroke="#16A34A"

@@ -1,36 +1,13 @@
-import type { AnomalyFinding } from '../types/fileAnalysis';
+import type { AnomalyFinding } from "../types/fileAnalysis";
 
 const KNOWN_PNG_CHUNK_TYPES = new Set([
-  'IHDR',
-  'PLTE',
-  'IDAT',
-  'IEND',
-  'tRNS',
-  'cHRM',
-  'gAMA',
-  'iCCP',
-  'sBIT',
-  'sRGB',
-  'tEXt',
-  'zTXt',
-  'iTXt',
-  'bKGD',
-  'hIST',
-  'pHYs',
-  'sPLT',
-  'tIME',
-  'acTL',
-  'fcTL',
-  'fdAT', // APNG extensions, commonly seen and legitimate
+  "IHDR", "PLTE", "IDAT", "IEND", "tRNS", "cHRM", "gAMA", "iCCP", "sBIT",
+  "sRGB", "tEXt", "zTXt", "iTXt", "bKGD", "hIST", "pHYs", "sPLT", "tIME",
+  "acTL", "fcTL", "fdAT", // APNG extensions, commonly seen and legitimate
 ]);
 
 function readUint32BE(data: Uint8Array, offset: number): number {
-  return (
-    (data[offset] << 24) |
-    (data[offset + 1] << 16) |
-    (data[offset + 2] << 8) |
-    data[offset + 3]
-  );
+  return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
 }
 
 /**
@@ -47,24 +24,19 @@ export function inspectPngChunks(data: Uint8Array): AnomalyFinding[] {
 
   while (offset + 8 <= data.length) {
     const length = readUint32BE(data, offset);
-    const type = String.fromCharCode(
-      data[offset + 4],
-      data[offset + 5],
-      data[offset + 6],
-      data[offset + 7],
-    );
+    const type = String.fromCharCode(data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7]);
 
     if (!KNOWN_PNG_CHUNK_TYPES.has(type)) {
       findings.push({
-        kind: 'unknown-chunk',
+        kind: "unknown-chunk",
         description: `Unknown PNG chunk type '${type}'`,
         offset,
         length: length + 12,
-        confidence: 'probable',
+        confidence: "probable",
       });
     }
 
-    if (type === 'IEND') {
+    if (type === "IEND") {
       iendOffset = offset + 12; // header(8) + length already counted; IEND has 0-length data + 4-byte CRC
       break;
     }
@@ -75,11 +47,11 @@ export function inspectPngChunks(data: Uint8Array): AnomalyFinding[] {
 
   if (iendOffset !== null && iendOffset < data.length) {
     findings.push({
-      kind: 'trailing-data',
+      kind: "trailing-data",
       description: `${data.length - iendOffset} byte(s) found after the IEND chunk`,
       offset: iendOffset,
       length: data.length - iendOffset,
-      confidence: 'probable',
+      confidence: "probable",
     });
   }
 
@@ -101,11 +73,11 @@ export function inspectJpegTrailingData(data: Uint8Array): AnomalyFinding[] {
       const trailingLength = data.length - (i + 2);
       if (trailingLength > 0) {
         findings.push({
-          kind: 'trailing-data',
+          kind: "trailing-data",
           description: `${trailingLength} byte(s) found after the JPEG end-of-image marker`,
           offset: i + 2,
           length: trailingLength,
-          confidence: 'probable',
+          confidence: "probable",
         });
       }
       break;
@@ -119,14 +91,11 @@ export function inspectJpegTrailingData(data: Uint8Array): AnomalyFinding[] {
  * format. Returns an empty array (not an error) for formats without a
  * dedicated check -- absence of findings is not evidence of absence.
  */
-export function inspectForAnomalies(
-  data: Uint8Array,
-  detectedFormat: string,
-): AnomalyFinding[] {
+export function inspectForAnomalies(data: Uint8Array, detectedFormat: string): AnomalyFinding[] {
   switch (detectedFormat) {
-    case 'PNG image':
+    case "PNG image":
       return inspectPngChunks(data);
-    case 'JPEG image':
+    case "JPEG image":
       return inspectJpegTrailingData(data);
     default:
       return [];

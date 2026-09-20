@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import type { ArchiveInformation } from '../types/fileAnalysis';
+import React, { useState } from "react";
+import type { ArchiveInformation } from "../types/fileAnalysis";
 
 interface ArchiveInspectionPanelProps {
   archive: ArchiveInformation;
@@ -7,7 +7,7 @@ interface ArchiveInspectionPanelProps {
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
-  const units = ['KB', 'MB', 'GB'];
+  const units = ["KB", "MB", "GB"];
   let value = bytes;
   let unitIndex = -1;
   do {
@@ -17,17 +17,13 @@ function formatBytes(bytes: number): string {
   return `${value.toFixed(1)} ${units[unitIndex]}`;
 }
 
-export function ArchiveInspectionPanel({
-  archive,
-}: ArchiveInspectionPanelProps) {
-  const [filter, setFilter] = useState('');
+export function ArchiveInspectionPanel({ archive }: ArchiveInspectionPanelProps) {
+  const [filter, setFilter] = useState("");
 
   if (!archive.supported) {
     return (
       <div className="rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
-        <p className="text-sm text-[#111827]">
-          This archive type isn't supported for detailed inspection.
-        </p>
+        <p className="text-sm text-[#111827]">This archive type isn't supported for detailed inspection.</p>
         {archive.limitations.map((note, i) => (
           <p key={i} className="mt-1 text-xs text-[#6B7280]">
             {note}
@@ -37,16 +33,13 @@ export function ArchiveInspectionPanel({
     );
   }
 
-  const filtered = archive.entries.filter((e) =>
-    e.name.toLowerCase().includes(filter.toLowerCase()),
-  );
+  const filtered = archive.entries.filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()));
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#E5E7EB] bg-white p-3 shadow-sm">
         <p className="text-sm text-[#111827]">
-          {archive.entryCount} entr{archive.entryCount === 1 ? 'y' : 'ies'} ·{' '}
-          {archive.archiveType.toUpperCase()}
+          {archive.entryCount} entr{archive.entryCount === 1 ? "y" : "ies"} · {archive.archiveType.toUpperCase()}
         </p>
         <input
           type="search"
@@ -72,37 +65,21 @@ export function ArchiveInspectionPanel({
               <tr key={i} className="hover:bg-[#F9FAFB]">
                 <td className="px-4 py-2 font-mono text-[#111827]">
                   {entry.isDirectory ? `${entry.name}` : entry.name}
-                  {entry.isDirectory && (
-                    <span className="ml-2 text-xs text-[#9CA3AF]">
-                      (directory)
-                    </span>
-                  )}
+                  {entry.isDirectory && <span className="ml-2 text-xs text-[#9CA3AF]">(directory)</span>}
                 </td>
-                <td className="px-4 py-2 font-mono text-[#6B7280]">
-                  {formatBytes(entry.compressedSize)}
-                </td>
-                <td className="px-4 py-2 font-mono text-[#6B7280]">
-                  {formatBytes(entry.uncompressedSize)}
-                </td>
-                <td className="px-4 py-2 text-[#6B7280]">
-                  {entry.compressionMethod}
-                </td>
+                <td className="px-4 py-2 font-mono text-[#6B7280]">{formatBytes(entry.compressedSize)}</td>
+                <td className="px-4 py-2 font-mono text-[#6B7280]">{formatBytes(entry.uncompressedSize)}</td>
+                <td className="px-4 py-2 text-[#6B7280]">{entry.compressionMethod}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {filtered.length === 0 && (
-          <p className="p-4 text-sm text-[#6B7280]">
-            No entries match your filter.
-          </p>
-        )}
+        {filtered.length === 0 && <p className="p-4 text-sm text-[#6B7280]">No entries match your filter.</p>}
       </div>
 
       {archive.limitations.length > 0 && (
         <div className="rounded-[12px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
-            Notes
-          </p>
+          <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Notes</p>
           {archive.limitations.map((note, i) => (
             <p key={i} className="mt-1 text-xs text-[#6B7280]">
               {note}
@@ -112,8 +89,7 @@ export function ArchiveInspectionPanel({
       )}
 
       <div className="rounded-[10px] border border-[#E5E7EB] bg-white px-4 py-2 text-xs text-[#6B7280]">
-        Contents are listed only. Extraction is a separate, explicit action and
-        is not performed automatically.
+        Contents are listed only. Extraction is a separate, explicit action and is not performed automatically.
       </div>
     </div>
   );

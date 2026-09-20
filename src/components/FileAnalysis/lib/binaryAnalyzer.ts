@@ -1,7 +1,4 @@
-import type {
-  BinaryStatistics,
-  ByteFrequencyEntry,
-} from '../types/fileAnalysis';
+import type { BinaryStatistics, ByteFrequencyEntry } from "../types/fileAnalysis";
 
 const DEFAULT_MIN_TEXT_REGION_LENGTH = 8;
 /** Cap the number of bytes actually scanned for expensive stats on huge files. */
@@ -27,18 +24,14 @@ function computeEntropy(freq: Uint32Array, sampleSize: number): number {
   return entropy;
 }
 
-function findTextRegions(
-  data: Uint8Array,
-  minLength: number,
-): { offset: number; length: number }[] {
+function findTextRegions(data: Uint8Array, minLength: number): { offset: number; length: number }[] {
   const regions: { offset: number; length: number }[] = [];
   let runStart = -1;
   for (let i = 0; i < data.length; i++) {
     if (isPrintable(data[i])) {
       if (runStart === -1) runStart = i;
     } else if (runStart !== -1) {
-      if (i - runStart >= minLength)
-        regions.push({ offset: runStart, length: i - runStart });
+      if (i - runStart >= minLength) regions.push({ offset: runStart, length: i - runStart });
       runStart = -1;
     }
   }
@@ -60,17 +53,12 @@ export interface BinaryAnalysisOptions {
  * stays responsive; callers should surface that this is a sample, not the
  * whole file, when `data.length > sampleLimit`.
  */
-export function analyzeBinary(
-  data: Uint8Array,
-  options: BinaryAnalysisOptions = {},
-): BinaryStatistics {
+export function analyzeBinary(data: Uint8Array, options: BinaryAnalysisOptions = {}): BinaryStatistics {
   const sampleLimit = options.sampleLimit ?? DEFAULT_SAMPLE_LIMIT;
-  const minTextRegionLength =
-    options.minTextRegionLength ?? DEFAULT_MIN_TEXT_REGION_LENGTH;
+  const minTextRegionLength = options.minTextRegionLength ?? DEFAULT_MIN_TEXT_REGION_LENGTH;
   const topByteCount = options.topByteCount ?? 8;
 
-  const sample =
-    data.length > sampleLimit ? data.subarray(0, sampleLimit) : data;
+  const sample = data.length > sampleLimit ? data.subarray(0, sampleLimit) : data;
 
   const freq = new Uint32Array(256);
   let printableCount = 0;
@@ -83,8 +71,7 @@ export function analyzeBinary(
   }
 
   const entropyEstimate = computeEntropy(freq, sample.length);
-  const printableRatio =
-    sample.length === 0 ? 0 : printableCount / sample.length;
+  const printableRatio = sample.length === 0 ? 0 : printableCount / sample.length;
   const nullByteRatio = sample.length === 0 ? 0 : nullCount / sample.length;
 
   const topBytes: ByteFrequencyEntry[] = Array.from(freq)
@@ -93,10 +80,7 @@ export function analyzeBinary(
     .sort((a, b) => b.count - a.count)
     .slice(0, topByteCount);
 
-  const detectedTextRegions = findTextRegions(
-    sample,
-    minTextRegionLength,
-  ).slice(0, 200);
+  const detectedTextRegions = findTextRegions(sample, minTextRegionLength).slice(0, 200);
 
   return {
     sizeBytes: data.length,
