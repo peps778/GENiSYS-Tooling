@@ -1,4 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect, useState, type ReactNode } from 'react';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 import DecodingEncodingPage from '../components/DecodingEncoding/DecodingEncodingPage';
 import Sidebar from '../components/Navigation/Sidebar';
 import HeapDump from './HeapDump_MemoryAnalysis';
@@ -9,31 +12,134 @@ import Networking from '../components/Networking/';
 import NotesSOP from './NotesSOP';
 import OSINT from './OSINT'
 import {WebSecurityCTFPage} from './WebAutomation_Exploit'
+import Login from '../Authentication/Login';
+import Registration from '../Authentication/Registration';
 
+type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
+
+/**
+ * Tracks Firebase auth state. A user only counts as "authenticated" for
+ * routing purposes once their email is verified — an unverified account
+ * is treated the same as signed-out here (Login.tsx handles showing them
+ * the verification screen instead of silently redirecting them away).
+ */
+function useAuthStatus(): AuthStatus {
+  const [status, setStatus] = useState<AuthStatus>('loading');
+
+  useEffect(() => {
+    console.log('[AUTH] Initial auth status: loading');
+
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      console.log('[AUTH] Firebase auth state changed');
+      console.log('[AUTH] User:', user?.email ?? 'none');
+      console.log('[AUTH] Email verified:', user?.emailVerified ?? false);
+
+      if (user && user.emailVerified) {
+        console.log('[AUTH] Status: authenticated');
+        setStatus('authenticated');
+        return;
+      }
+
+      if (user && !user.emailVerified) {
+        console.log('[AUTH] Status: unauthenticated - email not verified');
+        setStatus('unauthenticated');
+        return;
+      }
+
+      console.log('[AUTH] Status: unauthenticated - no Firebase user');
+      setStatus('unauthenticated');
+    });
+
+    return () => {
+      console.log('[AUTH] Removing Firebase auth listener');
+      unsubscribe();
+    };
+  }, []);
+
+  return status;
+}
+
+/**
+ * Wraps /login and /registration. While Firebase is still resolving the
+ * session, the requested form (Login or Registration) renders as-is —
+ * there is nothing to bounce away from yet. Once resolved, a signed-in
+ * user is redirected to "/".
+ */
+function PublicOnlyRoute({ children }: { children: ReactNode }) {
+  const status = useAuthStatus();
+
+  if (status === 'authenticated') return <Navigate to="/" replace />;
+
+  return <>{children}</>;
+}
+
+/**
+ * Wraps the existing app shell. Login is rendered immediately — both
+ * while Firebase is still resolving the session AND once it resolves to
+ * signed-out — so a reload always shows Login first rather than a
+ * generic loading state or a flash of protected content.
+ */
+function ProtectedLayout() {
+  const status = useAuthStatus();
+
+  console.log('[ROUTER] ProtectedLayout status:', status);
+
+  if (status === 'loading') {
+    console.log('[ROUTER] Auth still loading');
+    return <Login />;
+  }
+
+  if (status === 'unauthenticated') {
+    console.log('[ROUTER] Unauthenticated → redirecting to /login');
+    return <Navigate to="/login" replace />;
+  }
+
+  console.log('[ROUTER] Authenticated → rendering protected application');
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+
+      <main className="min-h-screen lg:pl-64">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/heap" element={<HeapDump />} />
+          <Route path="/decode" element={<DecodingEncodingPage />} />
+          <Route path="/files" element={<FileAnalysisPage />} />
+          <Route path="/linux" element={<LinuxDocs />} />
+          <Route path="/networking" element={<Networking />} />
+          <Route path="/notes" element={<NotesSOP />} />
+          <Route path="/osint" element={<OSINT />} />
+          <Route path="/web" element={<WebSecurityCTFPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
 
 export default function GenisysApp() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-        <Sidebar />
-
-        <main className="min-h-screen lg:pl-64">
-          <Routes>
-            {/* no content pa si dashboard */}
-            <Route path="/" element={<Dashboard />} />
-
-            <Route path="/heap" element={<HeapDump />} />
-
-            <Route path="/decode" element={<DecodingEncodingPage />} />
-            <Route path="/files" element={<FileAnalysisPage />} />
-            <Route path="/linux" element={<LinuxDocs />} />
-            <Route path="/networking" element={<Networking />} />
-            <Route path="/notes" element={<NotesSOP />} />
-            <Route path="/osint" element={<OSINT />} /> 
-            <Route path="/web" element={<WebSecurityCTFPage />} />
-          </Routes>
-        </main>
-      </div>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Login />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/registration"
+          element={
+            <PublicOnlyRoute>
+              <Registration />
+            </PublicOnlyRoute>
+          }
+        />
+        {/* Everything else requires a verified, signed-in user. */}
+        <Route path="/*" element={<ProtectedLayout />} />
+      </Routes>
     </BrowserRouter>
   );
 }

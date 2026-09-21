@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { logout } from '../../Authentication/logout';
 
 interface NavigationItem {
   label: string;
@@ -231,6 +232,22 @@ function Icon({ name }: { name: string }) {
         </svg>
       );
 
+    case 'logout':
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+          <path d="M21 3v18" />
+        </svg>
+      );
+
     default:
       return null;
   }
@@ -370,6 +387,18 @@ export default function Sidebar() {
 
         {/* Footer */}
         <div className="border-t border-gray-200 px-6 py-4">
+          <button
+            type="button"
+            onClick={logout}
+            className="group mb-4 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-green-50 hover:text-green-700"
+          >
+            <span className="text-gray-400 transition-colors group-hover:text-green-600">
+              <Icon name="logout" />
+            </span>
+
+            <span>Log out</span>
+          </button>
+
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-medium text-green-700">
               GENiSYS Tooling
