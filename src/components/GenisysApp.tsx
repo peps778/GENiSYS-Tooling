@@ -4,16 +4,17 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import DecodingEncodingPage from '../components/DecodingEncoding/DecodingEncodingPage';
 import Sidebar from '../components/Navigation/Sidebar';
+import { SidebarCollapseProvider, useSidebarCollapseContext } from '../components/Navigation/SidebarCollapseContext';
 import HeapDump from './HeapDump_MemoryAnalysis';
 import Dashboard from './Dashboard';
 import { FileAnalysisPage } from '../components/FileAnalysis';
 import LinuxDocs from '../components/LinuxDocs/';
 import Networking from '../components/Networking/';
 import NotesSOP from './NotesSOP';
-import OSINT from './OSINT'
-import {WebSecurityCTFPage} from './WebAutomation_Exploit'
-import Login from '../Authentication/Login';
-import Registration from '../Authentication/Registration';
+import OSINT from './OSINT';
+import { WebSecurityCTFPage } from './WebAutomation_Exploit';
+import Login from '../Authentication/Login/Login';
+import Registration from '../Authentication/Registration/RegistrationPage';
 
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -74,6 +75,37 @@ function PublicOnlyRoute({ children }: { children: ReactNode }) {
 }
 
 /**
+ * The authenticated app shell: sidebar + routed page content. Split out
+ * from ProtectedLayout so it can sit inside SidebarCollapseProvider and
+ * read the shared collapsed state via context — the main content's left
+ * offset has to track the sidebar's current width, not just its expanded
+ * width.
+ */
+function ProtectedShell() {
+  const { collapsed } = useSidebarCollapseContext();
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+
+      <main className={`min-h-screen ${collapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/heap" element={<HeapDump />} />
+          <Route path="/decode" element={<DecodingEncodingPage />} />
+          <Route path="/files" element={<FileAnalysisPage />} />
+          <Route path="/linux" element={<LinuxDocs />} />
+          <Route path="/networking" element={<Networking />} />
+          <Route path="/notes" element={<NotesSOP />} />
+          <Route path="/osint" element={<OSINT />} />
+          <Route path="/web" element={<WebSecurityCTFPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+/**
  * Wraps the existing app shell. Login is rendered immediately — both
  * while Firebase is still resolving the session AND once it resolves to
  * signed-out — so a reload always shows Login first rather than a
@@ -97,23 +129,9 @@ function ProtectedLayout() {
   console.log('[ROUTER] Authenticated → rendering protected application');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-
-      <main className="min-h-screen lg:pl-64">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/heap" element={<HeapDump />} />
-          <Route path="/decode" element={<DecodingEncodingPage />} />
-          <Route path="/files" element={<FileAnalysisPage />} />
-          <Route path="/linux" element={<LinuxDocs />} />
-          <Route path="/networking" element={<Networking />} />
-          <Route path="/notes" element={<NotesSOP />} />
-          <Route path="/osint" element={<OSINT />} />
-          <Route path="/web" element={<WebSecurityCTFPage />} />
-        </Routes>
-      </main>
-    </div>
+    <SidebarCollapseProvider>
+      <ProtectedShell />
+    </SidebarCollapseProvider>
   );
 }
 

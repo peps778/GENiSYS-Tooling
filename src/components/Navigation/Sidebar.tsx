@@ -2,259 +2,14 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { logout } from '../../Authentication/logout';
 
-interface NavigationItem {
-  label: string;
-  href: string;
-  icon: string;
-  title?: string;
-}
-
-/**
- * Primary navigation definitions.
- *
- * Routes are handled by React Router so the persistent application shell
- * remains mounted while only the active tool view changes.
- */
-const navigationItems: NavigationItem[] = [
-  {
-    label: 'Decoding / Encoding',
-    href: '/decode',
-    icon: 'decode',
-    // title: "GENiSYS | Decoder/Encoder"
-  },
-  {
-    label: 'File Analysis',
-    href: '/files',
-    icon: 'file',
-    // title: "GENiSYS | File Analyzer"
-  },
-  {
-    label: 'Heap Dump / Memory',
-    href: '/heap',
-    icon: 'memory',
-    // title: "GENiSYS | Memory Dump"
-  },
-  {
-    label: 'Linux Docs',
-    href: '/linux',
-    icon: 'terminal',
-    // title: "GENiSYS | Create Linux Commands"
-  },
-  // {
-  //   label: "Navigation",
-  //   href: "/navigation",
-  //   icon: "navigation",
-  // },
-  {
-    label: 'Networking',
-    href: '/networking',
-    icon: 'network',
-    // title: "GENiSYS | Networking Docs and Tools"
-  },
-  {
-    label: 'Notes / SOP',
-    href: '/notes',
-    icon: 'notes',
-    title: 'GENiSYS | SOP for exploit and manuals',
-  },
-  {
-    label: 'OSINT',
-    href: '/osint',
-    icon: 'search',
-    // title: "GENiSYS | OSINT Resources"
-  },
-  {
-    label: 'Web Automation / Exploit',
-    href: '/web',
-    icon: 'web',
-    // title: "GENiSYS | Automate Web Exploit"
-  },
-];
-
-/**
- * Minimal SVG icon component.
- *
- * Inline SVGs avoid introducing an additional icon dependency while
- * keeping the navigation bundle lightweight and deterministic.
- */
-function Icon({ name }: { name: string }) {
-  const common = 'h-4 w-4 shrink-0 stroke-[1.8]';
-
-  switch (name) {
-    case 'decode':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M8 8l-3 4 3 4" />
-          <path d="M16 8l3 4-3 4" />
-          <path d="M14 5l-4 14" />
-        </svg>
-      );
-
-    case 'file':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <path d="M14 2v6h6" />
-          <path d="M8 13h8" />
-          <path d="M8 17h5" />
-        </svg>
-      );
-
-    case 'memory':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="4" y="6" width="16" height="12" rx="2" />
-          <path d="M8 10h8v4H8z" />
-          <path d="M8 2v4M12 2v4M16 2v4" />
-          <path d="M8 18v4M12 18v4M16 18v4" />
-        </svg>
-      );
-
-    case 'terminal':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="4" width="18" height="16" rx="2" />
-          <path d="m7 9 3 3-3 3" />
-          <path d="M13 15h4" />
-        </svg>
-      );
-
-    case 'navigation':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2v20" />
-          <path d="m8 6 4-4 4 4" />
-          <path d="M5 8h14" />
-          <path d="M5 16h14" />
-        </svg>
-      );
-
-    case 'network':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="5" r="2.5" />
-          <circle cx="5" cy="18" r="2.5" />
-          <circle cx="19" cy="18" r="2.5" />
-          <path d="M10.5 7 6.5 16" />
-          <path d="M13.5 7 17.5 16" />
-          <path d="M7.5 18h9" />
-        </svg>
-      );
-
-    case 'notes':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M5 4h14v16H5z" />
-          <path d="M8 8h8" />
-          <path d="M8 12h8" />
-          <path d="M8 16h5" />
-        </svg>
-      );
-
-    case 'search':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="6.5" />
-          <path d="m16 16 5 5" />
-        </svg>
-      );
-
-    case 'web':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18" />
-          <path d="M12 3c2.2 2.4 3.3 5.4 3.3 9s-1.1 6.6-3.3 9" />
-          <path d="M12 3c-2.2 2.4-3.3 5.4-3.3 9s1.1 6.6 3.3 9" />
-        </svg>
-      );
-
-    case 'logout':
-      return (
-        <svg
-          className={common}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M10 17l5-5-5-5" />
-          <path d="M15 12H3" />
-          <path d="M21 3v18" />
-        </svg>
-      );
-
-    default:
-      return null;
-  }
-}
+import { navigationItems } from '../Navigation/navigationItems';
+import { NavigationIcon } from '../Navigation/NavigationIcon';
+import { useSidebarCollapseContext } from '../Navigation/SidebarCollapseContext';
+import { CollapseToggleButton } from '../Navigation/CollapseToggleButton';
 
 export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { collapsed, toggleCollapsed } = useSidebarCollapseContext();
   const location = useLocation();
 
   /**
@@ -262,6 +17,11 @@ export default function Sidebar() {
    * synchronized with client-side route changes without full reloads.
    */
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
+
+  // Applied to text/decoration elements that should disappear only
+  // once the desktop rail is collapsed — the mobile drawer is always
+  // shown at full width, so `lg:hidden` has no effect there.
+  const hiddenWhenCollapsed = collapsed ? 'lg:hidden' : '';
 
   return (
     <>
@@ -310,19 +70,27 @@ export default function Sidebar() {
         className={[
           'fixed inset-y-0 left-0 z-40 flex w-64 flex-col',
           'border-r border-gray-200 bg-white',
-          'transition-transform duration-200',
+          'transition-[transform,width] duration-200',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
           'lg:translate-x-0',
+          collapsed ? 'lg:w-20' : 'lg:w-64',
         ].join(' ')}
       >
+        <CollapseToggleButton collapsed={collapsed} onToggle={toggleCollapsed} />
+
         {/* Brand */}
-        <div className="flex h-20 items-center border-b border-gray-200 px-6">
+        <div
+          className={[
+            'flex h-20 items-center border-b border-gray-200 px-6',
+            collapsed ? 'lg:justify-center lg:px-0' : '',
+          ].join(' ')}
+        >
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white">
               G
             </div>
 
-            <div>
+            <div className={hiddenWhenCollapsed}>
               <p className="text-sm font-semibold tracking-tight text-green-700">
                 GENiSYS
               </p>
@@ -338,7 +106,9 @@ export default function Sidebar() {
           aria-label="GENiSYS Tooling navigation"
           className="flex-1 overflow-y-auto px-3 py-5"
         >
-          <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+          <p
+            className={`mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 ${hiddenWhenCollapsed}`}
+          >
             Modules
           </p>
 
@@ -356,9 +126,11 @@ export default function Sidebar() {
                   to={item.href}
                   onClick={() => setMobileOpen(false)}
                   aria-current={isActive ? 'page' : undefined}
+                  title={collapsed ? item.label : undefined}
                   className={[
                     'group flex items-center gap-3 rounded-lg px-3 py-2.5',
                     'text-sm font-medium transition-colors duration-150',
+                    collapsed ? 'lg:justify-center lg:px-2' : '',
                     isActive
                       ? 'bg-green-50 text-green-700'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-950',
@@ -371,13 +143,15 @@ export default function Sidebar() {
                         : 'text-gray-400 group-hover:text-gray-600'
                     }
                   >
-                    <Icon name={item.icon} />
+                    <NavigationIcon name={item.icon} />
                   </span>
 
-                  <span className="truncate">{item.label}</span>
+                  <span className={`truncate ${hiddenWhenCollapsed}`}>{item.label}</span>
 
                   {isActive && (
-                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-green-600" />
+                    <span
+                      className={`ml-auto h-1.5 w-1.5 rounded-full bg-green-600 ${hiddenWhenCollapsed}`}
+                    />
                   )}
                 </Link>
               );
@@ -390,16 +164,21 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={logout}
-            className="group mb-4 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-green-50 hover:text-green-700"
+            title={collapsed ? 'Log out' : undefined}
+            className={[
+              'group mb-4 flex w-full items-center gap-3 rounded-lg px-3 py-2.5',
+              'text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-green-50 hover:text-green-700',
+              collapsed ? 'lg:justify-center lg:px-0' : '',
+            ].join(' ')}
           >
             <span className="text-gray-400 transition-colors group-hover:text-green-600">
-              <Icon name="logout" />
+              <NavigationIcon name="logout" />
             </span>
 
-            <span>Log out</span>
+            <span className={hiddenWhenCollapsed}>Log out</span>
           </button>
 
-          <div className="flex items-center justify-between">
+          <div className={`flex items-center justify-between ${hiddenWhenCollapsed}`}>
             <span className="text-[11px] font-medium text-green-700">
               GENiSYS Tooling
             </span>
