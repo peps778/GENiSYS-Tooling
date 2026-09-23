@@ -100,8 +100,8 @@ export interface SOPSection {
   description: string;
 }
 
-
-export type FlagLogStatus = 'candidate' | 'confirmed' | 'duplicate' | 'rejected';
+export type FlagLogStatus =
+  'candidate' | 'confirmed' | 'duplicate' | 'rejected';
 
 export interface FlagLogEntry {
   id: string;

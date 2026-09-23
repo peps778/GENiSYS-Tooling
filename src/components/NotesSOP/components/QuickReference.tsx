@@ -5,7 +5,9 @@ export default function QuickReference() {
   const [query, setQuery] = useState('');
   const [groupId, setGroupId] = useState(quickReferenceGroups[0]?.id ?? '');
 
-  const group = quickReferenceGroups.find((item) => item.id === groupId) ?? quickReferenceGroups[0];
+  const group =
+    quickReferenceGroups.find((item) => item.id === groupId) ??
+    quickReferenceGroups[0];
   const filteredItems = useMemo(() => {
     if (!group) return [];
     const normalized = query.trim().toLowerCase();
@@ -28,7 +30,10 @@ export default function QuickReference() {
               Reference areas
             </p>
           </div>
-          <nav className="max-h-[520px] overflow-y-auto p-2" aria-label="Quick reference areas">
+          <nav
+            className="max-h-[520px] overflow-y-auto p-2"
+            aria-label="Quick reference areas"
+          >
             {quickReferenceGroups.map((item) => (
               <button
                 key={item.id}
@@ -77,12 +82,19 @@ export default function QuickReference() {
 
           <div className="grid gap-3 p-3 sm:p-4 xl:grid-cols-2">
             {filteredItems.map((item) => (
-              <article key={item.id} className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+              <article
+                key={item.id}
+                className="overflow-hidden rounded-lg border border-slate-200 bg-white"
+              >
                 <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900">{item.name}</h3>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">{item.summary}</p>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        {item.name}
+                      </h3>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">
+                        {item.summary}
+                      </p>
                     </div>
                     <span className="shrink-0 rounded-md bg-white px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-400 ring-1 ring-slate-200">
                       ref
@@ -105,7 +117,10 @@ export default function QuickReference() {
                   </ul>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {item.tags.map((tag) => (
-                      <span key={tag} className="rounded bg-slate-100 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500">
+                      <span
+                        key={tag}
+                        className="rounded bg-slate-100 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500"
+                      >
                         {tag}
                       </span>
                     ))}

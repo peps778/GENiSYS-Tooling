@@ -41,8 +41,7 @@ export interface SanitizationResult {
 const CONTROL_CHARACTERS_PATTERN =
   /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 
-const EMAIL_FORMAT_PATTERN =
-  /^[^\s@"'<>;]+@[^\s@"'<>;]+\.[^\s@"'<>;]{2,}$/;
+const EMAIL_FORMAT_PATTERN = /^[^\s@"'<>;]+@[^\s@"'<>;]+\.[^\s@"'<>;]{2,}$/;
 
 /**
  * Sequences that are essentially never legitimate in an email address
@@ -90,7 +89,10 @@ export function sanitizeEmailInput(rawValue: string): SanitizationResult {
     return { value: cleaned, error: 'Email address is too long.' };
   }
 
-  if (matchesAny(cleaned, SQLI_PATTERNS) || matchesAny(cleaned, SSTI_PATTERNS)) {
+  if (
+    matchesAny(cleaned, SQLI_PATTERNS) ||
+    matchesAny(cleaned, SSTI_PATTERNS)
+  ) {
     return {
       value: cleaned,
       error: 'Email address contains characters that are not allowed.',
@@ -122,7 +124,10 @@ export function sanitizePasswordInput(rawValue: string): SanitizationResult {
     return { value: cleaned, error: 'Password is too long.' };
   }
 
-  if (matchesAny(cleaned, SQLI_PATTERNS) || matchesAny(cleaned, SSTI_PATTERNS)) {
+  if (
+    matchesAny(cleaned, SQLI_PATTERNS) ||
+    matchesAny(cleaned, SSTI_PATTERNS)
+  ) {
     return {
       value: cleaned,
       error: 'Password contains characters that are not allowed.',

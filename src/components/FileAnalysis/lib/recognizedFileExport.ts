@@ -1,5 +1,5 @@
-import type { AnalysisResult, FileIdentification } from "../types/fileAnalysis";
-import { decodeAsciiBitstream } from "./binaryTextDecoder";
+import type { AnalysisResult, FileIdentification } from '../types/fileAnalysis';
+import { decodeAsciiBitstream } from './binaryTextDecoder';
 
 export interface RecognizedFileExport {
   bytes: Uint8Array;
@@ -21,10 +21,10 @@ export interface RecognizedFileExport {
  */
 export function getRecognizedFileExport(
   result: AnalysisResult,
-  rawData: Uint8Array
+  rawData: Uint8Array,
 ): RecognizedFileExport | null {
   const whole = result.identification;
-  if (whole.confidence !== "unknown" && whole.expectedExtensions.length > 0) {
+  if (whole.confidence !== 'unknown' && whole.expectedExtensions.length > 0) {
     return {
       bytes: rawData,
       extension: whole.expectedExtensions[0],
@@ -35,7 +35,8 @@ export function getRecognizedFileExport(
   }
 
   if (result.encodedContent) {
-    const decodedId: FileIdentification = result.encodedContent.decodedIdentification;
+    const decodedId: FileIdentification =
+      result.encodedContent.decodedIdentification;
     if (decodedId.expectedExtensions.length > 0) {
       const decoded = decodeAsciiBitstream(rawData);
       if (decoded) {
@@ -55,7 +56,7 @@ export function getRecognizedFileExport(
 
 /** Swaps a filename's extension rather than appending one, so "digits.bin" -> "digits.jpg". */
 export function withExtension(filename: string, extension: string): string {
-  const idx = filename.lastIndexOf(".");
+  const idx = filename.lastIndexOf('.');
   const base = idx > 0 ? filename.slice(0, idx) : filename;
   return `${base}${extension}`;
 }

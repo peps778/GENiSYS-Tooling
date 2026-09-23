@@ -1,45 +1,53 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { FileDropzone } from "./components/FileDropzone";
-import { FileInfoPanel } from "./components/FileInfoPanel";
-import { AnalysisStatus } from "./components/AnalysisStatus";
-import { ToolCategoryNav, type AnalysisTabId } from "./components/ToolCategoryNav";
-import { DetectionResults } from "./components/DetectionResults";
-import { MetadataPanel } from "./components/MetadataPanel";
-import { StringsPanel } from "./components/StringsPanel";
-import { HexViewer } from "./components/HexViewer";
-import { ImageAnalysisPanel } from "./components/ImageAnalysisPanel";
-import { ArchiveInspectionPanel } from "./components/ArchiveInspectionPanel";
-import { SteganographyPanel } from "./components/SteganographyPanel";
-import { RecoveryConceptsPanel } from "./components/RecoveryConceptsPanel";
-import { BinaryAnalysisPanel } from "./components/BinaryAnalysisPanel";
-import { ExportActions, exportCandidateAsFile, exportStringsAsText, exportDecodedContent } from "./components/ExportActions";
+import { FileDropzone } from './components/FileDropzone';
+import { FileInfoPanel } from './components/FileInfoPanel';
+import { AnalysisStatus } from './components/AnalysisStatus';
+import {
+  ToolCategoryNav,
+  type AnalysisTabId,
+} from './components/ToolCategoryNav';
+import { DetectionResults } from './components/DetectionResults';
+import { MetadataPanel } from './components/MetadataPanel';
+import { StringsPanel } from './components/StringsPanel';
+import { HexViewer } from './components/HexViewer';
+import { ImageAnalysisPanel } from './components/ImageAnalysisPanel';
+import { ArchiveInspectionPanel } from './components/ArchiveInspectionPanel';
+import { SteganographyPanel } from './components/SteganographyPanel';
+import { RecoveryConceptsPanel } from './components/RecoveryConceptsPanel';
+import { BinaryAnalysisPanel } from './components/BinaryAnalysisPanel';
+import {
+  ExportActions,
+  exportCandidateAsFile,
+  exportStringsAsText,
+  exportDecodedContent,
+} from './components/ExportActions';
 
-import { FileAnalysisWorkerClient } from "./lib/fileAnalysisWorkerClient";
-import { analyzeImage } from "./lib/imageAnalyzer";
-import { decodeAsciiBitstream } from "./lib/binaryTextDecoder";
+import { FileAnalysisWorkerClient } from './lib/fileAnalysisWorkerClient';
+import { analyzeImage } from './lib/imageAnalyzer';
+import { decodeAsciiBitstream } from './lib/binaryTextDecoder';
 
 import type {
   AnalysisProgress,
   AnalysisResult,
   EmbeddedFileCandidate,
   LoadedFileSummary,
-} from "./types/fileAnalysis";
+} from './types/fileAnalysis';
 
 const IMAGE_FORMATS = new Set([
-  "PNG image",
-  "JPEG image",
-  "GIF image",
-  "BMP image",
-  "WebP image",
-  "TIFF image (little-endian)",
-  "TIFF image (big-endian)",
+  'PNG image',
+  'JPEG image',
+  'GIF image',
+  'BMP image',
+  'WebP image',
+  'TIFF image (little-endian)',
+  'TIFF image (big-endian)',
 ]);
 
 const IDLE_PROGRESS: AnalysisProgress = {
-  stage: "idle",
+  stage: 'idle',
   percent: null,
-  message: "Select a file to begin.",
+  message: 'Select a file to begin.',
   processedBytes: null,
   totalBytes: null,
   startedAt: null,
@@ -47,21 +55,30 @@ const IDLE_PROGRESS: AnalysisProgress = {
 };
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs font-medium tracking-wide text-[#16A34A]">{children}</p>;
+  return (
+    <p className="text-xs font-medium tracking-wide text-[#16A34A]">
+      {children}
+    </p>
+  );
 }
 
 export function FileAnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
   const [rawData, setRawData] = useState<Uint8Array | null>(null);
-  const [fileSummary, setFileSummary] = useState<LoadedFileSummary | null>(null);
+  const [fileSummary, setFileSummary] = useState<LoadedFileSummary | null>(
+    null,
+  );
   const [progress, setProgress] = useState<AnalysisProgress>(IDLE_PROGRESS);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [activeTab, setActiveTab] = useState<AnalysisTabId>("overview");
+  const [activeTab, setActiveTab] = useState<AnalysisTabId>('overview');
   const [imageObjectUrl, setImageObjectUrl] = useState<string | null>(null);
   const [hashInProgress, setHashInProgress] = useState(false);
   const [stringsMinLength, setStringsMinLength] = useState(4);
   const [stringsLoading, setStringsLoading] = useState(false);
-  const [hexJump, setHexJump] = useState<{ offset: number | null; nonce: number }>({ offset: null, nonce: 0 });
+  const [hexJump, setHexJump] = useState<{
+    offset: number | null;
+    nonce: number;
+  }>({ offset: null, nonce: 0 });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const workerClientRef = useRef<FileAnalysisWorkerClient | null>(null);
@@ -91,7 +108,7 @@ export function FileAnalysisPage() {
     }
     setImageObjectUrl(null);
     setResult(null);
-    setActiveTab("overview");
+    setActiveTab('overview');
     setErrorMessage(null);
     setStringsMinLength(4);
   }, []);
@@ -103,9 +120,9 @@ export function FileAnalysisPage() {
 
       const startedAt = Date.now();
       setProgress({
-        stage: "reading",
+        stage: 'reading',
         percent: 5,
-        message: "Reading file into memory...",
+        message: 'Reading file into memory...',
         processedBytes: null,
         totalBytes: selectedFile.size,
         startedAt,
@@ -117,9 +134,9 @@ export function FileAnalysisPage() {
         buffer = await selectedFile.arrayBuffer();
       } catch {
         setProgress({
-          stage: "error",
+          stage: 'error',
           percent: null,
-          message: "Could not read the selected file.",
+          message: 'Could not read the selected file.',
           processedBytes: null,
           totalBytes: selectedFile.size,
           startedAt,
@@ -161,12 +178,14 @@ export function FileAnalysisPage() {
         onResult: (analysisResult) => {
           setResult(analysisResult);
           setFileSummary((prev) =>
-            prev ? { ...prev, identification: analysisResult.identification } : prev
+            prev
+              ? { ...prev, identification: analysisResult.identification }
+              : prev,
           );
           setProgress({
-            stage: "ready",
+            stage: 'ready',
             percent: 100,
-            message: "Analysis complete.",
+            message: 'Analysis complete.',
             processedBytes: null,
             totalBytes: selectedFile.size,
             startedAt,
@@ -182,7 +201,7 @@ export function FileAnalysisPage() {
         onError: (message) => {
           setErrorMessage(message);
           setProgress({
-            stage: "error",
+            stage: 'error',
             percent: null,
             message,
             processedBytes: null,
@@ -193,9 +212,9 @@ export function FileAnalysisPage() {
         },
         onCancelled: () => {
           setProgress({
-            stage: "cancelled",
+            stage: 'cancelled',
             percent: null,
-            message: "Analysis cancelled.",
+            message: 'Analysis cancelled.',
             processedBytes: null,
             totalBytes: selectedFile.size,
             startedAt,
@@ -204,7 +223,7 @@ export function FileAnalysisPage() {
         },
       });
     },
-    [getWorkerClient, resetForNewFile]
+    [getWorkerClient, resetForNewFile],
   );
 
   const handleCancel = useCallback(() => {
@@ -232,25 +251,30 @@ export function FileAnalysisPage() {
       if (!rawData) return;
       setStringsLoading(true);
       const client = getWorkerClient();
-      client.extractStrings(rawData, length, "ascii", {
+      client.extractStrings(rawData, length, 'ascii', {
         onResult: (stringsResult) => {
           setStringsLoading(false);
-          setResult((prev) => (prev ? { ...prev, strings: stringsResult } : prev));
+          setResult((prev) =>
+            prev ? { ...prev, strings: stringsResult } : prev,
+          );
         },
         onError: () => setStringsLoading(false),
       });
     },
-    [rawData, getWorkerClient]
+    [rawData, getWorkerClient],
   );
 
-  const handleInspectCandidate = useCallback((candidate: EmbeddedFileCandidate) => {
-    setHexJump({ offset: candidate.offset, nonce: Date.now() });
-    setActiveTab("hex");
-  }, []);
+  const handleInspectCandidate = useCallback(
+    (candidate: EmbeddedFileCandidate) => {
+      setHexJump({ offset: candidate.offset, nonce: Date.now() });
+      setActiveTab('hex');
+    },
+    [],
+  );
 
   const handleOpenInHexViewer = useCallback((offset: number) => {
     setHexJump({ offset, nonce: Date.now() });
-    setActiveTab("hex");
+    setActiveTab('hex');
   }, []);
 
   const handleExportCandidate = useCallback(
@@ -258,7 +282,7 @@ export function FileAnalysisPage() {
       if (!fileSummary || !rawData) return;
       exportCandidateAsFile(fileSummary, candidate, rawData);
     },
-    [fileSummary, rawData]
+    [fileSummary, rawData],
   );
 
   const handleOpenDecodedContent = useCallback(() => {
@@ -266,11 +290,15 @@ export function FileAnalysisPage() {
     const decoded = decodeAsciiBitstream(rawData);
     if (!decoded) return;
     const decodedIdentification = result.encodedContent.decodedIdentification;
-    const extension = decodedIdentification.expectedExtensions[0] ?? ".bin";
-    const mime = decodedIdentification.mime ?? "application/octet-stream";
-    const decodedFile = new File([decoded as unknown as BlobPart], `${fileSummary.name}.decoded${extension}`, {
-      type: mime,
-    });
+    const extension = decodedIdentification.expectedExtensions[0] ?? '.bin';
+    const mime = decodedIdentification.mime ?? 'application/octet-stream';
+    const decodedFile = new File(
+      [decoded as unknown as BlobPart],
+      `${fileSummary.name}.decoded${extension}`,
+      {
+        type: mime,
+      },
+    );
     handleFileSelected(decodedFile);
   }, [rawData, fileSummary, result, handleFileSelected]);
 
@@ -279,28 +307,48 @@ export function FileAnalysisPage() {
     const decoded = decodeAsciiBitstream(rawData);
     if (!decoded) return;
     const decodedIdentification = result.encodedContent.decodedIdentification;
-    const extension = decodedIdentification.expectedExtensions[0] ?? ".bin";
-    exportDecodedContent(fileSummary, decoded, extension, decodedIdentification.mime);
+    const extension = decodedIdentification.expectedExtensions[0] ?? '.bin';
+    exportDecodedContent(
+      fileSummary,
+      decoded,
+      extension,
+      decodedIdentification.mime,
+    );
   }, [rawData, fileSummary, result]);
 
-  const identification = result?.identification ?? fileSummary?.identification ?? null;
-  const isImage = identification ? IMAGE_FORMATS.has(identification.detectedType) : false;
-  const isArchive = identification ? identification.detectedType.startsWith("ZIP archive") : false;
+  const identification =
+    result?.identification ?? fileSummary?.identification ?? null;
+  const isImage = identification
+    ? IMAGE_FORMATS.has(identification.detectedType)
+    : false;
+  const isArchive = identification
+    ? identification.detectedType.startsWith('ZIP archive')
+    : false;
   const image =
     result && isImage && rawData && identification
-      ? analyzeImage(rawData, identification.detectedType, identification.mime, imageObjectUrl)
+      ? analyzeImage(
+          rawData,
+          identification.detectedType,
+          identification.mime,
+          imageObjectUrl,
+        )
       : null;
 
-  const isBusy = !["idle", "ready", "error", "cancelled"].includes(progress.stage);
+  const isBusy = !['idle', 'ready', 'error', 'cancelled'].includes(
+    progress.stage,
+  );
 
   return (
     <div className="flex flex-col gap-6 bg-[#F9FAFB] p-6">
       <header className="max-w-3xl">
         <Eyebrow>DIGITAL FORENSICS</Eyebrow>
-        <h1 className="mt-1 text-xl font-semibold text-[#111827]">Forensics / File Analysis</h1>
+        <h1 className="mt-1 text-xl font-semibold text-[#111827]">
+          Forensics / File Analysis
+        </h1>
         <p className="mt-1 text-sm text-[#6B7280]">
-          Identify, inspect, and analyze files for metadata, strings, binary structures, file
-          signatures, embedded content, archives, images, and other forensic artifacts.
+          Identify, inspect, and analyze files for metadata, strings, binary
+          structures, file signatures, embedded content, archives, images, and
+          other forensic artifacts.
         </p>
       </header>
 
@@ -317,7 +365,9 @@ export function FileAnalysisPage() {
             />
           )}
 
-          {file && <AnalysisStatus progress={progress} onCancel={handleCancel} />}
+          {file && (
+            <AnalysisStatus progress={progress} onCancel={handleCancel} />
+          )}
 
           {errorMessage && (
             <div className="rounded-[10px] border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
@@ -326,7 +376,11 @@ export function FileAnalysisPage() {
           )}
 
           {result && fileSummary && rawData && (
-            <ExportActions fileSummary={fileSummary} result={result} rawData={rawData} />
+            <ExportActions
+              fileSummary={fileSummary}
+              result={result}
+              rawData={rawData}
+            />
           )}
         </div>
 
@@ -334,7 +388,8 @@ export function FileAnalysisPage() {
         <div className="min-w-0">
           {!fileSummary ? (
             <div className="flex h-full min-h-[320px] items-center justify-center rounded-[12px] border border-dashed border-[#E5E7EB] bg-white text-sm text-[#9CA3AF]">
-              Load a file to see identification, metadata, strings, hex, and analysis results here.
+              Load a file to see identification, metadata, strings, hex, and
+              analysis results here.
             </div>
           ) : !result ? (
             <div className="flex h-full min-h-[320px] items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-white text-sm text-[#6B7280]">
@@ -349,10 +404,10 @@ export function FileAnalysisPage() {
                 showArchiveTab={isArchive}
               />
 
-              {activeTab === "overview" && (
+              {activeTab === 'overview' && (
                 <OverviewTab fileSummary={fileSummary} result={result} />
               )}
-              {activeTab === "identification" && (
+              {activeTab === 'identification' && (
                 <DetectionResults
                   identification={result.identification}
                   encodedContent={result.encodedContent}
@@ -360,36 +415,41 @@ export function FileAnalysisPage() {
                   onExportDecodedContent={handleExportDecodedContent}
                 />
               )}
-              {activeTab === "metadata" && <MetadataPanel metadata={result.metadata} />}
-              {activeTab === "strings" && (
+              {activeTab === 'metadata' && (
+                <MetadataPanel metadata={result.metadata} />
+              )}
+              {activeTab === 'strings' && (
                 <StringsPanel
                   result={result.strings}
                   minLength={stringsMinLength}
                   onMinLengthChange={handleMinLengthChange}
                   onExport={() => {
-                    if (fileSummary && result) exportStringsAsText(fileSummary, result);
+                    if (fileSummary && result)
+                      exportStringsAsText(fileSummary, result);
                   }}
                   loading={stringsLoading}
                 />
               )}
-              {activeTab === "hex" && rawData && (
+              {activeTab === 'hex' && rawData && (
                 <HexViewer
                   data={rawData}
                   externalJumpOffset={hexJump.offset}
                   externalJumpNonce={hexJump.nonce}
                 />
               )}
-              {activeTab === "image" && image && <ImageAnalysisPanel image={image} />}
-              {activeTab === "archive" && result.archive && (
+              {activeTab === 'image' && image && (
+                <ImageAnalysisPanel image={image} />
+              )}
+              {activeTab === 'archive' && result.archive && (
                 <ArchiveInspectionPanel archive={result.archive} />
               )}
-              {activeTab === "steganography" && (
+              {activeTab === 'steganography' && (
                 <SteganographyPanel
                   findings={result.anomalies}
                   detectedFormat={result.identification.detectedType}
                 />
               )}
-              {activeTab === "recovery" && (
+              {activeTab === 'recovery' && (
                 <RecoveryConceptsPanel
                   candidates={result.embeddedCandidates}
                   onInspect={handleInspectCandidate}
@@ -397,7 +457,7 @@ export function FileAnalysisPage() {
                   onExport={handleExportCandidate}
                 />
               )}
-              {activeTab === "binary" && result.binaryStatistics && (
+              {activeTab === 'binary' && result.binaryStatistics && (
                 <BinaryAnalysisPanel stats={result.binaryStatistics} />
               )}
             </div>
@@ -416,26 +476,32 @@ function OverviewTab({
   result: AnalysisResult;
 }) {
   const extensionNote = result.identification.extensionMismatch
-    ? `Extension mismatch: reported ${result.identification.reportedExtension || "(none)"}, detected ${result.identification.detectedType}`
+    ? `Extension mismatch: reported ${result.identification.reportedExtension || '(none)'}, detected ${result.identification.detectedType}`
     : `Extension matches detected format`;
 
   const findings: string[] = [extensionNote];
   if (result.encodedContent) {
     findings.push(
-      `File content is ASCII binary-text; decoded bytes identify as ${result.encodedContent.decodedIdentification.detectedType} — see Identification tab`
+      `File content is ASCII binary-text; decoded bytes identify as ${result.encodedContent.decodedIdentification.detectedType} — see Identification tab`,
     );
   }
   if (result.embeddedCandidates.length > 0) {
-    findings.push(`${result.embeddedCandidates.length} embedded signature candidate(s) detected`);
+    findings.push(
+      `${result.embeddedCandidates.length} embedded signature candidate(s) detected`,
+    );
   }
   if (result.anomalies.length > 0) {
-    findings.push(`${result.anomalies.length} anomaly finding(s) reported — see Steganography tab`);
+    findings.push(
+      `${result.anomalies.length} anomaly finding(s) reported — see Steganography tab`,
+    );
   }
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div className="rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">File Overview</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
+          File Overview
+        </p>
         <dl className="mt-3 space-y-2 text-sm">
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Filename</dt>
@@ -443,47 +509,63 @@ function OverviewTab({
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Size</dt>
-            <dd className="text-right font-mono text-[#111827]">{fileSummary.sizeBytes.toLocaleString()} bytes</dd>
+            <dd className="text-right font-mono text-[#111827]">
+              {fileSummary.sizeBytes.toLocaleString()} bytes
+            </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Detected Type</dt>
-            <dd className="text-right text-[#111827]">{result.identification.detectedType}</dd>
+            <dd className="text-right text-[#111827]">
+              {result.identification.detectedType}
+            </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">MIME</dt>
-            <dd className="text-right font-mono text-[#111827]">{result.identification.mime ?? "—"}</dd>
+            <dd className="text-right font-mono text-[#111827]">
+              {result.identification.mime ?? '—'}
+            </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Signature</dt>
             <dd className="text-right font-mono text-[#111827]">
-              {result.identification.signature?.magicHex ?? "—"}
+              {result.identification.signature?.magicHex ?? '—'}
             </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">SHA-256</dt>
-            <dd className="text-right font-mono text-[#111827]">{fileSummary.sha256 ?? "Not calculated"}</dd>
+            <dd className="text-right font-mono text-[#111827]">
+              {fileSummary.sha256 ?? 'Not calculated'}
+            </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Strings</dt>
             <dd className="text-right text-[#111827]">
-              {result.strings ? `${result.strings.totalFound.toLocaleString()} candidates` : "—"}
+              {result.strings
+                ? `${result.strings.totalFound.toLocaleString()} candidates`
+                : '—'}
             </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Embedded Files</dt>
-            <dd className="text-right text-[#111827]">{result.embeddedCandidates.length} candidates</dd>
+            <dd className="text-right text-[#111827]">
+              {result.embeddedCandidates.length} candidates
+            </dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-[#6B7280]">Metadata</dt>
             <dd className="text-right text-[#111827]">
-              {result.metadata.fields.some((f) => f.status === "available") ? "Available" : "Limited"}
+              {result.metadata.fields.some((f) => f.status === 'available')
+                ? 'Available'
+                : 'Limited'}
             </dd>
           </div>
         </dl>
       </div>
 
       <div className="rounded-[12px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Potential Findings</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
+          Potential Findings
+        </p>
         <ul className="mt-3 space-y-2">
           {findings.map((finding, i) => (
             <li key={i} className="flex gap-2 text-sm text-[#111827]">
@@ -493,8 +575,9 @@ function OverviewTab({
           ))}
         </ul>
         <p className="mt-4 text-xs text-[#9CA3AF]">
-          Findings reflect what the checks in this tool could observe. They are not a malware or
-          integrity verdict — interpret them alongside the detailed tabs.
+          Findings reflect what the checks in this tool could observe. They are
+          not a malware or integrity verdict — interpret them alongside the
+          detailed tabs.
         </p>
       </div>
     </div>

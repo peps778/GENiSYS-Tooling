@@ -1,1 +1,1 @@
-export { default as FileAnalysisPage } from "./FileAnalysisPage";
+export { default as FileAnalysisPage } from './FileAnalysisPage';

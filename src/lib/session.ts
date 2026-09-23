@@ -3,16 +3,11 @@ import Swal from 'sweetalert2';
 
 import { auth } from './firebase';
 
-export type SessionTimeoutReason =
-  | 'idle'
-  | 'absolute';
+export type SessionTimeoutReason = 'idle' | 'absolute';
 
 let timeoutTimer: number | null = null;
 
-let currentReason:
-  | SessionTimeoutReason
-  | null = null;
-
+let currentReason: SessionTimeoutReason | null = null;
 
 /**
  * Clear the currently scheduled session timeout.
@@ -24,18 +19,14 @@ function clearSessionTimer(): void {
   }
 }
 
-
 /**
  * Return the user-facing session expiration notice.
  */
-function getTimeoutMessage(
-  reason: SessionTimeoutReason,
-) {
+function getTimeoutMessage(reason: SessionTimeoutReason) {
   if (reason === 'idle') {
     return {
       title: 'Session timed out',
-      message:
-        'Session timed out due to inactivity.',
+      message: 'Session timed out due to inactivity.',
     };
   }
 
@@ -44,7 +35,6 @@ function getTimeoutMessage(
     message: 'Session expired.',
   };
 }
-
 
 /**
  * Terminate the Firebase authentication session and
@@ -67,14 +57,9 @@ export async function terminateSession(
 
   currentReason = reason;
 
-  const {
-    title,
-    message,
-  } = getTimeoutMessage(reason);
+  const { title, message } = getTimeoutMessage(reason);
 
-  console.warn(
-    `[GENiSYS Auth] Session terminated: ${reason}`,
-  );
+  console.warn(`[GENiSYS Auth] Session terminated: ${reason}`);
 
   try {
     await signOut(auth);
@@ -84,10 +69,7 @@ export async function terminateSession(
      * user from being redirected away from the protected
      * application interface.
      */
-    console.error(
-      '[GENiSYS Auth] Failed to clear Firebase session.',
-      error,
-    );
+    console.error('[GENiSYS Auth] Failed to clear Firebase session.', error);
   }
 
   await Swal.fire({
@@ -100,7 +82,6 @@ export async function terminateSession(
   window.location.assign('/login');
 }
 
-
 /**
  * Reset the frontend session controller.
  *
@@ -111,7 +92,6 @@ export function resetSessionController(): void {
   clearSessionTimer();
   currentReason = null;
 }
-
 
 /**
  * Schedule the next frontend session timeout using the
@@ -129,39 +109,25 @@ export function scheduleSessionTimeouts(
 
   currentReason = null;
 
-  const absoluteTime =
-    new Date(
-      absoluteExpiresAt,
-    ).getTime();
+  const absoluteTime = new Date(absoluteExpiresAt).getTime();
 
-  const idleTime =
-    new Date(
-      idleExpiresAt,
-    ).getTime();
+  const idleTime = new Date(idleExpiresAt).getTime();
 
   const now = Date.now();
 
-  const absoluteDelay =
-    absoluteTime - now;
+  const absoluteDelay = absoluteTime - now;
 
-  const idleDelay =
-    idleTime - now;
+  const idleDelay = idleTime - now;
 
   /**
    * Invalid timestamps should not silently create a
    * broken timeout.
    */
-  if (
-    Number.isNaN(absoluteTime) ||
-    Number.isNaN(idleTime)
-  ) {
-    console.error(
-      '[GENiSYS Auth] Invalid session expiration timestamps.',
-      {
-        absoluteExpiresAt,
-        idleExpiresAt,
-      },
-    );
+  if (Number.isNaN(absoluteTime) || Number.isNaN(idleTime)) {
+    console.error('[GENiSYS Auth] Invalid session expiration timestamps.', {
+      absoluteExpiresAt,
+      idleExpiresAt,
+    });
 
     return;
   }

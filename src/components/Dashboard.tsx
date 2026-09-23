@@ -22,7 +22,6 @@ const modules = [
       'Analyze HTTP traffic, endpoints, parameters, APIs, and web targets.',
     tools: ['httpx', 'ffuf', 'curl', 'jq'],
   },
-  
 ];
 
 const bootLines = [

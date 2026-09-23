@@ -8,7 +8,10 @@ interface PasswordMatchStatusProps {
  * the user starts typing a confirmation, then updates on every
  * keystroke until the two values match.
  */
-export function PasswordMatchStatus({ confirmPassword, matches }: PasswordMatchStatusProps) {
+export function PasswordMatchStatus({
+  confirmPassword,
+  matches,
+}: PasswordMatchStatusProps) {
   if (confirmPassword.length === 0) {
     return null;
   }

@@ -4,7 +4,10 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import DecodingEncodingPage from '../components/DecodingEncoding/DecodingEncodingPage';
 import Sidebar from '../components/Navigation/Sidebar';
-import { SidebarCollapseProvider, useSidebarCollapseContext } from '../components/Navigation/SidebarCollapseContext';
+import {
+  SidebarCollapseProvider,
+  useSidebarCollapseContext,
+} from '../components/Navigation/SidebarCollapseContext';
 import HeapDump from './HeapDump_MemoryAnalysis';
 import Dashboard from './Dashboard';
 import { FileAnalysisPage } from '../components/FileAnalysis';
@@ -116,13 +119,26 @@ function ProtectedLayout() {
 
   console.log('[ROUTER] ProtectedLayout status:', status);
 
+  /*
+   * Firebase authentication is asynchronous. Rendering Login while the
+   * initial authentication state is unresolved causes a visible login
+   * flash for users who already have a valid persisted session.
+   *
+   * Keep the application neutral until Firebase resolves the session.
+   */
   if (status === 'loading') {
-    console.log('[ROUTER] Auth still loading');
-    return <Login />;
+    return (
+      <div className="min-h-screen bg-gray-50" aria-busy="true">
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-sm text-gray-500">Loading GENiSYS...</div>
+        </div>
+      </div>
+    );
   }
 
   if (status === 'unauthenticated') {
     console.log('[ROUTER] Unauthenticated → redirecting to /login');
+
     return <Navigate to="/login" replace />;
   }
 

@@ -7,7 +7,8 @@ interface SidebarCollapseContextValue {
   toggleCollapsed: () => void;
 }
 
-const SidebarCollapseContext = createContext<SidebarCollapseContextValue | null>(null);
+const SidebarCollapseContext =
+  createContext<SidebarCollapseContextValue | null>(null);
 
 /**
  * Shares the sidebar's collapsed state with any layout element that
@@ -32,7 +33,7 @@ export function useSidebarCollapseContext(): SidebarCollapseContextValue {
 
   if (!context) {
     throw new Error(
-      'useSidebarCollapseContext must be used within a SidebarCollapseProvider'
+      'useSidebarCollapseContext must be used within a SidebarCollapseProvider',
     );
   }
 

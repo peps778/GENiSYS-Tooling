@@ -1,7 +1,26 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
-import GenisysApp from "../components/GenisysApp";
+export function getStaticPaths() {
+  const routes = [
+    'login',
+    'registration',
+    'heap',
+    'decode',
+    'files',
+    'linux',
+    'networking',
+    'notes',
+    'osint',
+    'web',
+  ];
+
+  return routes.map((slug) => ({
+    params: { slug },
+  }));
+}
+
+import GenisysApp from '../components/GenisysApp';
 import "../styles/global.css";
 ---
 

@@ -25,7 +25,7 @@ const swalTheme = {
 export async function showAuthError(
   title: string,
   message: string,
-  technicalContext?: string
+  technicalContext?: string,
 ): Promise<void> {
   console.error(`[GENiSYS Auth] ${technicalContext ?? title}: ${message}`);
 
@@ -39,7 +39,10 @@ export async function showAuthError(
 }
 
 /** Displays a branded informational message. */
-export async function showAuthInfo(title: string, message: string): Promise<void> {
+export async function showAuthInfo(
+  title: string,
+  message: string,
+): Promise<void> {
   await Swal.fire({
     ...swalTheme,
     icon: 'info',
@@ -50,7 +53,10 @@ export async function showAuthInfo(title: string, message: string): Promise<void
 }
 
 /** Displays a branded success message. */
-export async function showAuthSuccess(title: string, message: string): Promise<void> {
+export async function showAuthSuccess(
+  title: string,
+  message: string,
+): Promise<void> {
   await Swal.fire({
     ...swalTheme,
     icon: 'success',

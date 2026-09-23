@@ -76,7 +76,10 @@ export default function Sidebar() {
           collapsed ? 'lg:w-20' : 'lg:w-64',
         ].join(' ')}
       >
-        <CollapseToggleButton collapsed={collapsed} onToggle={toggleCollapsed} />
+        <CollapseToggleButton
+          collapsed={collapsed}
+          onToggle={toggleCollapsed}
+        />
 
         {/* Brand */}
         <div
@@ -146,7 +149,9 @@ export default function Sidebar() {
                     <NavigationIcon name={item.icon} />
                   </span>
 
-                  <span className={`truncate ${hiddenWhenCollapsed}`}>{item.label}</span>
+                  <span className={`truncate ${hiddenWhenCollapsed}`}>
+                    {item.label}
+                  </span>
 
                   {isActive && (
                     <span
@@ -178,7 +183,9 @@ export default function Sidebar() {
             <span className={hiddenWhenCollapsed}>Log out</span>
           </button>
 
-          <div className={`flex items-center justify-between ${hiddenWhenCollapsed}`}>
+          <div
+            className={`flex items-center justify-between ${hiddenWhenCollapsed}`}
+          >
             <span className="text-[11px] font-medium text-green-700">
               GENiSYS Tooling
             </span>

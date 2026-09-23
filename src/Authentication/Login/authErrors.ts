@@ -4,12 +4,7 @@
  */
 
 export type BackendFailureType =
-  | 'offline'
-  | 'unauthorized'
-  | 'forbidden'
-  | 'server'
-  | 'network'
-  | 'unknown';
+  'offline' | 'unauthorized' | 'forbidden' | 'server' | 'network' | 'unknown';
 
 /**
  * Firebase authentication errors are intentionally mapped to
@@ -113,7 +108,9 @@ export function getBackendFailureType(error: unknown): BackendFailureType {
  * Converts an internal backend failure into a safe user-facing
  * message. Detailed technical information stays in the console.
  */
-export function getBackendErrorMessage(failureType: BackendFailureType): string {
+export function getBackendErrorMessage(
+  failureType: BackendFailureType,
+): string {
   switch (failureType) {
     case 'offline':
       return 'The GENiSYS backend is currently unavailable. Please make sure the server is running and try again.';
@@ -152,7 +149,7 @@ export function wrapBackendError(error: unknown): WrappedBackendError {
 }
 
 export function isWrappedBackendError(
-  error: unknown
+  error: unknown,
 ): error is WrappedBackendError {
   return (
     typeof error === 'object' &&

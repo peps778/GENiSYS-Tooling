@@ -1,16 +1,21 @@
-import { FILE_SIGNATURES, RIFF_SUBTYPES } from "./fileSignatures";
-import type {
-  FileIdentification,
-  SignatureMatch,
-} from "../types/fileAnalysis";
+import { FILE_SIGNATURES, RIFF_SUBTYPES } from './fileSignatures';
+import type { FileIdentification, SignatureMatch } from '../types/fileAnalysis';
 
 /** Reads N bytes from `data` starting at `offset`, or null if out of range. */
-function sliceSafe(data: Uint8Array, offset: number, length: number): Uint8Array | null {
+function sliceSafe(
+  data: Uint8Array,
+  offset: number,
+  length: number,
+): Uint8Array | null {
   if (offset < 0 || offset + length > data.length) return null;
   return data.subarray(offset, offset + length);
 }
 
-function matchesAt(data: Uint8Array, offset: number, pattern: (number | null)[]): boolean {
+function matchesAt(
+  data: Uint8Array,
+  offset: number,
+  pattern: (number | null)[],
+): boolean {
   const slice = sliceSafe(data, offset, pattern.length);
   if (!slice) return false;
   for (let i = 0; i < pattern.length; i++) {
@@ -23,10 +28,10 @@ function matchesAt(data: Uint8Array, offset: number, pattern: (number | null)[])
 
 function toHexPreview(data: Uint8Array, offset: number, count = 8): string {
   const slice = sliceSafe(data, offset, Math.min(count, data.length - offset));
-  if (!slice || slice.length === 0) return "";
+  if (!slice || slice.length === 0) return '';
   return Array.from(slice)
-    .map((b) => b.toString(16).toUpperCase().padStart(2, "0"))
-    .join(" ");
+    .map((b) => b.toString(16).toUpperCase().padStart(2, '0'))
+    .join(' ');
 }
 
 /**
@@ -40,10 +45,12 @@ export function findSignatureMatches(data: Uint8Array): SignatureMatch[] {
   for (const sig of FILE_SIGNATURES) {
     if (!matchesAt(data, sig.offset, sig.bytes)) continue;
 
-    if (sig.format === "WAV audio" || sig.format === "WebP image") {
+    if (sig.format === 'WAV audio' || sig.format === 'WebP image') {
       // Disambiguate RIFF subtype instead of emitting the generic guess twice.
       const subtypeBytes = sliceSafe(data, 8, 4);
-      const subtype = subtypeBytes ? new TextDecoder("ascii").decode(subtypeBytes) : "";
+      const subtype = subtypeBytes
+        ? new TextDecoder('ascii').decode(subtypeBytes)
+        : '';
       const resolved = RIFF_SUBTYPES[subtype];
       if (resolved && resolved.format === sig.format) {
         matches.push({
@@ -52,7 +59,7 @@ export function findSignatureMatches(data: Uint8Array): SignatureMatch[] {
           extensions: resolved.extensions,
           magicHex: `${toHexPreview(data, 0, 4)} .. ${subtype}`,
           offset: 0,
-          confidence: "confirmed",
+          confidence: 'confirmed',
           reason: `RIFF container with '${subtype}' subtype confirmed`,
         });
       }
@@ -78,9 +85,9 @@ export function findSignatureMatches(data: Uint8Array): SignatureMatch[] {
  * dot (e.g. "photo.JPG" -> ".jpg"). Returns "" when there is no extension.
  */
 export function extractReportedExtension(filename: string): string {
-  const idx = filename.lastIndexOf(".");
+  const idx = filename.lastIndexOf('.');
   // idx <= 0 covers "no dot" and "dotfile with no extension" (e.g. ".gitignore").
-  if (idx <= 0 || idx === filename.length - 1) return "";
+  if (idx <= 0 || idx === filename.length - 1) return '';
   return filename.slice(idx).toLowerCase();
 }
 
@@ -88,31 +95,34 @@ export function extractReportedExtension(filename: string): string {
  * Identifies a file from its contents. Extension is used only for
  * mismatch detection -- it never upgrades a match's confidence.
  */
-export function identifyFile(data: Uint8Array, filename: string): FileIdentification {
+export function identifyFile(
+  data: Uint8Array,
+  filename: string,
+): FileIdentification {
   const candidates = findSignatureMatches(data);
   const reportedExtension = extractReportedExtension(filename);
 
   // Prefer confirmed matches over probable ones; keep original order otherwise.
   const best =
-    candidates.find((c) => c.confidence === "confirmed") ??
-    candidates.find((c) => c.confidence === "probable") ??
+    candidates.find((c) => c.confidence === 'confirmed') ??
+    candidates.find((c) => c.confidence === 'probable') ??
     null;
 
   const expectedExtensions = best ? best.extensions : [];
   const extensionMismatch =
     best !== null &&
-    reportedExtension !== "" &&
+    reportedExtension !== '' &&
     !expectedExtensions.includes(reportedExtension);
 
   if (!best) {
     return {
-      detectedType: "Unknown",
+      detectedType: 'Unknown',
       mime: null,
       reportedExtension,
       expectedExtensions: [],
       signature: null,
       candidates,
-      confidence: "unknown",
+      confidence: 'unknown',
       extensionMismatch: false,
     };
   }

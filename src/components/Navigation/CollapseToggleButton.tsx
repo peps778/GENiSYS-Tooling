@@ -8,7 +8,10 @@ interface CollapseToggleButtonProps {
  * full width and an icon-only rail. Hidden below the `lg` breakpoint
  * since the mobile drawer already has its own hamburger toggle.
  */
-export function CollapseToggleButton({ collapsed, onToggle }: CollapseToggleButtonProps) {
+export function CollapseToggleButton({
+  collapsed,
+  onToggle,
+}: CollapseToggleButtonProps) {
   return (
     <button
       type="button"

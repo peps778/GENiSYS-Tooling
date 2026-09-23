@@ -64,7 +64,9 @@ const Login = () => {
       <div className="flex min-h-screen w-full items-center justify-center bg-white p-6 text-slate-950">
         <div className="w-full max-w-sm rounded-2xl border border-emerald-900/10 bg-white/80 p-6 shadow-sm shadow-emerald-900/5">
           <div className="mb-4 flex items-center gap-3">
-            <span className="font-mono text-[10px] text-emerald-600/70">02 /</span>
+            <span className="font-mono text-[10px] text-emerald-600/70">
+              02 /
+            </span>
             <span className="h-px w-8 bg-emerald-500/30" />
             <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-slate-400">
               Verification Required
@@ -77,12 +79,14 @@ const Login = () => {
 
           <p className="mt-3 text-xs leading-6 text-slate-500">
             We sent a verification link to{' '}
-            <span className="text-slate-700">{pendingUser?.email}</span>. Verify your email to
-            finish signing in.
+            <span className="text-slate-700">{pendingUser?.email}</span>. Verify
+            your email to finish signing in.
           </p>
 
           {resendStatus && (
-            <p className="mt-3 text-[11px] leading-5 text-emerald-700">{resendStatus}</p>
+            <p className="mt-3 text-[11px] leading-5 text-emerald-700">
+              {resendStatus}
+            </p>
           )}
 
           {error && (
@@ -128,7 +132,9 @@ const Login = () => {
     <div className="flex min-h-screen w-full items-center justify-center bg-white p-6 text-slate-950">
       <div className="w-full max-w-sm rounded-2xl border border-emerald-900/10 bg-white/80 p-6 shadow-sm shadow-emerald-900/5">
         <div className="mb-4 flex items-center gap-3">
-          <span className="font-mono text-[10px] text-emerald-600/70">00 /</span>
+          <span className="font-mono text-[10px] text-emerald-600/70">
+            00 /
+          </span>
           <span className="h-px w-8 bg-emerald-500/30" />
           <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-slate-400">
             Hack4Gov Toolkit
@@ -138,9 +144,15 @@ const Login = () => {
         <h1 className="text-2xl font-bold leading-tight tracking-[-0.03em] text-green-950">
           Sign in
         </h1>
-        <p className="mt-1.5 text-xs text-slate-500">Access the GENiSYS workspace.</p>
+        <p className="mt-1.5 text-xs text-slate-500">
+          Access the GENiSYS workspace.
+        </p>
 
-        <form onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="mt-6 flex flex-col gap-4"
+        >
           <div>
             <label
               htmlFor="login-email"
@@ -214,7 +226,10 @@ const Login = () => {
 
         <p className="mt-5 text-center text-[11px] text-slate-400">
           Need an account?{' '}
-          <Link to="/registration" className="font-medium text-emerald-600 hover:text-emerald-700">
+          <Link
+            to="/registration"
+            className="font-medium text-emerald-600 hover:text-emerald-700"
+          >
             Register
           </Link>
         </p>

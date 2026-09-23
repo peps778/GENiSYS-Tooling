@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 
 /** How strongly the evidence supports a given finding. */
-export type Confidence = "confirmed" | "probable" | "unknown";
+export type Confidence = 'confirmed' | 'probable' | 'unknown';
 
 /** A byte offset within a file. Always a non-negative integer. */
 export type ByteOffset = number;
@@ -60,7 +60,7 @@ export interface FileIdentification {
 // ---------------------------------------------------------------------------
 
 export interface FormatGuessEvidence {
-  source: "signature" | "structural" | "mime" | "extension";
+  source: 'signature' | 'structural' | 'mime' | 'extension';
   value: string;
   weight: number;
 }
@@ -78,7 +78,8 @@ export interface FormatGuessResult {
 // Metadata
 // ---------------------------------------------------------------------------
 
-export type MetadataFieldStatus = "available" | "unavailable" | "not-applicable";
+export type MetadataFieldStatus =
+  'available' | 'unavailable' | 'not-applicable';
 
 export interface MetadataField {
   label: string;
@@ -87,11 +88,7 @@ export interface MetadataField {
 }
 
 export type MetadataCategory =
-  | "generic"
-  | "image"
-  | "pdf"
-  | "archive"
-  | "audio";
+  'generic' | 'image' | 'pdf' | 'archive' | 'audio';
 
 export interface FileMetadata {
   category: MetadataCategory;
@@ -104,7 +101,7 @@ export interface FileMetadata {
 // Strings extraction
 // ---------------------------------------------------------------------------
 
-export type StringEncoding = "ascii" | "utf8";
+export type StringEncoding = 'ascii' | 'utf8';
 
 export interface StringMatch {
   id: number;
@@ -168,7 +165,7 @@ export interface ArchiveEntry {
 }
 
 export interface ArchiveInformation {
-  archiveType: "zip" | "unsupported";
+  archiveType: 'zip' | 'unsupported';
   entryCount: number;
   entries: ArchiveEntry[];
   supported: boolean;
@@ -180,10 +177,7 @@ export interface ArchiveInformation {
 // ---------------------------------------------------------------------------
 
 export type AnomalyKind =
-  | "trailing-data"
-  | "unknown-chunk"
-  | "embedded-signature"
-  | "structural-note";
+  'trailing-data' | 'unknown-chunk' | 'embedded-signature' | 'structural-note';
 
 export interface AnomalyFinding {
   kind: AnomalyKind;
@@ -234,16 +228,16 @@ export interface BinaryStatistics {
 // ---------------------------------------------------------------------------
 
 export type AnalysisStage =
-  | "idle"
-  | "reading"
-  | "identifying"
-  | "analyzing"
-  | "extracting"
-  | "scanning"
-  | "hashing"
-  | "ready"
-  | "error"
-  | "cancelled";
+  | 'idle'
+  | 'reading'
+  | 'identifying'
+  | 'analyzing'
+  | 'extracting'
+  | 'scanning'
+  | 'hashing'
+  | 'ready'
+  | 'error'
+  | 'cancelled';
 
 export interface AnalysisProgress {
   stage: AnalysisStage;
@@ -273,7 +267,7 @@ export interface LoadedFileSummary {
 // Encoded/obfuscated content (e.g. ASCII binary-text encoding of a real file)
 // ---------------------------------------------------------------------------
 
-export type EncodedContentEncoding = "ascii-binary-text";
+export type EncodedContentEncoding = 'ascii-binary-text';
 
 export interface EncodedContentCandidate {
   encoding: EncodedContentEncoding;

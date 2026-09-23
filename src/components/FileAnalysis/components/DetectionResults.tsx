@@ -1,5 +1,9 @@
-import React from "react";
-import type { EncodedContentCandidate, FileIdentification, Confidence } from "../types/fileAnalysis";
+import React from 'react';
+import type {
+  EncodedContentCandidate,
+  FileIdentification,
+  Confidence,
+} from '../types/fileAnalysis';
 
 interface DetectionResultsProps {
   identification: FileIdentification;
@@ -9,15 +13,15 @@ interface DetectionResultsProps {
 }
 
 const CONFIDENCE_STYLES: Record<Confidence, string> = {
-  confirmed: "bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]",
-  probable: "bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]",
-  unknown: "bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB]",
+  confirmed: 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]',
+  probable: 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]',
+  unknown: 'bg-[#F9FAFB] text-[#6B7280] border-[#E5E7EB]',
 };
 
 const CONFIDENCE_LABELS: Record<Confidence, string> = {
-  confirmed: "Confirmed signature match",
-  probable: "Probable match",
-  unknown: "Unknown",
+  confirmed: 'Confirmed signature match',
+  probable: 'Probable match',
+  unknown: 'Unknown',
 };
 
 function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
@@ -36,7 +40,8 @@ export function DetectionResults({
   onOpenDecodedContent,
   onExportDecodedContent,
 }: DetectionResultsProps) {
-  const { signature, candidates, reportedExtension, extensionMismatch } = identification;
+  const { signature, candidates, reportedExtension, extensionMismatch } =
+    identification;
 
   return (
     <div className="space-y-4">
@@ -46,10 +51,13 @@ export function DetectionResults({
             Text-Encoded Binary Detected
           </p>
           <p className="mt-2 text-sm text-[#111827]">
-            This file's raw bytes are ASCII <span className="font-mono">'0'</span>/
-            <span className="font-mono">'1'</span> characters — a bit-per-character text encoding of
-            another file, not binary image/document data. No byte-level signature scan can see the real
-            file's magic bytes until this is decoded (every 8 characters → 1 byte).
+            This file's raw bytes are ASCII{' '}
+            <span className="font-mono">'0'</span>/
+            <span className="font-mono">'1'</span> characters — a
+            bit-per-character text encoding of another file, not binary
+            image/document data. No byte-level signature scan can see the real
+            file's magic bytes until this is decoded (every 8 characters → 1
+            byte).
           </p>
           <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
             <dt className="text-[#6B7280]">Encoded length</dt>
@@ -63,7 +71,9 @@ export function DetectionResults({
             <dt className="text-[#6B7280]">Decoded content identifies as</dt>
             <dd className="text-right text-[#111827]">
               {encodedContent.decodedIdentification.detectedType}
-              {encodedContent.decodedIdentification.confidence === "confirmed" ? " (confirmed)" : " (probable)"}
+              {encodedContent.decodedIdentification.confidence === 'confirmed'
+                ? ' (confirmed)'
+                : ' (probable)'}
             </dd>
           </dl>
           <div className="mt-3 flex gap-3">
@@ -97,28 +107,38 @@ export function DetectionResults({
           <ConfidenceBadge confidence={identification.confidence} />
         </div>
 
-        <p className="mt-2 text-lg font-semibold text-[#111827]">{identification.detectedType}</p>
+        <p className="mt-2 text-lg font-semibold text-[#111827]">
+          {identification.detectedType}
+        </p>
 
         <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <dt className="text-[#6B7280]">MIME</dt>
-          <dd className="text-right font-mono text-[#111827]">{identification.mime ?? "—"}</dd>
+          <dd className="text-right font-mono text-[#111827]">
+            {identification.mime ?? '—'}
+          </dd>
 
           <dt className="text-[#6B7280]">Extension (reported)</dt>
-          <dd className="text-right font-mono text-[#111827]">{reportedExtension || "—"}</dd>
+          <dd className="text-right font-mono text-[#111827]">
+            {reportedExtension || '—'}
+          </dd>
 
           <dt className="text-[#6B7280]">Extension (expected)</dt>
           <dd className="text-right font-mono text-[#111827]">
-            {identification.expectedExtensions.length ? identification.expectedExtensions.join(", ") : "—"}
+            {identification.expectedExtensions.length
+              ? identification.expectedExtensions.join(', ')
+              : '—'}
           </dd>
 
           {signature && (
             <>
               <dt className="text-[#6B7280]">Magic bytes</dt>
-              <dd className="text-right font-mono text-[#111827]">{signature.magicHex}</dd>
+              <dd className="text-right font-mono text-[#111827]">
+                {signature.magicHex}
+              </dd>
 
               <dt className="text-[#6B7280]">Offset</dt>
               <dd className="text-right font-mono text-[#111827]">
-                0x{signature.offset.toString(16).toUpperCase().padStart(8, "0")}
+                0x{signature.offset.toString(16).toUpperCase().padStart(8, '0')}
               </dd>
 
               <dt className="text-[#6B7280]">Detection</dt>
@@ -129,8 +149,9 @@ export function DetectionResults({
 
         {extensionMismatch && (
           <div className="mt-3 rounded-[10px] border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
-            Extension mismatch: filename suggests <span className="font-mono">{reportedExtension}</span>, but
-            the detected signature indicates {identification.detectedType}.
+            Extension mismatch: filename suggests{' '}
+            <span className="font-mono">{reportedExtension}</span>, but the
+            detected signature indicates {identification.detectedType}.
           </div>
         )}
       </div>
@@ -144,10 +165,15 @@ export function DetectionResults({
             {candidates
               .filter((c) => c !== signature)
               .map((c, i) => (
-                <li key={i} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <li
+                  key={i}
+                  className="flex items-center justify-between gap-3 py-2 text-sm"
+                >
                   <div>
                     <p className="text-[#111827]">{c.format}</p>
-                    <p className="font-mono text-xs text-[#9CA3AF]">{c.magicHex}</p>
+                    <p className="font-mono text-xs text-[#9CA3AF]">
+                      {c.magicHex}
+                    </p>
                   </div>
                   <ConfidenceBadge confidence={c.confidence} />
                 </li>

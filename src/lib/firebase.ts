@@ -1,7 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported as isAnalyticsSupported } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import {
+  getAnalytics,
+  isSupported as isAnalyticsSupported,
+} from 'firebase/analytics';
+import { getAuth } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -15,15 +18,17 @@ const firebaseConfig = {
   measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-
 // TEMPORARY DEBUG — remove once the invalid-api-key issue is confirmed fixed.
 // Logs which keys are missing without printing the actual secret values.
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   const missing = Object.entries(firebaseConfig)
     .filter(([, value]) => !value)
     .map(([key]) => key);
-  console.log("[firebase.ts] config keys present:", Object.keys(firebaseConfig).filter((k) => !missing.includes(k)));
-  console.log("[firebase.ts] config keys MISSING:", missing);
+  console.log(
+    '[firebase.ts] config keys present:',
+    Object.keys(firebaseConfig).filter((k) => !missing.includes(k)),
+  );
+  console.log('[firebase.ts] config keys MISSING:', missing);
 }
 
 // Initialize Firebase
@@ -39,7 +44,7 @@ export const auth = getAuth(app);
 // it's only initialized when running client-side and supported.
 export let analytics: ReturnType<typeof getAnalytics> | undefined;
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   isAnalyticsSupported()
     .then((supported) => {
       if (supported) {

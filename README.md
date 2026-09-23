@@ -51,8 +51,6 @@ Built mainly for:
    - SQLi Command generator (All and most possible cases)
    - SSTI Command generator (All and most possible cases) JS/PHP or other possible way
 
-
-
 4. Linux Docs / Command Reference [FOR-REVIEW]
    - grep
    - sed
@@ -127,7 +125,7 @@ Built mainly for:
    - Flag/evidence recording
    - Time-management procedure
    - Common Vulnerabilities (SQLi SSTI IDOR Broken Access etc...)
-   - BURP SUITE 
+   - BURP SUITE
    - ZAP
    - Wireshark
    - Other beneficial PEN tools

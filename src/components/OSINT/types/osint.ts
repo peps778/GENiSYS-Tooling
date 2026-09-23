@@ -1,16 +1,44 @@
 export type OSINTCategory =
-  | "overview" | "quick-reference" | "dns" | "whois" | "subdomains"
-  | "url-domain" | "metadata" | "search" | "username-email"
-  | "public-evidence" | "tools" | "evidence-workflow" | "cases" | "logbook";
+  | 'overview'
+  | 'quick-reference'
+  | 'dns'
+  | 'whois'
+  | 'subdomains'
+  | 'url-domain'
+  | 'metadata'
+  | 'search'
+  | 'username-email'
+  | 'public-evidence'
+  | 'tools'
+  | 'evidence-workflow'
+  | 'cases'
+  | 'logbook';
 
-export type OSINTDifficulty = "foundational" | "intermediate" | "advanced";
-export type OSINTPhase = "discovery" | "enumeration" | "correlation" | "validation" | "evidence" | "reporting";
-export type EvidenceClassification = "observed" | "corroborated" | "unverified" | "contradicted" | "historical" | "current" | "archived" | "derived";
+export type OSINTDifficulty = 'foundational' | 'intermediate' | 'advanced';
+export type OSINTPhase =
+  | 'discovery'
+  | 'enumeration'
+  | 'correlation'
+  | 'validation'
+  | 'evidence'
+  | 'reporting';
+export type EvidenceClassification =
+  | 'observed'
+  | 'corroborated'
+  | 'unverified'
+  | 'contradicted'
+  | 'historical'
+  | 'current'
+  | 'archived'
+  | 'derived';
 
 export interface OSINTCase {
   id: string;
   title: string;
-  category: Exclude<OSINTCategory, "overview" | "quick-reference" | "logbook" | "cases">;
+  category: Exclude<
+    OSINTCategory,
+    'overview' | 'quick-reference' | 'logbook' | 'cases'
+  >;
   difficulty: OSINTDifficulty;
   phase: OSINTPhase;
   situation: string;
@@ -26,7 +54,7 @@ export interface OSINTCase {
   relatedCases: string[];
   relatedTools: string[];
   evidenceTypes: string[];
-  status?: "lead" | "active" | "validated" | "closed";
+  status?: 'lead' | 'active' | 'validated' | 'closed';
 }
 
 export interface OSINTReference {
@@ -58,7 +86,13 @@ export interface OSINTSection {
   description: string;
 }
 
-export type OSINTFlagStatus = "candidate" | "investigating" | "confirmed" | "duplicate" | "rejected" | "needs-review";
+export type OSINTFlagStatus =
+  | 'candidate'
+  | 'investigating'
+  | 'confirmed'
+  | 'duplicate'
+  | 'rejected'
+  | 'needs-review';
 
 export interface OSINTFlagEntry {
   id: string;
@@ -70,7 +104,7 @@ export interface OSINTFlagEntry {
   evidence: string;
   url: string;
   status: OSINTFlagStatus;
-  confidence: "low" | "medium" | "high";
+  confidence: 'low' | 'medium' | 'high';
   verification: string;
   notes: string;
 }
@@ -87,9 +121,9 @@ export interface EvidenceRecord {
   screenshot?: string;
   downloadedArtifact?: string;
   sha256?: string;
-  sourceReliability: "unknown" | "low" | "medium" | "high";
+  sourceReliability: 'unknown' | 'low' | 'medium' | 'high';
   corroboratingSources: string[];
   classification: EvidenceClassification;
-  confidence: "low" | "medium" | "high";
+  confidence: 'low' | 'medium' | 'high';
   notes: string;
 }

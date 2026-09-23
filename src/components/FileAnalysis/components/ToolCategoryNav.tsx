@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
 export type AnalysisTabId =
-  | "overview"
-  | "identification"
-  | "metadata"
-  | "strings"
-  | "hex"
-  | "image"
-  | "archive"
-  | "steganography"
-  | "recovery"
-  | "binary";
+  | 'overview'
+  | 'identification'
+  | 'metadata'
+  | 'strings'
+  | 'hex'
+  | 'image'
+  | 'archive'
+  | 'steganography'
+  | 'recovery'
+  | 'binary';
 
 interface TabDefinition {
   id: AnalysisTabId;
@@ -18,14 +18,14 @@ interface TabDefinition {
 }
 
 const ALWAYS_AVAILABLE: TabDefinition[] = [
-  { id: "overview", label: "Overview" },
-  { id: "identification", label: "Identification" },
-  { id: "metadata", label: "Metadata" },
-  { id: "strings", label: "Strings" },
-  { id: "hex", label: "Hex" },
-  { id: "binary", label: "Binary Analysis" },
-  { id: "steganography", label: "Steganography" },
-  { id: "recovery", label: "Recovery" },
+  { id: 'overview', label: 'Overview' },
+  { id: 'identification', label: 'Identification' },
+  { id: 'metadata', label: 'Metadata' },
+  { id: 'strings', label: 'Strings' },
+  { id: 'hex', label: 'Hex' },
+  { id: 'binary', label: 'Binary Analysis' },
+  { id: 'steganography', label: 'Steganography' },
+  { id: 'recovery', label: 'Recovery' },
 ];
 
 interface ToolCategoryNavProps {
@@ -47,8 +47,9 @@ export function ToolCategoryNav({
   showArchiveTab,
 }: ToolCategoryNavProps) {
   const tabs: TabDefinition[] = [...ALWAYS_AVAILABLE];
-  if (showImageTab) tabs.splice(6, 0, { id: "image", label: "Image" });
-  if (showArchiveTab) tabs.splice(showImageTab ? 7 : 6, 0, { id: "archive", label: "Archive" });
+  if (showImageTab) tabs.splice(6, 0, { id: 'image', label: 'Image' });
+  if (showArchiveTab)
+    tabs.splice(showImageTab ? 7 : 6, 0, { id: 'archive', label: 'Archive' });
 
   return (
     <nav
@@ -62,13 +63,13 @@ export function ToolCategoryNav({
             key={tab.id}
             type="button"
             onClick={() => onSelectTab(tab.id)}
-            aria-current={active ? "page" : undefined}
+            aria-current={active ? 'page' : undefined}
             className={[
-              "shrink-0 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+              'shrink-0 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
               active
-                ? "border-[#16A34A] text-[#16A34A]"
-                : "border-transparent text-[#6B7280] hover:text-[#111827]",
-            ].join(" ")}
+                ? 'border-[#16A34A] text-[#16A34A]'
+                : 'border-transparent text-[#6B7280] hover:text-[#111827]',
+            ].join(' ')}
           >
             {tab.label}
           </button>

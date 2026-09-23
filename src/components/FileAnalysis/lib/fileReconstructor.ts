@@ -1,4 +1,4 @@
-import type { EmbeddedFileCandidate } from "../types/fileAnalysis";
+import type { EmbeddedFileCandidate } from '../types/fileAnalysis';
 
 interface EmbeddedSignatureDef {
   format: string;
@@ -9,7 +9,11 @@ interface EmbeddedSignatureDef {
   findEnd?: (data: Uint8Array, startOffset: number) => number | null;
 }
 
-function findBytes(data: Uint8Array, pattern: number[], fromOffset: number): number | null {
+function findBytes(
+  data: Uint8Array,
+  pattern: number[],
+  fromOffset: number,
+): number | null {
   outer: for (let i = fromOffset; i <= data.length - pattern.length; i++) {
     for (let j = 0; j < pattern.length; j++) {
       if (data[i + j] !== pattern[j]) continue outer;
@@ -49,36 +53,36 @@ function findPdfEnd(data: Uint8Array, start: number): number | null {
 
 const EMBEDDED_SIGNATURES: EmbeddedSignatureDef[] = [
   {
-    format: "PNG",
-    mime: "image/png",
-    extension: ".png",
+    format: 'PNG',
+    mime: 'image/png',
+    extension: '.png',
     bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
     findEnd: findPngEnd,
   },
   {
-    format: "JPEG",
-    mime: "image/jpeg",
-    extension: ".jpg",
+    format: 'JPEG',
+    mime: 'image/jpeg',
+    extension: '.jpg',
     bytes: [0xff, 0xd8, 0xff],
     findEnd: findJpegEnd,
   },
   {
-    format: "PDF",
-    mime: "application/pdf",
-    extension: ".pdf",
+    format: 'PDF',
+    mime: 'application/pdf',
+    extension: '.pdf',
     bytes: [0x25, 0x50, 0x44, 0x46, 0x2d],
     findEnd: findPdfEnd,
   },
   {
-    format: "ZIP",
-    mime: "application/zip",
-    extension: ".zip",
+    format: 'ZIP',
+    mime: 'application/zip',
+    extension: '.zip',
     bytes: [0x50, 0x4b, 0x03, 0x04],
   },
   {
-    format: "GIF",
-    mime: "image/gif",
-    extension: ".gif",
+    format: 'GIF',
+    mime: 'image/gif',
+    extension: '.gif',
     bytes: [0x47, 0x49, 0x46, 0x38],
   },
 ];
@@ -96,7 +100,7 @@ export interface ReconstructorOptions {
  */
 export function findEmbeddedCandidates(
   data: Uint8Array,
-  options: ReconstructorOptions = {}
+  options: ReconstructorOptions = {},
 ): EmbeddedFileCandidate[] {
   const maxPerFormat = options.maxCandidatesPerFormat ?? 25;
   const maxTotal = options.maxTotalCandidates ?? 100;
@@ -117,13 +121,15 @@ export function findEmbeddedCandidates(
         id: id++,
         format: sig.format,
         mime: sig.mime,
-        signatureHex: sig.bytes.map((b) => b.toString(16).toUpperCase().padStart(2, "0")).join(" "),
+        signatureHex: sig.bytes
+          .map((b) => b.toString(16).toUpperCase().padStart(2, '0'))
+          .join(' '),
         offset,
         endOffset,
         // Signature at offset 0 spanning most of the file is the "whole file
         // is this format" case, not a hidden embedded file -- still reported,
         // but callers can filter by offset === 0 if only embedded matches matter.
-        confidence: isAtStart ? "probable" : "probable",
+        confidence: isAtStart ? 'probable' : 'probable',
         suggestedExtension: sig.extension,
       });
 
@@ -139,7 +145,7 @@ export function findEmbeddedCandidates(
 export function extractCandidateBytes(
   data: Uint8Array,
   offset: number,
-  endOffset: number | null
+  endOffset: number | null,
 ): Uint8Array {
   const end = endOffset ?? data.length;
   const safeEnd = Math.max(offset, Math.min(end, data.length));

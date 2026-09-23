@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import type { StringExtractionResult } from "../types/fileAnalysis";
+import React, { useMemo, useState } from 'react';
+import type { StringExtractionResult } from '../types/fileAnalysis';
 
 interface StringsPanelProps {
   result: StringExtractionResult | null;
@@ -11,8 +11,14 @@ interface StringsPanelProps {
 
 const PAGE_SIZE = 100;
 
-export function StringsPanel({ result, minLength, onMinLengthChange, onExport, loading }: StringsPanelProps) {
-  const [query, setQuery] = useState("");
+export function StringsPanel({
+  result,
+  minLength,
+  onMinLengthChange,
+  onExport,
+  loading,
+}: StringsPanelProps) {
+  const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
@@ -24,13 +30,19 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
   }, [result, query]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = filtered.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const pageItems = filtered.slice(
+    page * PAGE_SIZE,
+    page * PAGE_SIZE + PAGE_SIZE,
+  );
 
   const copy = async (id: number, value: string) => {
     try {
       await navigator.clipboard.writeText(value);
       setCopiedId(id);
-      setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 1200);
+      setTimeout(
+        () => setCopiedId((current) => (current === id ? null : current)),
+        1200,
+      );
     } catch {
       // Clipboard access can fail silently in restrictive contexts; no UI
       // change is a reasonable fallback rather than throwing.
@@ -58,7 +70,9 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
             min={1}
             max={64}
             value={minLength}
-            onChange={(e) => onMinLengthChange(Math.max(1, Number(e.target.value) || 1))}
+            onChange={(e) =>
+              onMinLengthChange(Math.max(1, Number(e.target.value) || 1))
+            }
             className="w-16 rounded-[8px] border border-[#E5E7EB] px-2 py-1 text-sm font-mono text-[#111827] outline-none focus:border-[#16A34A]"
           />
         </label>
@@ -77,17 +91,28 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
         {loading ? (
           <p className="p-4 text-sm text-[#6B7280]">Extracting strings...</p>
         ) : !result || result.matches.length === 0 ? (
-          <p className="p-4 text-sm text-[#6B7280]">No strings of at least {minLength} characters found.</p>
+          <p className="p-4 text-sm text-[#6B7280]">
+            No strings of at least {minLength} characters found.
+          </p>
         ) : (
           <>
             <div className="max-h-[480px] overflow-y-auto divide-y divide-[#E5E7EB]">
               {pageItems.map((match) => (
-                <div key={match.id} className="flex items-center justify-between gap-3 px-4 py-2">
+                <div
+                  key={match.id}
+                  className="flex items-center justify-between gap-3 px-4 py-2"
+                >
                   <div className="min-w-0">
-                    <p className="truncate font-mono text-sm text-[#111827]">{match.value}</p>
+                    <p className="truncate font-mono text-sm text-[#111827]">
+                      {match.value}
+                    </p>
                     <p className="font-mono text-xs text-[#9CA3AF]">
-                      0x{match.offset.toString(16).toUpperCase().padStart(8, "0")} · {match.length} bytes ·{" "}
-                      {match.encoding.toUpperCase()}
+                      0x
+                      {match.offset
+                        .toString(16)
+                        .toUpperCase()
+                        .padStart(8, '0')}{' '}
+                      · {match.length} bytes · {match.encoding.toUpperCase()}
                     </p>
                   </div>
                   <button
@@ -95,7 +120,7 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
                     onClick={() => copy(match.id, match.value)}
                     className="shrink-0 text-xs font-medium text-[#16A34A] hover:text-[#15803D]"
                   >
-                    {copiedId === match.id ? "Copied" : "Copy"}
+                    {copiedId === match.id ? 'Copied' : 'Copy'}
                   </button>
                 </div>
               ))}
@@ -103,8 +128,11 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
 
             <div className="flex items-center justify-between border-t border-[#E5E7EB] px-4 py-2 text-xs text-[#6B7280]">
               <span>
-                {filtered.length.toLocaleString()} match{filtered.length === 1 ? "" : "es"}
-                {result.truncated ? ` (of ${result.totalFound.toLocaleString()} found; results capped)` : ""}
+                {filtered.length.toLocaleString()} match
+                {filtered.length === 1 ? '' : 'es'}
+                {result.truncated
+                  ? ` (of ${result.totalFound.toLocaleString()} found; results capped)`
+                  : ''}
               </span>
               <div className="flex items-center gap-2">
                 <button
@@ -121,7 +149,9 @@ export function StringsPanel({ result, minLength, onMinLengthChange, onExport, l
                 <button
                   type="button"
                   disabled={page >= totalPages - 1}
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
                   className="rounded-[6px] border border-[#E5E7EB] px-2 py-1 disabled:opacity-40"
                 >
                   Next

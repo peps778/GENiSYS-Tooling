@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from 'firebase/auth';
 
 import { auth } from '../../lib/firebase';
 import { evaluatePassword } from './passwordPolicy';
@@ -16,7 +19,8 @@ export function useRegistration() {
   // Recomputed on every render from current input — this is what
   // drives the live checklist and match indicator as the user types.
   const passwordPolicy = evaluatePassword(password);
-  const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
+  const passwordsMatch =
+    confirmPassword.length > 0 && password === confirmPassword;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,7 +46,11 @@ export function useRegistration() {
     setLoading(true);
 
     try {
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       await sendEmailVerification(credential.user);
       setSubmitted(true);
     } catch (err) {
