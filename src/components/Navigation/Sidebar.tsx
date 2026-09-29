@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { logout } from '../../Authentication/logout';
+import logo from '../../assets/genisys-icon.png'
 
 import { navigationItems } from '../Navigation/navigationItems';
 import { NavigationIcon } from '../Navigation/NavigationIcon';
@@ -89,14 +90,12 @@ export default function Sidebar() {
           ].join(' ')}
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white">
-              G
-            </div>
-
+          <img
+              src={logo.src}
+              className="h-11 w-auto object-contain"
+              alt="GENiSYS Logo"
+              />
             <div className={hiddenWhenCollapsed}>
-              <p className="text-sm font-semibold tracking-tight text-green-700">
-                GENiSYS
-              </p>
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gray-400">
                 Toolkit
               </p>

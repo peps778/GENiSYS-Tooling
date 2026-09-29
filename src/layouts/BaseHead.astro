@@ -1,4 +1,6 @@
 ---
+import icon from "../assets/genisys-icon.png";
+
 interface Props {
     title: string;
     description?: string;
@@ -8,31 +10,49 @@ interface Props {
 
 const {
     title,
-    description = "My Astro website",
+    description = "GENiSYS Tooling cybersecurity analysis workspace.",
     image,
     canonical
 } = Astro.props;
 
-const siteUrl = Astro.site ?? new URL("https://example.com");
+const siteUrl = Astro.site ?? new URL(
+    "https://genisys-tooling.college-paulmagbanua.workers.dev"
+);
+
 const canonicalUrl = canonical
     ? new URL(canonical, siteUrl)
     : Astro.url;
 ---
 
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>{title}</title>
-<meta name="description" content={description} />
+
+<meta
+    name="description"
+    content={description}
+/>
 
 {canonicalUrl && (
     <link
         rel="canonical"
         href={canonicalUrl}
-    />
+/>
 )}
 
-<link rel="icon" href="/favicon.svg" />
+<!-- GENiSYS favicon -->
+<link
+    rel="icon"
+    type="image/png"
+    href={icon.src}
+/>
+
+<link
+    rel="shortcut icon"
+    type="image/png"
+    href={icon.src}
+/>
 
 <!-- Open Graph metadata -->
 <meta property="og:title" content={title} />
