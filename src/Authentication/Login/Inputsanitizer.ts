@@ -1,36 +1,5 @@
 /**
- * Client-side input sanitization for the GENiSYS login form.
- *
- * IMPORTANT — read before relying on this module:
- *
- * This is a defense-in-depth / early-feedback layer only. It cannot,
- * by itself, prevent SQL injection or server-side template injection
- * (SSTI), because:
- *
- *   1. Any client-side check can be bypassed entirely by calling the
- *      API directly (curl, Postman, a modified client, etc.) — the
- *      browser is not a trust boundary.
- *   2. In this app, email/password never reach a SQL query or a
- *      template engine on the client. Firebase Authentication treats
- *      them as opaque credential strings.
- *
- * The only real protection is on the backend:
- *   - SQLi: Django's ORM / parameterized queries, never string-
- *     interpolating request data into raw SQL.
- *   - SSTI: never rendering a template (Jinja2 / Django templates)
- *     using user-supplied data as the *template source* itself, and
- *     always treating request data as a template *variable*, not
- *     as template code.
- *
- * What this module does do:
- *   - Strips characters (control/null bytes) that have no legitimate
- *     use in an email or password and can be used to smuggle payloads
- *     past naive backend filters.
- *   - Flags input containing classic SQLi/SSTI marker sequences so the
- *     UI can reject it early with a friendly message.
- *   - Deliberately does NOT strip ordinary punctuation from passwords
- *     (quotes, dashes, braces, etc. are all valid in real passwords) —
- *     doing so would silently corrupt a user's actual credential.
+ * Client-side input sanitization
  */
 
 export interface SanitizationResult {

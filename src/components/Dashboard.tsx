@@ -72,7 +72,7 @@ const Dashboard = () => {
         />
 
         {/* Continuous scan */}
-        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent animate-[dashboardScan_7s_linear_infinite]" />
+        <div className="absolute left-0 right-0 top-0 h-px bg-linear-to-r from-transparent via-emerald-500/40 to-transparent animate-[dashboardScan_7s_linear_infinite]" />
 
         <style>{`
           @keyframes dashboardScan {
