@@ -31,31 +31,21 @@ function useAuthStatus(): AuthStatus {
   const [status, setStatus] = useState<AuthStatus>('loading');
 
   useEffect(() => {
-    console.log('[AUTH] Initial auth status: loading');
-
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
-      console.log('[AUTH] Firebase auth state changed');
-      console.log('[AUTH] User:', user?.email ?? 'none');
-      console.log('[AUTH] Email verified:', user?.emailVerified ?? false);
-
       if (user && user.emailVerified) {
-        console.log('[AUTH] Status: authenticated');
         setStatus('authenticated');
         return;
       }
 
       if (user && !user.emailVerified) {
-        console.log('[AUTH] Status: unauthenticated - email not verified');
         setStatus('unauthenticated');
         return;
       }
 
-      console.log('[AUTH] Status: unauthenticated - no Firebase user');
       setStatus('unauthenticated');
     });
 
     return () => {
-      console.log('[AUTH] Removing Firebase auth listener');
       unsubscribe();
     };
   }, []);
@@ -117,8 +107,6 @@ function ProtectedShell() {
 function ProtectedLayout() {
   const status = useAuthStatus();
 
-  console.log('[ROUTER] ProtectedLayout status:', status);
-
   /*
    * Firebase authentication is asynchronous. Rendering Login while the
    * initial authentication state is unresolved causes a visible login
@@ -137,12 +125,8 @@ function ProtectedLayout() {
   }
 
   if (status === 'unauthenticated') {
-    console.log('[ROUTER] Unauthenticated → redirecting to /login');
-
     return <Navigate to="/login" replace />;
   }
-
-  console.log('[ROUTER] Authenticated → rendering protected application');
 
   return (
     <SidebarCollapseProvider>

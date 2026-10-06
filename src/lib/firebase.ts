@@ -1,4 +1,3 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import {
   getAnalytics,
@@ -18,30 +17,27 @@ const firebaseConfig = {
   measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// TEMPORARY DEBUG — remove once the invalid-api-key issue is confirmed fixed.
-// Logs which keys are missing without printing the actual secret values.
+// TEMPORARY DEBUG — remove once the Firebase configuration issue is confirmed fixed.
+// Logs which configuration keys are missing without exposing their values.
 if (typeof window !== 'undefined') {
   const missing = Object.entries(firebaseConfig)
     .filter(([, value]) => !value)
     .map(([key]) => key);
-  console.log(
-    '[firebase.ts] config keys present:',
-    Object.keys(firebaseConfig).filter((k) => !missing.includes(k)),
-  );
-  console.log('[firebase.ts] config keys MISSING:', missing);
+
+  console.log('[GENiSYS Firebase] Missing configuration keys:', missing);
 }
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Auth is the identity provider used across the app (Login, Registration,
-// the Django API client). Exported here so no component initializes
+// and the Django API client). Exported here so no component initializes
 // Firebase or Auth on its own.
 export const auth = getAuth(app);
 
 // Analytics requires a browser environment. Astro renders on the server
 // as well as the client, and getAnalytics() throws outside a browser, so
-// it's only initialized when running client-side and supported.
+// it is only initialized when running client-side and supported.
 export let analytics: ReturnType<typeof getAnalytics> | undefined;
 
 if (typeof window !== 'undefined') {

@@ -27,8 +27,6 @@ export async function showAuthError(
   message: string,
   technicalContext?: string,
 ): Promise<void> {
-  console.error(`[GENiSYS Auth] ${technicalContext ?? title}: ${message}`);
-
   await Swal.fire({
     ...swalTheme,
     icon: 'error',

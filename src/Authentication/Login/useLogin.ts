@@ -46,49 +46,24 @@ export function useLogin() {
    * mandatory application authentication and authorization boundary.
    */
   const authenticateWithBackend = async (user: User) => {
-    console.log('[GENiSYS Auth] Starting Django authentication.');
-    console.log('[GENiSYS Auth] Firebase identity:', {
-      uid: user.uid,
-      email: user.email,
-      emailVerified: user.emailVerified,
-    });
-
     try {
       // getCurrentUser() obtains the Firebase ID token and sends it
       // as "Authorization: Bearer <firebase-id-token>". The token
       // itself is never logged.
       const backendUser = await getCurrentUser();
 
-      console.log('[GENiSYS Auth] Django authentication successful.');
-      console.log('[GENiSYS Auth] Django identity:', {
-        uid: backendUser.uid,
-        email: backendUser.email,
-        email_verified: backendUser.email_verified,
-      });
-
       return backendUser;
     } catch (backendError) {
       const wrapped = wrapBackendError(backendError);
-
-      console.error('[GENiSYS Auth] Django authentication failed.', wrapped);
 
       // Firebase may still have an authenticated user even though
       // Django rejected the application session. Sign the Firebase
       // user out so that Firebase authentication alone can't leave
       // GENiSYS in an authenticated state.
-      console.log(
-        '[GENiSYS Auth] Revoking local Firebase session after Django authentication failure.',
-      );
 
       try {
         await signOut(auth);
-        console.log('[GENiSYS Auth] Firebase session cleared.');
-      } catch (signOutError) {
-        console.error(
-          '[GENiSYS Auth] Failed to clear Firebase session.',
-          signOutError,
-        );
-      }
+      } catch (signOutError) {}
 
       throw wrapped;
     }
@@ -126,12 +101,9 @@ export function useLogin() {
     const sanitizedPassword = passwordResult.value;
 
     setLoading(true);
-    console.log('[GENiSYS Auth] Login request initiated.');
-    console.log('[GENiSYS Auth] Authentication identifier:', sanitizedEmail);
 
     try {
       // STEP 1: Firebase validates the user's credentials.
-      console.log('[GENiSYS Auth] Contacting Firebase Authentication.');
 
       const credential = await signInWithEmailAndPassword(
         auth,
@@ -140,15 +112,8 @@ export function useLogin() {
       );
       const { user } = credential;
 
-      console.log('[GENiSYS Auth] Firebase authentication successful.', {
-        uid: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified,
-      });
-
       // STEP 2: Require verified email before application access.
       if (!user.emailVerified) {
-        console.log('[GENiSYS Auth] Email verification required.');
         setPendingUser(user);
         setView('unverified');
         setLoading(false);
@@ -156,22 +121,16 @@ export function useLogin() {
       }
 
       // STEP 3: Forward Firebase identity to Django.
-      console.log('[GENiSYS Auth] Firebase identity verified.');
-      console.log('[GENiSYS Auth] Forwarding Firebase identity to Django.');
+
       await authenticateWithBackend(user);
 
       // STEP 4: Only navigate after Django approves the identity.
-      console.log('[GENiSYS Auth] Application authentication successful.');
-      console.log('[GENiSYS Auth] Redirecting to GENiSYS workspace.');
+
       navigate('/');
     } catch (caughtError) {
       const firebaseCode = (caughtError as { code?: string }).code ?? '';
 
       if (firebaseCode.startsWith('auth/')) {
-        console.error('[GENiSYS Auth] Firebase authentication rejected.', {
-          code: firebaseCode,
-        });
-
         const message = getFirebaseErrorMessage(firebaseCode);
         setError(message);
         await showAuthError(
@@ -195,10 +154,6 @@ export function useLogin() {
 
       switch (failureType) {
         case 'offline':
-          console.error(
-            '[GENiSYS Auth] Django server appears to be offline.',
-            originalError,
-          );
           await showAuthError(
             'Backend unavailable',
             'GENiSYS could not connect to the authentication server. Make sure the Django backend is running and try again.',
@@ -207,10 +162,6 @@ export function useLogin() {
           break;
 
         case 'unauthorized':
-          console.error(
-            '[GENiSYS Auth] Django rejected the Firebase identity.',
-            originalError,
-          );
           await showAuthError(
             'Authentication rejected',
             'The backend could not verify your authentication session. Please sign in again.',
@@ -219,10 +170,6 @@ export function useLogin() {
           break;
 
         case 'forbidden':
-          console.error(
-            '[GENiSYS Auth] Django denied application access.',
-            originalError,
-          );
           await showAuthError(
             'Access denied',
             'Your account is authenticated but is not authorized to access GENiSYS.',
@@ -231,10 +178,6 @@ export function useLogin() {
           break;
 
         case 'server':
-          console.error(
-            '[GENiSYS Auth] Django returned a server-side failure.',
-            originalError,
-          );
           await showAuthError(
             'Server error',
             'The GENiSYS backend encountered an internal error. Please try again later.',
@@ -243,10 +186,6 @@ export function useLogin() {
           break;
 
         default:
-          console.error(
-            '[GENiSYS Auth] Unexpected backend authentication failure.',
-            originalError,
-          );
           await showAuthError(
             'Authentication error',
             message,
@@ -264,21 +203,16 @@ export function useLogin() {
     }
 
     setResendStatus(null);
-    console.log('[GENiSYS Auth] Sending Firebase email verification.');
 
     try {
       await sendEmailVerification(pendingUser);
-      console.log('[GENiSYS Auth] Verification email sent successfully.');
+
       setResendStatus('Verification email sent. Check your inbox.');
       await showAuthSuccess(
         'Verification email sent',
         'Check your inbox and follow the verification link.',
       );
     } catch (sendError) {
-      console.error(
-        '[GENiSYS Auth] Failed to send verification email.',
-        sendError,
-      );
       setResendStatus('Could not send verification email. Try again shortly.');
       await showAuthError(
         'Unable to send email',
@@ -296,18 +230,11 @@ export function useLogin() {
     setResendStatus(null);
     setError(null);
     setLoading(true);
-    console.log('[GENiSYS Auth] Refreshing Firebase verification state.');
 
     try {
       await pendingUser.reload();
 
-      console.log('[GENiSYS Auth] Current verification state:', {
-        email: pendingUser.email,
-        emailVerified: pendingUser.emailVerified,
-      });
-
       if (!pendingUser.emailVerified) {
-        console.log('[GENiSYS Auth] Email is still unverified.');
         setResendStatus(
           'Still not verified. Check your inbox and spam folder.',
         );
@@ -319,20 +246,14 @@ export function useLogin() {
         return;
       }
 
-      console.log('[GENiSYS Auth] Email verification confirmed.');
-      console.log('[GENiSYS Auth] Forwarding verified identity to Django.');
       await authenticateWithBackend(pendingUser);
-      console.log('[GENiSYS Auth] Django authentication successful.');
+
       navigate('/');
     } catch (caughtError) {
       const wrapped = isWrappedBackendError(caughtError) ? caughtError : null;
 
       // Verification itself may fail independently from Django.
       if (!wrapped && !isNetworkFailure(caughtError)) {
-        console.error(
-          '[GENiSYS Auth] Failed while checking email verification.',
-          caughtError,
-        );
         setResendStatus('Could not check verification status. Try again.');
         await showAuthError(
           'Verification check failed',
@@ -347,14 +268,6 @@ export function useLogin() {
         ? wrapped.type
         : getBackendFailureType(caughtError);
       const message = getBackendErrorMessage(failureType);
-
-      console.error(
-        '[GENiSYS Auth] Verification/backend authentication failure.',
-        {
-          failureType,
-          caughtError,
-        },
-      );
 
       setError(message);
 
@@ -383,7 +296,6 @@ export function useLogin() {
   };
 
   const handleBackToForm = () => {
-    console.log('[GENiSYS Auth] Returning to login form.');
     setView('form');
     setPendingUser(null);
     setResendStatus(null);

@@ -8,21 +8,9 @@ import { auth } from '../lib/firebase';
  * here is what actually changes the auth state used by the router.
  */
 export async function logout(): Promise<void> {
-  console.log('[AUTH] Logout requested');
-
   try {
-    console.log('[AUTH] Current user:', auth.currentUser?.email ?? 'none');
-
     await signOut(auth);
 
-    console.log('[AUTH] Firebase sign-out successful');
-    console.log(
-      '[AUTH] Current user after sign-out:',
-      auth.currentUser ?? 'none',
-    );
-
     window.location.href = '/login';
-  } catch (error) {
-    console.error('[AUTH] Firebase sign-out failed:', error);
-  }
+  } catch (error) {}
 }

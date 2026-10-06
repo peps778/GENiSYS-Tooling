@@ -59,8 +59,6 @@ export async function terminateSession(
 
   const { title, message } = getTimeoutMessage(reason);
 
-  console.warn(`[GENiSYS Auth] Session terminated: ${reason}`);
-
   try {
     await signOut(auth);
   } catch (error) {
@@ -69,7 +67,6 @@ export async function terminateSession(
      * user from being redirected away from the protected
      * application interface.
      */
-    console.error('[GENiSYS Auth] Failed to clear Firebase session.', error);
   }
 
   await Swal.fire({
@@ -124,11 +121,6 @@ export function scheduleSessionTimeouts(
    * broken timeout.
    */
   if (Number.isNaN(absoluteTime) || Number.isNaN(idleTime)) {
-    console.error('[GENiSYS Auth] Invalid session expiration timestamps.', {
-      absoluteExpiresAt,
-      idleExpiresAt,
-    });
-
     return;
   }
 

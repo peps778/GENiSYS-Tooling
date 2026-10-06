@@ -147,8 +147,6 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   try {
     token = await user.getIdToken();
   } catch (error) {
-    console.error('[GENiSYS Auth] Failed to obtain Firebase ID token.', error);
-
     throw new ApiError(
       'Unable to obtain the Firebase authentication token.',
       401,
@@ -166,11 +164,6 @@ export async function getCurrentUser(): Promise<CurrentUser> {
       },
     });
   } catch (error) {
-    console.error('[GENiSYS Auth] Django backend is unreachable.', {
-      apiUrl: API_URL,
-      error,
-    });
-
     throw new ApiError('The GENiSYS backend is unreachable.', 0);
   }
 
@@ -187,25 +180,10 @@ export async function getCurrentUser(): Promise<CurrentUser> {
 
     const code = getErrorCode(responseBody);
 
-    console.error('[GENiSYS Auth] Backend authentication request failed.', {
-      status: response.status,
-      statusText: response.statusText,
-      message,
-      code,
-    });
-
     throw new ApiError(message, response.status, responseBody, code);
   }
 
   if (!isCurrentUser(responseBody)) {
-    console.error(
-      '[GENiSYS Auth] Backend returned an invalid authentication response.',
-      {
-        status: response.status,
-        responseBody,
-      },
-    );
-
     throw new ApiError(
       'The backend returned an invalid authentication response.',
       response.status,
