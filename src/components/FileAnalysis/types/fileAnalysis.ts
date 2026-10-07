@@ -22,41 +22,28 @@ export type ByteOffset = number;
 // ---------------------------------------------------------------------------
 
 export interface SignatureMatch {
-  /** Canonical format name, e.g. "PNG image" */
   format: string;
-  /** MIME type, when known. */
   mime: string | null;
-  /** Common extension(s) for this format, e.g. [".png"] */
   extensions: string[];
-  /** The magic bytes that were matched, as hex pairs, e.g. "89 50 4E 47" */
   magicHex: string;
-  /** Offset in the buffer where the signature was found. */
   offset: ByteOffset;
-  /** How confident this match is. */
   confidence: Confidence;
-  /** Short human-readable reason, e.g. "Signature match at offset 0x00". */
   reason: string;
 }
 
 export interface FileIdentification {
-  /** Best-guess canonical type name, or "Unknown" if nothing matched. */
   detectedType: string;
   mime: string | null;
-  /** Extension reported by the filename, e.g. ".jpg" (may be empty string). */
   reportedExtension: string;
-  /** Extension(s) implied by the detected signature, if any. */
   expectedExtensions: string[];
-  /** The winning signature match, if any. */
   signature: SignatureMatch | null;
-  /** All signature matches found at offset 0 or via structural checks. */
   candidates: SignatureMatch[];
   confidence: Confidence;
-  /** True when the reported extension conflicts with the detected signature. */
   extensionMismatch: boolean;
 }
 
 // ---------------------------------------------------------------------------
-// Format guessing (combines multiple evidence sources)
+// Format guessing
 // ---------------------------------------------------------------------------
 
 export interface FormatGuessEvidence {
@@ -79,7 +66,9 @@ export interface FormatGuessResult {
 // ---------------------------------------------------------------------------
 
 export type MetadataFieldStatus =
-  'available' | 'unavailable' | 'not-applicable';
+  | 'available'
+  | 'unavailable'
+  | 'not-applicable';
 
 export interface MetadataField {
   label: string;
@@ -88,12 +77,15 @@ export interface MetadataField {
 }
 
 export type MetadataCategory =
-  'generic' | 'image' | 'pdf' | 'archive' | 'audio';
+  | 'generic'
+  | 'image'
+  | 'pdf'
+  | 'archive'
+  | 'audio';
 
 export interface FileMetadata {
   category: MetadataCategory;
   fields: MetadataField[];
-  /** Free-text notes about extraction limitations, if any. */
   limitations: string[];
 }
 
@@ -113,7 +105,6 @@ export interface StringMatch {
 
 export interface StringExtractionResult {
   matches: StringMatch[];
-  /** Total matches found before any pagination/truncation was applied. */
   totalFound: number;
   truncated: boolean;
   minLength: number;
@@ -140,6 +131,38 @@ export interface HexRange {
 // Image analysis
 // ---------------------------------------------------------------------------
 
+export interface ImageChunk {
+  kind: string;
+  offset: ByteOffset;
+  length: number;
+  keyword?: string;
+  text?: string;
+  hexPreview?: string;
+}
+
+export interface ImageAnomaly {
+  kind: string;
+  detail: string;
+  offset: ByteOffset | null;
+  severity: 'high' | 'medium' | 'low' | 'info';
+}
+
+export interface ExifData {
+  make?: string;
+  model?: string;
+  software?: string;
+  dateTime?: string;
+  dateTimeOriginal?: string;
+  orientation?: number;
+  imageDescription?: string;
+  copyright?: string;
+  userComment?: string;
+  gps?: { latitude?: number; longitude?: number; altitude?: number };
+  pixelXDimension?: number;
+  pixelYDimension?: number;
+  raw?: Array<{ tag: number; name: string; value: string }>;
+}
+
 export interface ImageInformation {
   format: string;
   mime: string | null;
@@ -147,8 +170,13 @@ export interface ImageInformation {
   height: number | null;
   hasAlpha: boolean | null;
   colorInfo: string | null;
+  colorDepth: number | null;
+  interlaced: boolean | null;
+  frameCount: number | null;
+  chunks: ImageChunk[];
+  anomalies: ImageAnomaly[];
   exifAvailable: boolean;
-  exif: Record<string, string> | null;
+  exif: ExifData | null;
   objectUrl: string | null;
 }
 
@@ -177,7 +205,15 @@ export interface ArchiveInformation {
 // ---------------------------------------------------------------------------
 
 export type AnomalyKind =
-  'trailing-data' | 'unknown-chunk' | 'embedded-signature' | 'structural-note';
+  | 'trailing-data'
+  | 'unknown-chunk'
+  | 'embedded-signature'
+  | 'structural-note'
+  | 'lsb-data'
+  | 'silent-region'
+  | 'stego-signature'
+  | 'metadata-injection'
+  | 'appended-archive';
 
 export interface AnomalyFinding {
   kind: AnomalyKind;
@@ -185,6 +221,61 @@ export interface AnomalyFinding {
   offset: ByteOffset | null;
   length: number | null;
   confidence: Confidence;
+}
+
+/** One LSB plane extraction attempt from an image or audio buffer. */
+export interface LsbFinding {
+  channel: string;
+  bit: number;
+  bitsRead: number;
+  decoded: string;
+  preview: string;
+  offset: ByteOffset;
+  looksLikeFlag: boolean;
+  embeddedSignature: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Audio analysis
+// ---------------------------------------------------------------------------
+
+export interface AudioWaveform {
+  peaks: number[];
+  duration: number;
+  sampleRate: number;
+  channels: number;
+}
+
+export interface AudioSpectrogram {
+  width: number;
+  height: number;
+  magnitudes: Float32Array;
+  fftSize: number;
+  timeStep: number;
+  freqStep: number;
+  minDb: number;
+  maxDb: number;
+}
+
+export interface PcmData {
+  channels: Float32Array[];
+  sampleRate: number;
+}
+
+export interface AudioInformation {
+  format: string;
+  mime: string | null;
+  duration: number | null;
+  sampleRate: number | null;
+  channels: number | null;
+  bitsPerSample: number | null;
+  bitrate: number | null;
+  pcm: PcmData | null;
+  waveform: AudioWaveform | null;
+  spectrogram: AudioSpectrogram | null;
+  tags: Array<{ key: string; value: string }>;
+  anomalies: AnomalyFinding[];
+  lsbFindings: LsbFinding[];
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +288,6 @@ export interface EmbeddedFileCandidate {
   mime: string | null;
   signatureHex: string;
   offset: ByteOffset;
-  /** End offset, only when a reliable end-of-data marker was found. */
   endOffset: ByteOffset | null;
   confidence: Confidence;
   suggestedExtension: string;
@@ -214,11 +304,9 @@ export interface ByteFrequencyEntry {
 
 export interface BinaryStatistics {
   sizeBytes: number;
-  /** Shannon entropy estimate, 0-8 bits/byte. */
   entropyEstimate: number;
   printableRatio: number;
   nullByteRatio: number;
-  /** Top byte-frequency entries, sorted descending by count. */
   topBytes: ByteFrequencyEntry[];
   detectedTextRegions: { offset: ByteOffset; length: number }[];
 }
@@ -241,7 +329,6 @@ export type AnalysisStage =
 
 export interface AnalysisProgress {
   stage: AnalysisStage;
-  /** 0-100 when measurable, null for indeterminate progress. */
   percent: number | null;
   message: string;
   processedBytes: number | null;
@@ -264,7 +351,7 @@ export interface LoadedFileSummary {
 }
 
 // ---------------------------------------------------------------------------
-// Encoded/obfuscated content (e.g. ASCII binary-text encoding of a real file)
+// Encoded content
 // ---------------------------------------------------------------------------
 
 export type EncodedContentEncoding = 'ascii-binary-text';
@@ -274,6 +361,76 @@ export interface EncodedContentCandidate {
   originalLength: number;
   decodedLength: number;
   decodedIdentification: FileIdentification;
+}
+
+// ---------------------------------------------------------------------------
+// CTF triage / executable analysis
+// ---------------------------------------------------------------------------
+
+export type CtfSeverity = 'high' | 'medium' | 'low' | 'info';
+
+export interface CtfFinding {
+  id: string;
+  severity: CtfSeverity;
+  category:
+    | 'flag'
+    | 'credential'
+    | 'network'
+    | 'encoding'
+    | 'command'
+    | 'format'
+    | 'executable'
+    | 'anomaly';
+  title: string;
+  value: string;
+  offset: number | null;
+  why: string;
+  nextStep: string;
+}
+
+export interface CtfTransform {
+  name: string;
+  description: string;
+  output: string;
+}
+
+export interface CtfTriageResult {
+  score: number;
+  findings: CtfFinding[];
+  transforms: CtfTransform[];
+  recommendedCommands: string[];
+}
+
+export interface ExecutableSection {
+  name: string;
+  offset: number;
+  size: number;
+  virtualAddress: number;
+  flags: string;
+}
+
+export interface DisassembledInstruction {
+  offset: number;
+  address: number;
+  bytes: string;
+  mnemonic: string;
+  operands: string;
+  pseudo: string;
+  confidence: 'decoded' | 'heuristic' | 'unknown';
+}
+
+export interface ExecutableAnalysis {
+  format: 'ELF' | 'PE' | 'Mach-O' | 'Unknown';
+  architecture: string;
+  bits: 32 | 64 | null;
+  entryPoint: number | null;
+  entryFileOffset: number | null;
+  sections: ExecutableSection[];
+  imports: string[];
+  exports: string[];
+  strings: string[];
+  instructions: DisassembledInstruction[];
+  notes: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -291,4 +448,10 @@ export interface AnalysisResult {
   image: ImageInformation | null;
   sha256: string | null;
   encodedContent: EncodedContentCandidate | null;
+  ctf: CtfTriageResult | null;
+  executable: ExecutableAnalysis | null;
+  /** LSB stego findings surfaced by the steganography analyzer. */
+  lsbFindings: LsbFinding[];
+  /** Decoded PCM when the input is a raw WAV container. Null otherwise. */
+  pcm: PcmData | null;
 }

@@ -1,9 +1,4 @@
-/**
- * Minimal SVG icon component.
- *
- * Inline SVGs avoid introducing an additional icon dependency while
- * keeping the navigation bundle lightweight and deterministic.
- */
+
 export function NavigationIcon({ name }: { name: string }) {
   const common = 'h-4 w-4 shrink-0 stroke-[1.8]';
 
@@ -156,6 +151,25 @@ export function NavigationIcon({ name }: { name: string }) {
           <path d="M3 12h18" />
           <path d="M12 3c2.2 2.4 3.3 5.4 3.3 9s-1.1 6.6-3.3 9" />
           <path d="M12 3c-2.2 2.4-3.3 5.4-3.3 9s1.1 6.6 3.3 9" />
+        </svg>
+      );
+
+    case 'reverse-engineering':
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M8 5H5a2 2 0 0 0-2 2v3" />
+          <path d="M16 5h3a2 2 0 0 1 2 2v3" />
+          <path d="M8 19H5a2 2 0 0 1-2-2v-3" />
+          <path d="M16 19h3a2 2 0 0 0 2-2v-3" />
+          <circle cx="10.5" cy="10.5" r="4" />
+          <path d="m13.5 13.5 4 4" />
         </svg>
       );
 

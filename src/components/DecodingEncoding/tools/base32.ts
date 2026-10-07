@@ -32,7 +32,30 @@ export function base32Decode(input: string): TransformResult {
       error: 'Invalid Base32 input: unexpected characters.',
     };
   }
+  const firstPadding = cleaned.indexOf('=');
+  if (firstPadding >= 0) {
+    const padding = cleaned.length - firstPadding;
+    if (
+      padding > 6 ||
+      firstPadding % 8 === 0 ||
+      !/^=+$/.test(cleaned.slice(firstPadding))
+    ) {
+      return {
+        ok: false,
+        output: '',
+        error: 'Invalid Base32 input: padding is in the wrong position.',
+      };
+    }
+  }
   const withoutPadding = cleaned.replace(/=+$/, '');
+  const remainder = withoutPadding.length % 8;
+  if (![0, 2, 4, 5, 7].includes(remainder)) {
+    return {
+      ok: false,
+      output: '',
+      error: 'Invalid Base32 input: invalid encoded length.',
+    };
+  }
   let bits = '';
   for (const char of withoutPadding) {
     const value = ALPHABET.indexOf(char);
@@ -58,13 +81,21 @@ export function base32Decode(input: string): TransformResult {
     bytes[i] = parseInt(bits.slice(i * 8, i * 8 + 8), 2);
   }
   try {
-    const output = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    const output = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    const canonical = base32Encode(output);
+    if (!canonical.ok || canonical.output !== cleaned) {
+      return {
+        ok: false,
+        output: '',
+        error: 'Invalid Base32 input: non-canonical padding or trailing bits.',
+      };
+    }
     return { ok: true, output, meta: { bytes: byteCount } };
   } catch {
     return {
       ok: false,
       output: '',
-      error: 'Invalid Base32 input: could not decode.',
+      error: 'Invalid Base32 input: decoded bytes are not valid UTF-8 text.',
     };
   }
 }

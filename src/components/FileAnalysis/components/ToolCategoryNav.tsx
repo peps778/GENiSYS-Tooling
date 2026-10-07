@@ -10,7 +10,10 @@ export type AnalysisTabId =
   | 'archive'
   | 'steganography'
   | 'recovery'
-  | 'binary';
+  | 'binary'
+  | 'ctf'
+  | 'disassembly'
+  | 'shell';
 
 interface TabDefinition {
   id: AnalysisTabId;
@@ -19,6 +22,9 @@ interface TabDefinition {
 
 const ALWAYS_AVAILABLE: TabDefinition[] = [
   { id: 'overview', label: 'Overview' },
+  { id: 'ctf', label: 'CTF Triage' },
+  { id: 'disassembly', label: 'Disassembly' },
+  { id: 'shell', label: 'CTF Shell' },
   { id: 'identification', label: 'Identification' },
   { id: 'metadata', label: 'Metadata' },
   { id: 'strings', label: 'Strings' },

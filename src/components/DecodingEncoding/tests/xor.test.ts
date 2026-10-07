@@ -9,9 +9,28 @@ describe('xor', () => {
     expect(result.output).toBe('03 22');
   });
 
-  it('round-trips text output when key format is ascii', () => {
-    const encoded = xorTransform('secret', 'key', 'ascii', 'hex');
+  it('can consume hex input and emit text', () => {
+    const encoded = xorTransform(
+      '1B 0E 0B 0F 0E 1F',
+      'K',
+      'ascii',
+      'text',
+      'hex',
+    );
     expect(encoded.ok).toBe(true);
+    expect(encoded.output).toBe('PE@DET');
+  });
+
+  it('can consume binary input', () => {
+    const result = xorTransform(
+      '00000011 00100010',
+      'K',
+      'ascii',
+      'hex',
+      'binary',
+    );
+    expect(result.ok).toBe(true);
+    expect(result.output).toBe('48 69');
   });
 
   it('rejects a missing key', () => {

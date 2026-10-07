@@ -14,6 +14,14 @@ describe('hexAscii', () => {
     expect(result.output).toBe('48 69');
   });
 
+  it('round-trips UTF-8 text', () => {
+    const encoded = asciiToHex('héllo');
+    expect(encoded.ok).toBe(true);
+    const decoded = hexToAscii(encoded.output);
+    expect(decoded.ok).toBe(true);
+    expect(decoded.output).toBe('héllo');
+  });
+
   it('rejects odd-length hex', () => {
     const result = hexToAscii('485');
     expect(result.ok).toBe(false);

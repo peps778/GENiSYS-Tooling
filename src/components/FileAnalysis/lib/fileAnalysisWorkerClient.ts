@@ -155,8 +155,13 @@ export interface ArchiveCallbacks {
 
 let requestCounter = 0;
 function nextRequestId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `req-${crypto.randomUUID()}`;
+  }
   requestCounter += 1;
-  return `req-${Date.now()}-${requestCounter}`;
+  return `req-${Date.now()}-${requestCounter}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
 }
 
 type PendingEntry =
@@ -165,6 +170,15 @@ type PendingEntry =
   | { kind: 'strings'; callbacks: StringsCallbacks }
   | { kind: 'range'; callbacks: HexRangeCallbacks }
   | { kind: 'archive'; callbacks: ArchiveCallbacks };
+
+interface PendingMeta {
+  entry: PendingEntry;
+  /** setTimeout handle, or null when timeout is disabled. */
+  timer: ReturnType<typeof setTimeout> | null;
+}
+
+/** Default per-request timeout (ms). Override per call via `timeoutMs`. */
+const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000;
 
 /**
  * Lifecycle-managed wrapper around the forensics Web Worker. Owns exactly
@@ -175,73 +189,130 @@ type PendingEntry =
  */
 export class FileAnalysisWorkerClient {
   private worker: Worker | null = null;
-  private pending = new Map<string, PendingEntry>();
+  private pending = new Map<string, PendingMeta>();
 
   private ensureWorker(): Worker {
     if (!this.worker) {
-      this.worker = new Worker(
+      const w = new Worker(
         new URL('../workers/fileAnalysis.worker.ts', import.meta.url),
-        {
-          type: 'module',
-        },
+        { type: 'module' },
       );
-      this.worker.addEventListener('message', this.handleMessage);
+      w.addEventListener('message', this.handleMessage);
+      w.addEventListener('error', this.handleWorkerError);
+      w.addEventListener('messageerror', this.handleMessageError);
+      this.worker = w;
     }
     return this.worker;
   }
 
   private handleMessage = (event: MessageEvent<WorkerResponse>) => {
     const msg = event.data;
-    const entry = this.pending.get(msg.requestId);
-    if (!entry) return; // stale/unknown response, ignore
+    const meta = this.pending.get(msg.requestId);
+    if (!meta) return; // stale/unknown response, ignore
 
     switch (msg.type) {
       case 'progress':
-        if (entry.kind === 'analyze') entry.callbacks.onProgress?.(msg);
-        break;
+        if (meta.entry.kind === 'analyze') meta.entry.callbacks.onProgress?.(msg);
+        return; // progress does not resolve the request
+
       case 'result':
-        if (entry.kind === 'analyze') entry.callbacks.onResult?.(msg.result);
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'analyze') meta.entry.callbacks.onResult?.(msg.result);
         break;
       case 'hash-result':
-        if (entry.kind === 'hash') entry.callbacks.onResult?.(msg.sha256);
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'hash') meta.entry.callbacks.onResult?.(msg.sha256);
         break;
       case 'strings-result':
-        if (entry.kind === 'strings') entry.callbacks.onResult?.(msg.result);
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'strings') meta.entry.callbacks.onResult?.(msg.result);
         break;
       case 'hex-range-result':
-        if (entry.kind === 'range') entry.callbacks.onResult?.(msg.range);
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'range') meta.entry.callbacks.onResult?.(msg.range);
         break;
       case 'archive-result':
-        if (entry.kind === 'archive') entry.callbacks.onResult?.(msg.archive);
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'archive') meta.entry.callbacks.onResult?.(msg.archive);
         break;
       case 'error':
-        entry.callbacks.onError?.(msg.message);
-        this.pending.delete(msg.requestId);
+        meta.entry.callbacks.onError?.(msg.message);
         break;
       case 'cancelled':
-        if (entry.kind === 'analyze') entry.callbacks.onCancelled?.();
-        this.pending.delete(msg.requestId);
+        if (meta.entry.kind === 'analyze') meta.entry.callbacks.onCancelled?.();
         break;
       default:
-        break;
+        return;
     }
+    this.resolve(msg.requestId);
   };
 
-  /** Runs a full analysis pass. The buffer is transferred (zero-copy). */
+  /** Uncaught exception inside the worker: every in-flight request is dead. */
+  private handleWorkerError = (event: ErrorEvent) => {
+    const message = event.message || 'Worker crashed unexpectedly.';
+    this.failAll(message);
+    this.disposeWorker();
+  };
+
+  /** A message failed to deserialize. Fail pending but keep the worker alive. */
+  private handleMessageError = (_event: MessageEvent) => {
+    this.failAll('Worker message could not be deserialized.');
+  };
+
+  private resolve(requestId: string): void {
+    const meta = this.pending.get(requestId);
+    if (!meta) return;
+    if (meta.timer !== null) clearTimeout(meta.timer);
+    this.pending.delete(requestId);
+  }
+
+  private failAll(message: string): void {
+    for (const [id, meta] of this.pending) {
+      if (meta.timer !== null) clearTimeout(meta.timer);
+      meta.entry.callbacks.onError?.(message);
+      this.pending.delete(id);
+    }
+  }
+
+  private disposeWorker(): void {
+    if (!this.worker) return;
+    this.worker.removeEventListener('message', this.handleMessage);
+    this.worker.removeEventListener('error', this.handleWorkerError);
+    this.worker.removeEventListener('messageerror', this.handleMessageError);
+    this.worker.terminate();
+    this.worker = null;
+  }
+
+  private track(
+    requestId: string,
+    entry: PendingEntry,
+    timeoutMs: number = DEFAULT_TIMEOUT_MS,
+  ): void {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    if (timeoutMs > 0) {
+      timer = setTimeout(() => {
+        const meta = this.pending.get(requestId);
+        if (!meta) return;
+        meta.entry.callbacks.onError?.(
+          `Request timed out after ${timeoutMs} ms.`,
+        );
+        this.pending.delete(requestId);
+      }, timeoutMs);
+    }
+    this.pending.set(requestId, { entry, timer });
+  }
+
+  // --- public API ---------------------------------------------------------
+
+  /**
+   * Runs a full analysis pass. The buffer is transferred (zero-copy), so the
+   * caller must not use `buffer` after this call.
+   */
   analyze(
     buffer: ArrayBuffer,
     filename: string,
     mime: string,
     callbacks: AnalysisWorkerCallbacks,
+    timeoutMs?: number,
   ): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'analyze', callbacks });
+    this.track(requestId, { kind: 'analyze', callbacks }, timeoutMs);
     const request: AnalyzeRequest = {
       type: 'analyze',
       requestId,
@@ -253,27 +324,32 @@ export class FileAnalysisWorkerClient {
     return requestId;
   }
 
-  /** Computes a SHA-256 hash. `buffer` is copied first so the caller keeps its own copy usable. */
-  hash(data: Uint8Array, callbacks: HashCallbacks): string {
+  /** Computes SHA-256. `data` is copied first so the caller keeps it usable. */
+  hash(
+    data: Uint8Array,
+    callbacks: HashCallbacks,
+    timeoutMs?: number,
+  ): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'hash', callbacks });
+    this.track(requestId, { kind: 'hash', callbacks }, timeoutMs);
     const buffer = data.slice().buffer as ArrayBuffer;
     const request: HashRequest = { type: 'hash', requestId, buffer };
     worker.postMessage(request, [buffer]);
     return requestId;
   }
 
-  /** Re-extracts strings with a new minimum length / encoding without a full re-analysis. */
+  /** Re-extracts strings. `data` is copied first so the caller keeps it usable. */
   extractStrings(
     data: Uint8Array,
     minLength: number,
     encoding: StringEncoding,
     callbacks: StringsCallbacks,
+    timeoutMs?: number,
   ): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
-    this.pending.set(requestId, { kind: 'strings', callbacks });
+    this.track(requestId, { kind: 'strings', callbacks }, timeoutMs);
     const buffer = data.slice().buffer as ArrayBuffer;
     const request: ExtractStringsRequest = {
       type: 'extract-strings',
@@ -286,22 +362,79 @@ export class FileAnalysisWorkerClient {
     return requestId;
   }
 
-  /** Cancels the currently active analyze request, if any. */
-  cancel(requestId?: string) {
+  /** Reads a byte range as a hex dump. `data` is copied first. */
+  readRange(
+    data: Uint8Array,
+    offset: number,
+    length: number,
+    bytesPerRow: number,
+    callbacks: HexRangeCallbacks,
+    timeoutMs?: number,
+  ): string {
+    const worker = this.ensureWorker();
+    const requestId = nextRequestId();
+    this.track(requestId, { kind: 'range', callbacks }, timeoutMs);
+    const buffer = data.slice().buffer as ArrayBuffer;
+    const request: ReadRangeRequest = {
+      type: 'read-range',
+      requestId,
+      buffer,
+      offset,
+      length,
+      bytesPerRow,
+    };
+    worker.postMessage(request, [buffer]);
+    return requestId;
+  }
+
+  /** Inspects an archive's directory / entries. `data` is copied first. */
+  inspectArchive(
+    data: Uint8Array,
+    callbacks: ArchiveCallbacks,
+    timeoutMs?: number,
+  ): string {
+    const worker = this.ensureWorker();
+    const requestId = nextRequestId();
+    this.track(requestId, { kind: 'archive', callbacks }, timeoutMs);
+    const buffer = data.slice().buffer as ArrayBuffer;
+    const request: InspectArchiveRequest = {
+      type: 'inspect-archive',
+      requestId,
+      buffer,
+    };
+    worker.postMessage(request, [buffer]);
+    return requestId;
+  }
+
+  /**
+   * Cooperative cancel. Only effective if the worker periodically yields to
+   * its message loop; for a fully synchronous worker this is a no-op and you
+   * should use `hardCancel()` instead.
+   */
+  cancel(requestId?: string): void {
     if (!this.worker) return;
     const targetId =
       requestId ??
-      [...this.pending.entries()].find(([, e]) => e.kind === 'analyze')?.[0];
+      [...this.pending.entries()].find(
+        ([, meta]) => meta.entry.kind === 'analyze',
+      )?.[0];
     if (!targetId) return;
     const request: CancelRequest = { type: 'cancel', requestId: targetId };
     this.worker.postMessage(request);
   }
 
+  /**
+   * Hard cancel: terminates the worker and fails every in-flight request.
+   * Use when you need a guaranteed stop (file change, navigation, huge input).
+   */
+  hardCancel(reason = 'Analysis cancelled.'): void {
+    this.failAll(reason);
+    this.disposeWorker();
+  }
+
   /** Terminates the worker outright. Call on unmount / file change. */
-  terminate() {
-    this.worker?.removeEventListener('message', this.handleMessage);
-    this.worker?.terminate();
-    this.worker = null;
-    this.pending.clear();
+  terminate(): void {
+    this.failAll('Worker terminated.');
+    this.disposeWorker();
   }
 }

@@ -11,6 +11,11 @@ const KIND_LABELS: Record<AnomalyFinding['kind'], string> = {
   'unknown-chunk': 'Unknown chunk',
   'embedded-signature': 'Embedded signature candidate',
   'structural-note': 'Structural note',
+  'lsb-data': 'LSB data candidate',
+  'silent-region': 'Silent region',
+  'stego-signature': 'Steganography tool signature',
+  'metadata-injection': 'Suspicious metadata',
+  'appended-archive': 'Appended archive',
 };
 
 const CONFIDENCE_STYLES: Record<Confidence, string> = {

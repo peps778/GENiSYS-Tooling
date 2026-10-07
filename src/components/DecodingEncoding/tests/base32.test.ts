@@ -14,6 +14,17 @@ describe('base32', () => {
     expect(result.output).toBe('hello');
   });
 
+  it('accepts valid padded Base32', () => {
+    const result = base32Decode('MY======');
+    expect(result.ok).toBe(true);
+    expect(result.output).toBe('f');
+  });
+
+  it('rejects invalid padding placement', () => {
+    const result = base32Decode('N=BSWY3DP');
+    expect(result.ok).toBe(false);
+  });
+
   it('rejects invalid characters', () => {
     const result = base32Decode('this-is-not-base32!');
     expect(result.ok).toBe(false);

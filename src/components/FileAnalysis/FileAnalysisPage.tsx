@@ -26,6 +26,10 @@ import {
 import { FileAnalysisWorkerClient } from './lib/fileAnalysisWorkerClient';
 import { analyzeImage } from './lib/imageAnalyzer';
 import { decodeAsciiBitstream } from './lib/binaryTextDecoder';
+import { runVirtualShell } from './lib/virtualShell';
+import { CtfWorkbenchPanel } from './components/CtfWorkbenchPanel';
+import { DisassemblyPanel } from './components/DisassemblyPanel';
+import { VirtualShellPanel } from './components/VirtualShellPanel';
 
 import type {
   AnalysisProgress,
@@ -80,6 +84,7 @@ export function FileAnalysisPage() {
     nonce: number;
   }>({ offset: null, nonce: 0 });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [shellOutput, setShellOutput] = useState('');
 
   const workerClientRef = useRef<FileAnalysisWorkerClient | null>(null);
   const objectUrlRef = useRef<string | null>(null);
@@ -111,6 +116,7 @@ export function FileAnalysisPage() {
     setActiveTab('overview');
     setErrorMessage(null);
     setStringsMinLength(4);
+    setShellOutput('');
   }, []);
 
   const handleFileSelected = useCallback(
@@ -230,6 +236,22 @@ export function FileAnalysisPage() {
     workerClientRef.current?.cancel();
   }, []);
 
+  const handleRunShellCommand = useCallback(
+    async (command: string) => {
+      if (!rawData || !fileSummary) return;
+      setActiveTab('shell');
+      const output = await runVirtualShell(command, {
+        filename: fileSummary.name,
+        data: rawData,
+        executable: result?.executable ?? null,
+      });
+      setShellOutput((previous) =>
+        `${previous ? `${previous}\n` : ''}$ ${command}\n${output}`.trim(),
+      );
+    },
+    [rawData, fileSummary, result],
+  );
+
   const handleComputeHash = useCallback(() => {
     if (!rawData || hashInProgress) return;
     setHashInProgress(true);
@@ -346,9 +368,10 @@ export function FileAnalysisPage() {
           Forensics / File Analysis
         </h1>
         <p className="mt-1 text-sm text-[#6B7280]">
-          Identify, inspect, and analyze files for metadata, strings, binary
-          structures, file signatures, embedded content, archives, images, and
-          other forensic artifacts.
+          Identify, triage, decode, inspect, and reverse-engineer challenge
+          files with CTF-oriented indicators, executable structure, lightweight
+          disassembly, pseudo-code, byte-level recovery, and a safe Linux-like
+          analysis shell.
         </p>
       </header>
 
@@ -406,6 +429,27 @@ export function FileAnalysisPage() {
 
               {activeTab === 'overview' && (
                 <OverviewTab fileSummary={fileSummary} result={result} />
+              )}
+              {activeTab === 'ctf' && result.ctf && (
+                <CtfWorkbenchPanel
+                  triage={result.ctf}
+                  onJump={handleOpenInHexViewer}
+                  onRunCommand={handleRunShellCommand}
+                />
+              )}
+              {activeTab === 'disassembly' && (
+                <DisassemblyPanel
+                  analysis={result.executable}
+                  onJump={handleOpenInHexViewer}
+                />
+              )}
+              {activeTab === 'shell' && (
+                <VirtualShellPanel
+                  filename={fileSummary.name}
+                  output={shellOutput}
+                  onRun={handleRunShellCommand}
+                  initialCommand={null}
+                />
               )}
               {activeTab === 'identification' && (
                 <DetectionResults
@@ -493,6 +537,16 @@ function OverviewTab({
   if (result.anomalies.length > 0) {
     findings.push(
       `${result.anomalies.length} anomaly finding(s) reported — see Steganography tab`,
+    );
+  }
+  if (result.ctf) {
+    findings.push(
+      `${result.ctf.findings.length} CTF-oriented lead(s) found — inspect CTF Triage before drawing conclusions`,
+    );
+  }
+  if (result.executable && result.executable.format !== 'Unknown') {
+    findings.push(
+      `${result.executable.format} executable structure recognized — inspect Disassembly and CTF Shell`,
     );
   }
 

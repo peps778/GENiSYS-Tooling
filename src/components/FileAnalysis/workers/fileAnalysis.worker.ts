@@ -21,6 +21,9 @@ import { inspectForAnomalies } from '../lib/steganography';
 import { inspectZipArchive, looksLikeZip } from '../lib/archiveInspector';
 import { readHexRange } from '../lib/hexReader';
 import { decodeAsciiBitstream } from '../lib/binaryTextDecoder';
+import { analyzeCtfContent } from '../lib/ctfAnalyzer';
+import { analyzeExecutable } from '../lib/executableAnalyzer';
+
 import type {
   AnalysisResult,
   AnalysisStage,
@@ -78,6 +81,9 @@ async function handleAnalyze(
   progress(requestId, 'analyzing', 60, 'Computing binary statistics...');
   const binaryStatistics = analyzeBinary(data);
 
+  progress(requestId, 'scanning', 66, 'Running CTF-oriented indicator scan...');
+  const executable = analyzeExecutable(data);
+
   progress(
     requestId,
     'scanning',
@@ -85,9 +91,17 @@ async function handleAnalyze(
     'Scanning for embedded file signatures...',
   );
   const embeddedCandidates = findEmbeddedCandidates(data);
+  progress(
+    requestId,
+    'scanning',
+    78,
+    'Correlating strings, signatures, and challenge indicators...',
+  );
+  const ctf = analyzeCtfContent(data, strings, embeddedCandidates);
 
   progress(requestId, 'scanning', 85, 'Checking for anomalies...');
-  const anomalies = inspectForAnomalies(data, identification.detectedType);
+  const stego = inspectForAnomalies(data, identification.detectedType);
+  const { anomalies, lsbFindings, pcm } = stego;
 
   let archive = null;
   if (looksLikeZip(data)) {
@@ -133,6 +147,10 @@ async function handleAnalyze(
     image: null, // image preview/objectURL is created on the main thread
     sha256: null,
     encodedContent,
+    ctf,
+    executable,
+    lsbFindings,
+    pcm,
   };
 
   post({ type: 'result', requestId, result });

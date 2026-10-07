@@ -27,6 +27,10 @@ export default function HashResults({ result }: HashResultsProps) {
             {result.characterSet}
           </dd>
         </div>
+        <div className="col-span-2">
+          <dt className="text-xs text-[#6B7280]">Format</dt>
+          <dd className="text-sm text-[#111827]">{result.format}</dd>
+        </div>
       </div>
 
       {result.candidates.length > 1 && (

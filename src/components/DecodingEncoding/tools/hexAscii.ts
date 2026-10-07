@@ -22,11 +22,21 @@ export function hexToAscii(input: string): TransformResult {
       error: 'Invalid hexadecimal input: odd number of hex digits.',
     };
   }
-  let output = '';
-  for (let i = 0; i < stripped.length; i += 2) {
-    output += String.fromCharCode(parseInt(stripped.slice(i, i + 2), 16));
+  const bytes = new Uint8Array(stripped.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(stripped.slice(i * 2, i * 2 + 2), 16);
   }
-  return { ok: true, output, meta: { bytes: stripped.length / 2 } };
+  try {
+    const output = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    return { ok: true, output, meta: { bytes: bytes.length } };
+  } catch {
+    return {
+      ok: false,
+      output: '',
+      error:
+        'Invalid hexadecimal input: byte sequence is not valid UTF-8 text.',
+    };
+  }
 }
 
 export function asciiToHex(input: string): TransformResult {

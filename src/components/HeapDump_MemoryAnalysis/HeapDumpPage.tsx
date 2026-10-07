@@ -189,7 +189,9 @@ export default function HeapDumpPage() {
   }, [getClient]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-5 bg-[#F9FAFB] p-6">
+    // Width now follows the parent app shell instead of being capped, so the
+    // page expands to fill the space freed when the shell sidebar collapses.
+    <div className="w-full min-w-0 space-y-5 bg-[#F9FAFB] p-6">
       <header>
         <h1 className="text-lg font-semibold text-[#111827]">
           Heap Dump / Memory Analysis

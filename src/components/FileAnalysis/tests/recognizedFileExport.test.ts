@@ -30,6 +30,10 @@ function buildResult(
     image: null,
     sha256: null,
     encodedContent,
+    ctf: null,
+    executable: null,
+    lsbFindings: [],
+    pcm: null,
   };
 }
 

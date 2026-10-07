@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ReconSidebar, { reconSections } from './components/ReconSidebar';
 import SearchBar from './components/SearchBar';
 import SectionHeader from './components/SectionHeader';
@@ -28,25 +28,38 @@ import { ports } from './data/ports';
 import type { SectionId } from './types/networkRecon';
 
 const styles = `
+  /*
+   * Layout notes
+   * - The module fills whatever width the parent app shell gives it, so it
+   *   expands automatically when the shell sidebar is collapsed.
+   * - Responsive rules use CONTAINER queries (not viewport media queries),
+   *   because collapsing the shell sidebar changes the container width
+   *   but not the viewport width.
+   */
   .nr-root {
+    container-type: inline-size;
+    container-name: nr;
+    box-sizing: border-box;
     min-height: 100%;
     width: 100%;
+    min-width: 0;
     background: #f7f9f8;
     color: #111827;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   .nr-module {
-    min-height: 100vh;
+    --nr-gutter: 32px;
+    min-height: 100%;
     width: 100%;
+    min-width: 0;
   }
 
-  /* Module chrome: deliberately flat, compact and separate from the global GENiSYS shell. */
   .nr-main {
     min-width: 0;
-    min-height: 100vh;
+    min-height: 100%;
+    width: 100%;
     background: #f7f9f8;
-    overflow: auto;
   }
 
   .nr-header {
@@ -59,7 +72,7 @@ const styles = `
     align-items: center;
     justify-content: space-between;
     gap: 28px;
-    padding: 10px 32px;
+    padding: 10px var(--nr-gutter);
     border-bottom: 1px solid #e5e7eb;
     background: #ffffff;
   }
@@ -79,8 +92,9 @@ const styles = `
   }
 
   .nr-reference-scroll {
-    width: min(1320px, calc(100% - 64px));
-    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 var(--nr-gutter);
     display: flex;
     align-items: stretch;
     gap: 2px;
@@ -135,7 +149,7 @@ const styles = `
   .nr-search-field {
     position: relative;
     flex: 0 1 360px;
-    width: min(360px, 42vw);
+    width: min(360px, 42%);
   }
   .nr-search-field > span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; }
   .nr-search-field input {
@@ -153,12 +167,13 @@ const styles = `
   .nr-search-field input::placeholder { color: #9ca3af; }
   .nr-search-field input:focus { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.10); }
 
+  /* Anchored to the (sticky) header instead of the window, so it follows the shell layout. */
   .nr-search-results {
-    position: fixed;
-    right: 32px;
-    top: 56px;
+    position: absolute;
+    right: var(--nr-gutter);
+    top: calc(100% + 4px);
     z-index: 30;
-    width: min(360px, calc(100vw - 64px));
+    width: min(360px, calc(100% - (var(--nr-gutter) * 2)));
     max-height: 320px;
     overflow: auto;
     border: 1px solid #d1d5db;
@@ -174,9 +189,9 @@ const styles = `
   .nr-reference-empty { padding: 13px; color: #6b7280; font-size: 11px; }
 
   .nr-content {
-    width: min(1320px, calc(100% - 64px));
-    margin: 0 auto;
-    padding: 32px 0 56px;
+    width: 100%;
+    margin: 0;
+    padding: 32px var(--nr-gutter) 56px;
     box-sizing: border-box;
   }
   .nr-section { scroll-margin-top: 126px; }
@@ -250,29 +265,28 @@ const styles = `
 
   .nr-footer { margin-top: 26px; padding-top: 14px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 9px; text-align: left; }
 
-  @media (max-width: 1100px) {
-    .nr-header, .nr-content { width: auto; }
-    .nr-header { padding-left: 24px; padding-right: 24px; }
-    .nr-reference-scroll, .nr-content { width: calc(100% - 48px); }
+  /* Container queries: respond to the space the shell gives us, not the window. */
+  @container nr (max-width: 1100px) {
+    .nr-module { --nr-gutter: 24px; }
     .nr-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
-  @media (max-width: 760px) {
-    .nr-header { position: sticky; padding: 11px 16px; align-items: stretch; flex-direction: column; gap: 9px; }
+  @container nr (max-width: 760px) {
+    .nr-module { --nr-gutter: 16px; }
+    .nr-header { padding-top: 11px; padding-bottom: 11px; align-items: stretch; flex-direction: column; gap: 9px; }
     .nr-search-field { width: 100%; flex-basis: auto; }
     .nr-reference-sidebar { top: 102px; }
-    .nr-reference-scroll { width: calc(100% - 32px); }
     .nr-reference-item { min-height: 42px; padding: 0 8px; }
     .nr-reference-copy { font-size: 10px; }
-    .nr-search-results { left: 16px; right: 16px; top: 104px; width: auto; }
-    .nr-content { width: calc(100% - 32px); padding: 24px 0 40px; }
+    .nr-search-results { left: var(--nr-gutter); right: var(--nr-gutter); width: auto; }
+    .nr-content { padding-top: 24px; padding-bottom: 40px; }
     .nr-grid { grid-template-columns: 1fr; }
     .nr-workflow-sequence { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .nr-workflow-chevron { display: none; }
     .nr-content-heading h1 { font-size: 25px; }
   }
 
-  @media (max-width: 480px) {
+  @container nr (max-width: 480px) {
     .nr-stat-grid { grid-template-columns: 1fr; }
     .nr-workflow-sequence { grid-template-columns: 1fr; }
     .nr-flow { align-items: stretch; flex-direction: column; }
@@ -554,6 +568,7 @@ export default function NetworkReconPage() {
   const [activeSection, setActiveSection] = useState<SectionId>('overview');
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -571,16 +586,17 @@ export default function NetworkReconPage() {
     setActiveSection(id);
     setSearch('');
     setSearchOpen(false);
+    // The scroll container belongs to the app shell, so scroll our root into view
+    // rather than scrolling an inner element.
     window.requestAnimationFrame(() => {
-      const main = document.querySelector('.nr-main');
-      main?.scrollTo({ top: 0, behavior: 'smooth' });
+      rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 
   return (
     <>
       <style>{styles}</style>
-      <div className="nr-root">
+      <div className="nr-root" ref={rootRef}>
         <div className="nr-module">
           <main className="nr-main">
             <header className="nr-header">
@@ -598,33 +614,33 @@ export default function NetworkReconPage() {
                 }}
                 onFocus={() => setSearchOpen(Boolean(search.trim()))}
               />
+
+              {searchOpen && search.trim() && (
+                <div className="nr-search-results">
+                  {results.length > 0 ? (
+                    results.map((result) => (
+                      <button
+                        key={result.id}
+                        type="button"
+                        className="nr-search-result"
+                        onClick={() => selectSection(result.id)}
+                      >
+                        <strong>
+                          {result.number} · {result.title}
+                        </strong>
+                        <span>{result.description}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="nr-reference-empty">
+                      No matching reference content.
+                    </div>
+                  )}
+                </div>
+              )}
             </header>
 
             <ReconSidebar active={activeSection} onSelect={selectSection} />
-
-            {searchOpen && search.trim() && (
-              <div className="nr-search-results">
-                {results.length > 0 ? (
-                  results.map((result) => (
-                    <button
-                      key={result.id}
-                      type="button"
-                      className="nr-search-result"
-                      onClick={() => selectSection(result.id)}
-                    >
-                      <strong>
-                        {result.number} · {result.title}
-                      </strong>
-                      <span>{result.description}</span>
-                    </button>
-                  ))
-                ) : (
-                  <div className="nr-reference-empty">
-                    No matching reference content.
-                  </div>
-                )}
-              </div>
-            )}
 
             <div className="nr-content">
               {renderSection(activeSection, selectSection)}

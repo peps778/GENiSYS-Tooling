@@ -22,11 +22,20 @@ export function binaryToText(input: string): TransformResult {
       error: 'Invalid binary input: bit count is not a multiple of 8.',
     };
   }
-  let output = '';
-  for (let i = 0; i < stripped.length; i += 8) {
-    output += String.fromCharCode(parseInt(stripped.slice(i, i + 8), 2));
+  const bytes = new Uint8Array(stripped.length / 8);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(stripped.slice(i * 8, i * 8 + 8), 2);
   }
-  return { ok: true, output, meta: { bytes: stripped.length / 8 } };
+  try {
+    const output = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    return { ok: true, output, meta: { bytes: bytes.length } };
+  } catch {
+    return {
+      ok: false,
+      output: '',
+      error: 'Invalid binary input: byte sequence is not valid UTF-8 text.',
+    };
+  }
 }
 
 export function textToBinary(input: string): TransformResult {

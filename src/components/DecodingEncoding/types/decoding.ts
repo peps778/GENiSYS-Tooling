@@ -19,6 +19,7 @@ export type ToolId =
   | 'xor'
   | 'cipher-helpers'
   | 'hash-identifier'
+  | 'hash-calculator'
   | 'file-signature';
 
 export type SupportedIOKind =
@@ -151,6 +152,15 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       "Identify likely hash algorithms from a hash's length and character set.",
     supportedInput: ['hash'],
     supportedOutput: ['text'],
+  },
+  {
+    id: 'hash-calculator',
+    category: 'hashes',
+    label: 'Hash Calculator',
+    description:
+      'Calculate common cryptographic hashes and checksums locally from text.',
+    supportedInput: ['text'],
+    supportedOutput: ['hash'],
   },
   {
     id: 'file-signature',

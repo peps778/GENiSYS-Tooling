@@ -3,24 +3,59 @@ import React, { useEffect, useState } from 'react';
 const modules = [
   {
     code: '01',
-    title: 'Reconnaissance',
+    title: 'Decoding / Encoding',
     description:
-      'Discover hosts, services, endpoints, and useful target information.',
-    tools: ['nmap', 'dig', 'curl', 'katana'],
+      'Convert and inspect data across Base64/32/16, URL encoding, hex, binary, ROT/Caesar, XOR, hashes, and common ciphers.',
+    tools: ['base64', 'xxd', 'rot13', 'xor'],
   },
   {
     code: '02',
-    title: 'Analysis',
+    title: 'Heap Dump / Memory Analysis',
     description:
-      'Inspect files, binaries, requests, data, and challenge artifacts.',
-    tools: ['file', 'strings', 'xxd', 'jq'],
+      'Parse Chrome and Firefox-compatible heap snapshots to pull strings, secrets, structured data, and endpoints.',
+    tools: ['strings', 'regex', 'json', 'secrets'],
   },
   {
     code: '03',
-    title: 'Web Security',
+    title: 'Web Security / CTF Automation',
     description:
-      'Analyze HTTP traffic, endpoints, parameters, APIs, and web targets.',
+      'Build requests, enumerate endpoints and parameters, inspect JWTs, and generate SQLi/SSTI test cases with evidence logging.',
     tools: ['httpx', 'ffuf', 'curl', 'jq'],
+  },
+  {
+    code: '04',
+    title: 'Linux Docs / Command Reference',
+    description:
+      'Look up grep, sed, awk, find, nmap, msfconsole and other command-line tools, or generate a command from selected attributes.',
+    tools: ['grep', 'awk', 'nmap', 'msf'],
+  },
+  {
+    code: '05',
+    title: 'Network / Recon Reference',
+    description:
+      'Reference IP/MAC, TCP/UDP, DNS, HTTP, ports, CIDR, routing, NAT, firewalls, proxies, and packet-analysis commands.',
+    tools: ['dig', 'curl', 'nmap', 'tcpdump'],
+  },
+  {
+    code: '06',
+    title: 'Forensics / File Analysis',
+    description:
+      'Identify files and metadata, extract strings, inspect hex and archives, and convert raw .bin files into readable formats.',
+    tools: ['file', 'exiftool', 'binwalk', 'xxd'],
+  },
+  {
+    code: '07',
+    title: 'OSINT Reference',
+    description:
+      'Work through DNS enumeration, WHOIS, subdomain discovery, metadata, search operators, and username/email investigation.',
+    tools: ['whois', 'dig', 'dorking'],
+  },
+  {
+    code: '08',
+    title: 'Notes / SOP',
+    description:
+      'Run SOPs for enumeration, web, network, forensics, and stego work, plus vulnerability notes and tool references like Burp and Wireshark.',
+    tools: ['burp', 'zap', 'wireshark'],
   },
 ];
 
@@ -252,7 +287,7 @@ const Dashboard = () => {
               </span>
             </div>
 
-            <div className="grid min-w-0 gap-2.5 md:grid-cols-3">
+            <div className="grid min-w-0 gap-2.5 md:grid-cols-3 xl:grid-cols-4">
               {modules.map((module, index) => {
                 const active = activeModule === index;
 

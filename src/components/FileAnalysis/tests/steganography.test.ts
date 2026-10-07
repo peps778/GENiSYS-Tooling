@@ -34,7 +34,7 @@ describe('inspectPngChunks', () => {
       ...chunk('IDAT', 0),
       ...chunk('IEND', 0),
     ]);
-    const findings = inspectPngChunks(data);
+    const findings = inspectPngChunks(data).anomalies;
     expect(findings.some((f) => f.kind === 'unknown-chunk')).toBe(false);
   });
 
@@ -44,7 +44,7 @@ describe('inspectPngChunks', () => {
       ...chunk('zzZZ', 4),
       ...chunk('IEND', 0),
     ]);
-    const findings = inspectPngChunks(data);
+    const findings = inspectPngChunks(data).anomalies;
     expect(
       findings.some(
         (f) => f.kind === 'unknown-chunk' && f.description.includes('zzZZ'),
@@ -55,7 +55,7 @@ describe('inspectPngChunks', () => {
   it('detects trailing data after IEND', () => {
     const base = [...pngSignature(), ...chunk('IEND', 0)];
     const data = new Uint8Array([...base, 0xde, 0xad, 0xbe, 0xef]);
-    const findings = inspectPngChunks(data);
+    const findings = inspectPngChunks(data).anomalies;
     const trailing = findings.find((f) => f.kind === 'trailing-data');
     expect(trailing).toBeDefined();
     expect(trailing?.length).toBe(4);
@@ -63,40 +63,41 @@ describe('inspectPngChunks', () => {
 
   it('does not report false-positive trailing data on a well-formed file', () => {
     const data = new Uint8Array([...pngSignature(), ...chunk('IEND', 0)]);
-    const findings = inspectPngChunks(data);
+    const findings = inspectPngChunks(data).anomalies;
     expect(findings.some((f) => f.kind === 'trailing-data')).toBe(false);
   });
 
   it('returns no findings for non-PNG data', () => {
     const data = new Uint8Array([1, 2, 3, 4]);
-    expect(inspectPngChunks(data)).toEqual([]);
+    expect(inspectPngChunks(data).anomalies).toEqual([]);
   });
 });
 
 describe('inspectJpegTrailingData', () => {
   it('detects trailing data after the EOI marker', () => {
     const data = new Uint8Array([0xff, 0xd8, 0xff, 0xd9, 0x01, 0x02, 0x03]);
-    const findings = inspectJpegTrailingData(data);
+    const findings = inspectJpegTrailingData(data).anomalies;
     expect(findings.length).toBe(1);
     expect(findings[0].length).toBe(3);
   });
 
   it('reports no findings for a JPEG with no trailing data', () => {
     const data = new Uint8Array([0xff, 0xd8, 0xff, 0xd9]);
-    expect(inspectJpegTrailingData(data)).toEqual([]);
+    expect(inspectJpegTrailingData(data).anomalies).toEqual([]);
   });
 });
 
 describe('inspectForAnomalies', () => {
   it('routes to the PNG checker for PNG format', () => {
     const data = new Uint8Array([...pngSignature(), ...chunk('IEND', 0), 1, 2]);
-    const findings = inspectForAnomalies(data, 'PNG image');
+    const findings = inspectForAnomalies(data, 'PNG image').anomalies;
     expect(findings.some((f) => f.kind === 'trailing-data')).toBe(true);
   });
 
   it('returns an empty array for formats without a dedicated check', () => {
     expect(
-      inspectForAnomalies(new Uint8Array([1, 2, 3]), 'SQLite database'),
+      inspectForAnomalies(new Uint8Array([1, 2, 3]), 'SQLite database')
+        .anomalies,
     ).toEqual([]);
   });
 });

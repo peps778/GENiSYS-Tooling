@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { logout } from '../../Authentication/logout';
 import logo from '../../assets/genisys-icon.png';
 
 import { navigationItems } from '../Navigation/navigationItems';
@@ -19,9 +18,12 @@ export default function Sidebar() {
    */
   const currentPath = location.pathname.replace(/\/$/, '') || '/';
 
-  // Applied to text/decoration elements that should disappear only
-  // once the desktop rail is collapsed — the mobile drawer is always
-  // shown at full width, so `lg:hidden` has no effect there.
+  /**
+   * Hide secondary text when the desktop sidebar is collapsed.
+   *
+   * The mobile navigation remains fully expanded regardless of the
+   * desktop collapsed state.
+   */
   const hiddenWhenCollapsed = collapsed ? 'lg:hidden' : '';
 
   return (
@@ -41,6 +43,7 @@ export default function Sidebar() {
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
+            aria-hidden="true"
           >
             <path d="M6 6l12 12M18 6 6 18" />
           </svg>
@@ -51,6 +54,7 @@ export default function Sidebar() {
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
+            aria-hidden="true"
           >
             <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
@@ -95,6 +99,7 @@ export default function Sidebar() {
               className="h-11 w-auto object-contain"
               alt="GENiSYS Logo"
             />
+
             <div className={hiddenWhenCollapsed}>
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gray-400">
                 Toolkit
@@ -165,23 +170,6 @@ export default function Sidebar() {
 
         {/* Footer */}
         <div className="border-t border-gray-200 px-6 py-4">
-          <button
-            type="button"
-            onClick={logout}
-            title={collapsed ? 'Log out' : undefined}
-            className={[
-              'group mb-4 flex w-full items-center gap-3 rounded-lg px-3 py-2.5',
-              'text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-green-50 hover:text-green-700',
-              collapsed ? 'lg:justify-center lg:px-0' : '',
-            ].join(' ')}
-          >
-            <span className="text-gray-400 transition-colors group-hover:text-green-600">
-              <NavigationIcon name="logout" />
-            </span>
-
-            <span className={hiddenWhenCollapsed}>Log out</span>
-          </button>
-
           <div
             className={`flex items-center justify-between ${hiddenWhenCollapsed}`}
           >

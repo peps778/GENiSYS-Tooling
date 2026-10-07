@@ -38,13 +38,13 @@ export function base16Decode(input: string): TransformResult {
     bytes[i / 2] = parseInt(cleaned.slice(i, i + 2), 16);
   }
   try {
-    const output = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    const output = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     return { ok: true, output, meta: { bytes: bytes.length } };
   } catch {
     return {
       ok: false,
       output: '',
-      error: 'Invalid Base16 input: could not decode.',
+      error: 'Invalid Base16 input: decoded bytes are not valid UTF-8 text.',
     };
   }
 }

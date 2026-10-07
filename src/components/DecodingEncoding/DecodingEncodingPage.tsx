@@ -41,6 +41,7 @@ import {
 } from './tools/caesar';
 import {
   xorTransform,
+  type XorInputFormat,
   type XorKeyFormat,
   type XorOutputFormat,
 } from './tools/xor';
@@ -49,6 +50,7 @@ import {
   identifyHash,
   type HashIdentificationResult,
 } from './tools/hashIdentifier';
+import { HASH_ALGORITHMS, hashText, type HashAlgorithm } from './tools/hash';
 import { bytesToHexPreview, matchFileSignature } from './tools/fileSignatures';
 import { detectFormats, type FormatCandidate } from './tools/formatDetector';
 
@@ -68,6 +70,7 @@ const EXAMPLE_INPUTS: Partial<Record<ToolId, string>> = {
   xor: 'Hi',
   'cipher-helpers': 'HELLO',
   'hash-identifier': '5d41402abc4b2a76b9719d911017c59',
+  'hash-calculator': 'hello world',
   'file-signature': '89 50 4E 47 0D 0A 1A 0A',
 };
 
@@ -99,11 +102,13 @@ export default function DecodingEncodingPage() {
     useState<EncodeDecodeMode>('encode');
 
   const [xorKey, setXorKey] = useState('');
+  const [xorInputFormat, setXorInputFormat] = useState<XorInputFormat>('text');
   const [xorKeyFormat, setXorKeyFormat] = useState<XorKeyFormat>('ascii');
   const [xorOutputFormat, setXorOutputFormat] =
     useState<XorOutputFormat>('hex');
 
   const [helperId, setHelperId] = useState(CIPHER_HELPERS[0].id);
+  const [hashAlgorithm, setHashAlgorithm] = useState<HashAlgorithm>('SHA-256');
 
   const [hashResult, setHashResult] = useState<HashIdentificationResult | null>(
     null,
@@ -194,7 +199,7 @@ export default function DecodingEncodingPage() {
     }
   }
 
-  function handleExecute() {
+  async function handleExecute() {
     if (!tool) return;
 
     switch (tool.id) {
@@ -261,12 +266,18 @@ export default function DecodingEncodingPage() {
           xorKey,
           xorKeyFormat,
           xorOutputFormat,
+          xorInputFormat,
         );
         applyResult(result, tool.label, input);
         return;
       }
       case 'cipher-helpers': {
         const result = runCipherHelper(helperId, input);
+        applyResult(result, tool.label, input);
+        return;
+      }
+      case 'hash-calculator': {
+        const result = await hashText(input, hashAlgorithm);
         applyResult(result, tool.label, input);
         return;
       }
@@ -406,6 +417,7 @@ export default function DecodingEncodingPage() {
     }
     if (tool.id === 'xor') {
       setXorKey('K');
+      setXorInputFormat('text');
       setXorKeyFormat('ascii');
       setXorOutputFormat('hex');
     }
@@ -422,9 +434,11 @@ export default function DecodingEncodingPage() {
     customShift,
     caesarDirection,
     xorKey,
+    xorInputFormat,
     xorKeyFormat,
     xorOutputFormat,
     helperId,
+    hashAlgorithm,
     fileHexInput,
   ].join('␟');
   const debouncedAutoRunKey = useDebouncedValue(autoRunKey, 400);
@@ -721,6 +735,26 @@ export default function DecodingEncodingPage() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <label
+                  htmlFor="xor-input-format"
+                  className="text-sm font-medium text-[#111827]"
+                >
+                  Input Format
+                </label>
+                <select
+                  id="xor-input-format"
+                  value={xorInputFormat}
+                  onChange={(e) =>
+                    setXorInputFormat(e.target.value as XorInputFormat)
+                  }
+                  className="rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#111827] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]"
+                >
+                  <option value="text">Text / UTF-8</option>
+                  <option value="hex">Hex</option>
+                  <option value="binary">Binary</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label
                   htmlFor="xor-key-format"
                   className="text-sm font-medium text-[#111827]"
                 >
@@ -787,34 +821,110 @@ export default function DecodingEncodingPage() {
               </p>
             </div>
           )}
+          {tool.id === 'hash-calculator' && (
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="hash-algorithm"
+                className="text-sm font-medium text-[#111827]"
+              >
+                Algorithm
+              </label>
+              <select
+                id="hash-algorithm"
+                value={hashAlgorithm}
+                onChange={(e) =>
+                  setHashAlgorithm(e.target.value as HashAlgorithm)
+                }
+                className="rounded-[10px] border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#111827] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]"
+              >
+                {HASH_ALGORITHMS.map((algorithm) => (
+                  <option key={algorithm.id} value={algorithm.id}>
+                    {algorithm.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-[#6B7280]">
+                {
+                  HASH_ALGORITHMS.find(
+                    (algorithm) => algorithm.id === hashAlgorithm,
+                  )?.description
+                }
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Input / execute / output for text-based tools */}
-        {tool.id !== 'file-signature' && tool.id !== 'hash-identifier' && (
+        {tool.id !== 'file-signature' &&
+          tool.id !== 'hash-identifier' &&
+          tool.id !== 'hash-calculator' && (
+            <>
+              <InputEditor
+                id="tool-input"
+                label="Input"
+                value={input}
+                onChange={setInput}
+                placeholder="Paste or type data to transform…"
+              />
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleExecute}
+                  className="rounded-[10px] bg-[#16A34A] px-4 py-2 text-sm font-medium text-white hover:bg-[#15803D] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2"
+                >
+                  {autoRun
+                    ? 'Run Now'
+                    : tool.id === 'caesar'
+                      ? 'Apply Shift'
+                      : tool.id === 'xor'
+                        ? 'Apply XOR'
+                        : mode === 'encode'
+                          ? 'Encode'
+                          : 'Decode'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetWorkspace}
+                  className="rounded-[10px] border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#374151] hover:border-[#16A34A] hover:text-[#15803D] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]"
+                >
+                  Clear
+                </button>
+                {autoRun && (
+                  <span className="text-xs text-[#6B7280]">
+                    Auto-run is on — results update as you type.
+                  </span>
+                )}
+              </div>
+
+              <OutputViewer
+                id="tool-output"
+                label="Output"
+                value={output}
+                error={error}
+                downloadFileName="output.txt"
+              />
+              {metaRows.length > 0 && <ConversionTable rows={metaRows} />}
+            </>
+          )}
+
+        {tool.id === 'hash-calculator' && (
           <>
             <InputEditor
-              id="tool-input"
+              id="hash-calculator-input"
               label="Input"
               value={input}
               onChange={setInput}
-              placeholder="Paste or type data to transform…"
+              placeholder="Enter text to hash…"
+              rows={4}
             />
-
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={handleExecute}
                 className="rounded-[10px] bg-[#16A34A] px-4 py-2 text-sm font-medium text-white hover:bg-[#15803D] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2"
               >
-                {autoRun
-                  ? 'Run Now'
-                  : tool.id === 'caesar'
-                    ? 'Apply Shift'
-                    : tool.id === 'xor'
-                      ? 'Apply XOR'
-                      : mode === 'encode'
-                        ? 'Encode'
-                        : 'Decode'}
+                Calculate {hashAlgorithm}
               </button>
               <button
                 type="button"
@@ -823,19 +933,13 @@ export default function DecodingEncodingPage() {
               >
                 Clear
               </button>
-              {autoRun && (
-                <span className="text-xs text-[#6B7280]">
-                  Auto-run is on — results update as you type.
-                </span>
-              )}
             </div>
-
             <OutputViewer
-              id="tool-output"
-              label="Output"
+              id="hash-output"
+              label="Digest"
               value={output}
               error={error}
-              downloadFileName="output.txt"
+              downloadFileName={`${hashAlgorithm.toLowerCase()}-digest.txt`}
             />
             {metaRows.length > 0 && <ConversionTable rows={metaRows} />}
           </>

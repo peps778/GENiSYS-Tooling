@@ -11,12 +11,15 @@ describe('hashIdentifier', () => {
     expect(parsed.candidates.some((c) => c.algorithm === 'MD5')).toBe(true);
   });
 
-  it('flags a 64-hex-character value as SHA-256', () => {
+  it('reports SHA-256 among the candidates for a 64-character digest', () => {
     const hex64 = 'a'.repeat(64);
     const result = identifyHash(hex64);
     expect(result.ok).toBe(true);
     const parsed = JSON.parse(result.output) as HashIdentificationResult;
     expect(parsed.candidates.some((c) => c.algorithm === 'SHA-256')).toBe(true);
+    expect(parsed.candidates.some((c) => c.algorithm === 'SHA3-256')).toBe(
+      true,
+    );
   });
 
   it('rejects input containing whitespace', () => {
@@ -29,7 +32,9 @@ describe('hashIdentifier', () => {
   });
 
   it('recognizes a bcrypt-formatted value', () => {
-    const result = identifyHash('$2b$12$KIXQ8b1s0v7z8s8s8s8s8u');
+    const result = identifyHash(
+      '$2b$12$.....................................................',
+    );
     expect(result.ok).toBe(true);
     const parsed = JSON.parse(result.output) as HashIdentificationResult;
     expect(parsed.candidates[0].algorithm).toBe('bcrypt');

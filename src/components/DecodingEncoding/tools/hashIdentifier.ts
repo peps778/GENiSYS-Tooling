@@ -9,6 +9,7 @@ export interface HashCandidate {
 export interface HashIdentificationResult {
   length: number;
   characterSet: string;
+  format: string;
   candidates: HashCandidate[];
 }
 
@@ -17,20 +18,205 @@ const BASE64_LIKE = /^[A-Za-z0-9+/]+={0,2}$/;
 
 function describeCharacterSet(value: string): string {
   if (HEX_ONLY.test(value)) return 'Hexadecimal (0-9, a-f)';
-  if (BASE64_LIKE.test(value)) return 'Base64 (A-Z, a-z, 0-9, +, /, =)';
-  return 'Mixed / non-standard characters';
+  if (BASE64_LIKE.test(value))
+    return 'Base64 alphabet (A-Z, a-z, 0-9, +, /, =)';
+  return 'Mixed / structured characters';
 }
 
-/**
- * Heuristic hash *identification*, not decryption. Many algorithms share the
- * same output length and character set, so multiple candidates are returned
- * whenever the representation is ambiguous.
- */
+function candidate(
+  algorithm: string,
+  confidence: HashCandidate['confidence'],
+  note: string,
+): HashCandidate {
+  return { algorithm, confidence, note };
+}
+
+function identifyCryptFormat(value: string): HashCandidate[] {
+  if (/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(value)) {
+    return [
+      candidate(
+        'bcrypt',
+        'high',
+        'Valid bcrypt modular-crypt structure with a 60-character record.',
+      ),
+    ];
+  }
+  if (/^\$1\$[./A-Za-z0-9]{0,8}\$[./A-Za-z0-9]{22}$/.test(value)) {
+    return [
+      candidate('MD5 crypt', 'high', 'Valid $1$ modular-crypt structure.'),
+    ];
+  }
+  if (/^\$5\$[./A-Za-z0-9]{0,16}\$[./A-Za-z0-9]{43}$/.test(value)) {
+    return [
+      candidate('SHA-256 crypt', 'high', 'Valid $5$ modular-crypt structure.'),
+    ];
+  }
+  if (/^\$6\$[./A-Za-z0-9]{0,16}\$[./A-Za-z0-9]{86}$/.test(value)) {
+    return [
+      candidate('SHA-512 crypt', 'high', 'Valid $6$ modular-crypt structure.'),
+    ];
+  }
+  if (/^\$argon2(id|i|d)\$v=\d+\$/.test(value)) {
+    return [
+      candidate(
+        'Argon2',
+        'high',
+        'Matches an Argon2 modular password-hash prefix.',
+      ),
+    ];
+  }
+  if (/^\$scrypt\$/.test(value)) {
+    return [
+      candidate(
+        'scrypt',
+        'high',
+        'Matches the scrypt modular password-hash prefix.',
+      ),
+    ];
+  }
+  return [];
+}
+
+function identifyHex(value: string): HashCandidate[] {
+  switch (value.length) {
+    case 8:
+      return [
+        candidate(
+          'CRC32',
+          'medium',
+          '8 hexadecimal characters represent a 32-bit checksum.',
+        ),
+      ];
+    case 16:
+      return [
+        candidate(
+          'MySQL323',
+          'medium',
+          'MySQL 3.23 password hashes are 16 hexadecimal characters.',
+        ),
+        candidate(
+          'CRC64',
+          'low',
+          'Some CRC64 representations use 16 hexadecimal characters.',
+        ),
+      ];
+    case 32:
+      return [
+        candidate(
+          'MD5',
+          'high',
+          '128-bit digest represented as 32 hexadecimal characters.',
+        ),
+        candidate(
+          'NTLM',
+          'high',
+          'NT hashes are also 128-bit and indistinguishable from MD5 by shape alone.',
+        ),
+        candidate(
+          'MD4',
+          'medium',
+          'MD4 also produces a 128-bit hexadecimal digest.',
+        ),
+        candidate(
+          'LM',
+          'low',
+          'Legacy LM hashes use 32 hexadecimal characters, but have additional structural constraints.',
+        ),
+      ];
+    case 40:
+      return [
+        candidate(
+          'SHA-1',
+          'high',
+          '160-bit digest represented as 40 hexadecimal characters.',
+        ),
+        candidate('RIPEMD-160', 'medium', 'Also a 160-bit hexadecimal digest.'),
+      ];
+    case 56:
+      return [
+        candidate(
+          'SHA-224',
+          'high',
+          '224-bit SHA-2 digest represented as 56 hexadecimal characters.',
+        ),
+        candidate(
+          'SHA3-224',
+          'medium',
+          'SHA-3/224 has the same 224-bit hexadecimal length.',
+        ),
+      ];
+    case 64:
+      return [
+        candidate(
+          'SHA-256',
+          'high',
+          '256-bit SHA-2 digest represented as 64 hexadecimal characters.',
+        ),
+        candidate(
+          'SHA3-256',
+          'medium',
+          'SHA-3/256 has the same 256-bit hexadecimal length.',
+        ),
+        candidate(
+          'BLAKE2s-256',
+          'low',
+          'BLAKE2s can produce a 256-bit digest.',
+        ),
+      ];
+    case 96:
+      return [
+        candidate(
+          'SHA-384',
+          'high',
+          '384-bit SHA-2 digest represented as 96 hexadecimal characters.',
+        ),
+        candidate(
+          'SHA3-384',
+          'medium',
+          'SHA-3/384 has the same 384-bit hexadecimal length.',
+        ),
+      ];
+    case 128:
+      return [
+        candidate(
+          'SHA-512',
+          'high',
+          '512-bit SHA-2 digest represented as 128 hexadecimal characters.',
+        ),
+        candidate(
+          'SHA3-512',
+          'medium',
+          'SHA-3/512 has the same 512-bit hexadecimal length.',
+        ),
+        candidate(
+          'BLAKE2b-512',
+          'low',
+          'BLAKE2b can produce a 512-bit digest.',
+        ),
+      ];
+    default:
+      return [];
+  }
+}
+
+function identifyBase64Digest(value: string): HashCandidate[] {
+  if (!BASE64_LIKE.test(value) || value.length < 8) return [];
+  const byteLength = Math.floor((value.replace(/=+$/, '').length * 6) / 8);
+  if ([16, 20, 28, 32, 48, 64].includes(byteLength)) {
+    return [
+      candidate(
+        'Base64-encoded digest',
+        'low',
+        `${byteLength}-byte decoded length is compatible with common digest sizes; the underlying algorithm cannot be inferred.`,
+      ),
+    ];
+  }
+  return [];
+}
+
 export function identifyHash(input: string): TransformResult {
   const trimmed = input.trim();
-  if (trimmed.length === 0) {
-    return { ok: false, output: '', error: 'Input is empty.' };
-  }
+  if (!trimmed) return { ok: false, output: '', error: 'Input is empty.' };
   if (/\s/.test(trimmed)) {
     return {
       ok: false,
@@ -39,132 +225,41 @@ export function identifyHash(input: string): TransformResult {
     };
   }
 
-  const length = trimmed.length;
-  const characterSet = describeCharacterSet(trimmed);
-  const candidates: HashCandidate[] = [];
+  const cryptCandidates = identifyCryptFormat(trimmed);
+  const candidates = cryptCandidates.length
+    ? cryptCandidates
+    : HEX_ONLY.test(trimmed)
+      ? identifyHex(trimmed)
+      : identifyBase64Digest(trimmed);
 
-  if (HEX_ONLY.test(trimmed)) {
-    switch (length) {
-      case 8:
-        candidates.push({
-          algorithm: 'CRC32',
-          confidence: 'medium',
-          note: '8 hex characters (32-bit checksum).',
-        });
-        break;
-      case 16:
-        candidates.push({
-          algorithm: 'MySQL323 / short CRC64',
-          confidence: 'low',
-          note: '16 hex characters.',
-        });
-        break;
-      case 32:
-        candidates.push({
-          algorithm: 'MD5',
-          confidence: 'high',
-          note: '32 hex characters (128-bit).',
-        });
-        candidates.push({
-          algorithm: 'NTLM',
-          confidence: 'medium',
-          note: 'NTLM hashes are also 32 hex characters.',
-        });
-        candidates.push({
-          algorithm: 'MD4',
-          confidence: 'low',
-          note: 'MD4 also produces a 128-bit digest.',
-        });
-        break;
-      case 40:
-        candidates.push({
-          algorithm: 'SHA-1',
-          confidence: 'high',
-          note: '40 hex characters (160-bit).',
-        });
-        candidates.push({
-          algorithm: 'RIPEMD-160',
-          confidence: 'low',
-          note: 'Also a 160-bit digest.',
-        });
-        break;
-      case 56:
-        candidates.push({
-          algorithm: 'SHA-224 / SHA3-224',
-          confidence: 'medium',
-          note: '56 hex characters (224-bit).',
-        });
-        break;
-      case 64:
-        candidates.push({
-          algorithm: 'SHA-256',
-          confidence: 'high',
-          note: '64 hex characters (256-bit).',
-        });
-        candidates.push({
-          algorithm: 'SHA3-256',
-          confidence: 'medium',
-          note: 'Also a 256-bit digest.',
-        });
-        break;
-      case 96:
-        candidates.push({
-          algorithm: 'SHA-384',
-          confidence: 'high',
-          note: '96 hex characters (384-bit).',
-        });
-        break;
-      case 128:
-        candidates.push({
-          algorithm: 'SHA-512',
-          confidence: 'high',
-          note: '128 hex characters (512-bit).',
-        });
-        candidates.push({
-          algorithm: 'SHA3-512',
-          confidence: 'medium',
-          note: 'Also a 512-bit digest.',
-        });
-        break;
-      default:
-        candidates.push({
-          algorithm: 'Unknown',
-          confidence: 'low',
-          note: `${length} hex characters does not match a common fixed-length digest.`,
-        });
-    }
-  } else if (/^\$2[aby]?\$/.test(trimmed)) {
-    candidates.push({
-      algorithm: 'bcrypt',
-      confidence: 'high',
-      note: 'Matches the bcrypt "$2a/2b/2y$" prefix format.',
-    });
-  } else if (/^\$1\$/.test(trimmed)) {
-    candidates.push({
-      algorithm: 'MD5 crypt',
-      confidence: 'high',
-      note: 'Matches the "$1$" MD5-crypt prefix format.',
-    });
-  } else if (/^\$6\$/.test(trimmed)) {
-    candidates.push({
-      algorithm: 'SHA-512 crypt',
-      confidence: 'high',
-      note: 'Matches the "$6$" SHA-512-crypt prefix format.',
-    });
-  } else if (BASE64_LIKE.test(trimmed)) {
-    candidates.push({
-      algorithm: 'Base64-encoded digest',
-      confidence: 'low',
-      note: 'Character set matches Base64; algorithm cannot be narrowed further from format alone.',
-    });
-  } else {
-    candidates.push({
-      algorithm: 'Unknown',
-      confidence: 'low',
-      note: 'Input does not match a recognized hash character set or prefix format.',
-    });
+  if (candidates.length === 0) {
+    candidates.push(
+      candidate(
+        'Unknown',
+        'low',
+        'The value does not match a recognized fixed-length or modular hash representation.',
+      ),
+    );
   }
 
-  const result: HashIdentificationResult = { length, characterSet, candidates };
-  return { ok: true, output: JSON.stringify(result), meta: { length } };
+  const format = cryptCandidates.length
+    ? 'Modular crypt / password-hash format'
+    : HEX_ONLY.test(trimmed)
+      ? 'Fixed-length hexadecimal digest/checksum'
+      : BASE64_LIKE.test(trimmed)
+        ? 'Base64-like digest representation'
+        : 'Unrecognized';
+
+  const result: HashIdentificationResult = {
+    length: trimmed.length,
+    characterSet: describeCharacterSet(trimmed),
+    format,
+    candidates,
+  };
+
+  return {
+    ok: true,
+    output: JSON.stringify(result),
+    meta: { length: trimmed.length, format },
+  };
 }

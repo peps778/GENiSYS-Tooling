@@ -14,6 +14,14 @@ describe('binary', () => {
     expect(result.output).toBe('01001000 01101001');
   });
 
+  it('round-trips UTF-8 text', () => {
+    const encoded = textToBinary('héllo');
+    expect(encoded.ok).toBe(true);
+    const decoded = binaryToText(encoded.output);
+    expect(decoded.ok).toBe(true);
+    expect(decoded.output).toBe('héllo');
+  });
+
   it('rejects non-multiple-of-8 bit strings', () => {
     const result = binaryToText('0100100');
     expect(result.ok).toBe(false);
