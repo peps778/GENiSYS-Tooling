@@ -3,8 +3,12 @@ import { bytesToAscii, bytesToHex, hexToBytes } from '../tools/bytes';
 
 describe('bytes', () => {
   it('parses spaced and compact hex', () => {
-    expect(hexToBytes('48 65 6c 6c 6f').bytes).toEqual(Uint8Array.from([72,101,108,108,111]));
-    expect(hexToBytes('48656c6c6f').bytes).toEqual(Uint8Array.from([72,101,108,108,111]));
+    expect(hexToBytes('48 65 6c 6c 6f').bytes).toEqual(
+      Uint8Array.from([72, 101, 108, 108, 111]),
+    );
+    expect(hexToBytes('48656c6c6f').bytes).toEqual(
+      Uint8Array.from([72, 101, 108, 108, 111]),
+    );
   });
   it('rejects odd or invalid hex', () => {
     expect(hexToBytes('abc').ok).toBe(false);

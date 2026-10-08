@@ -15,9 +15,17 @@ export function shannonEntropy(bytes: Uint8Array): number {
 
 export function entropyTool(bytes: Uint8Array): TransformResult {
   const entropy = shannonEntropy(bytes);
-  const interpretation = entropy < 1 ? 'Very low diversity / highly structured'
-    : entropy < 4 ? 'Low-to-moderate diversity'
-    : entropy < 7 ? 'Moderate-to-high diversity'
-    : 'High entropy; compression, encryption, or packed data are possible';
-  return { ok: true, output: `Shannon entropy: ${entropy.toFixed(6)} bits/byte\nInterpretation: ${interpretation}`, meta: { entropy } };
+  const interpretation =
+    entropy < 1
+      ? 'Very low diversity / highly structured'
+      : entropy < 4
+        ? 'Low-to-moderate diversity'
+        : entropy < 7
+          ? 'Moderate-to-high diversity'
+          : 'High entropy; compression, encryption, or packed data are possible';
+  return {
+    ok: true,
+    output: `Shannon entropy: ${entropy.toFixed(6)} bits/byte\nInterpretation: ${interpretation}`,
+    meta: { entropy },
+  };
 }

@@ -65,9 +65,9 @@ export const navigationItems: NavigationItem[] = [
     icon: 'web',
     // title: "GENiSYS | Automate Web Exploit"
   },
-{
-  label: 'Reverse Engineering',
-  href: '/reverse-engineering',
-  icon: 'reverse-engineering',
-},
+  {
+    label: 'Reverse Engineering',
+    href: '/reverse-engineering',
+    icon: 'reverse-engineering',
+  },
 ];

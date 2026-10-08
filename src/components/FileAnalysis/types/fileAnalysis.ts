@@ -66,9 +66,7 @@ export interface FormatGuessResult {
 // ---------------------------------------------------------------------------
 
 export type MetadataFieldStatus =
-  | 'available'
-  | 'unavailable'
-  | 'not-applicable';
+  'available' | 'unavailable' | 'not-applicable';
 
 export interface MetadataField {
   label: string;
@@ -77,11 +75,7 @@ export interface MetadataField {
 }
 
 export type MetadataCategory =
-  | 'generic'
-  | 'image'
-  | 'pdf'
-  | 'archive'
-  | 'audio';
+  'generic' | 'image' | 'pdf' | 'archive' | 'audio';
 
 export interface FileMetadata {
   category: MetadataCategory;

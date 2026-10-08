@@ -7,7 +7,7 @@ describe('entropy', () => {
     expect(shannonEntropy(new Uint8Array(100))).toBe(0);
   });
   it('returns one bit for two equally likely symbols', () => {
-    expect(shannonEntropy(Uint8Array.from([0,1,0,1]))).toBeCloseTo(1, 10);
+    expect(shannonEntropy(Uint8Array.from([0, 1, 0, 1]))).toBeCloseTo(1, 10);
   });
   it('never exceeds eight bits per byte', () => {
     const bytes = Uint8Array.from({ length: 256 }, (_, i) => i);

@@ -3,10 +3,15 @@ import { findBytes, searchHexPattern } from '../tools/patternSearch';
 
 describe('pattern search', () => {
   it('finds overlapping matches', () => {
-    expect(findBytes(Uint8Array.from([1,1,1]), Uint8Array.from([1,1]))).toEqual([0,1]);
+    expect(
+      findBytes(Uint8Array.from([1, 1, 1]), Uint8Array.from([1, 1])),
+    ).toEqual([0, 1]);
   });
   it('finds all exact hexadecimal occurrences', () => {
-    const result = searchHexPattern('48 65 6C 6C 6F 20 48 65 6C 6C 6F', '48 65 6C 6C 6F');
+    const result = searchHexPattern(
+      '48 65 6C 6C 6F 20 48 65 6C 6C 6F',
+      '48 65 6C 6C 6F',
+    );
     expect(result.ok).toBe(true);
     expect(result.output).toContain('0x00000000');
     expect(result.output).toContain('0x00000006');

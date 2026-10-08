@@ -42,7 +42,11 @@ function readUint32LE(data: Uint8Array, offset: number): number | null {
   );
 }
 
-function asciiAt(data: Uint8Array, offset: number, length: number): string | null {
+function asciiAt(
+  data: Uint8Array,
+  offset: number,
+  length: number,
+): string | null {
   if (offset + length > data.length) return null;
   let s = '';
   for (let i = 0; i < length; i++) s += String.fromCharCode(data[offset + i]);
@@ -74,7 +78,12 @@ function printableSlice(
   let s = '';
   for (let i = offset; i < end; i++) {
     const b = data[i];
-    s += b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : b === 0 ? '\u0000' : '.';
+    s +=
+      b >= 0x20 && b <= 0x7e
+        ? String.fromCharCode(b)
+        : b === 0
+          ? '\u0000'
+          : '.';
   }
   return s;
 }
@@ -113,7 +122,13 @@ function walkPngChunks(data: Uint8Array, cap = 4096): PngChunk[] | null {
     const crcOffset = dataOffset + length;
     const totalEnd = crcOffset + 4;
     if (totalEnd > data.length) {
-      chunks.push({ type, length, dataOffset, crcOffset, totalEnd: data.length });
+      chunks.push({
+        type,
+        length,
+        dataOffset,
+        crcOffset,
+        totalEnd: data.length,
+      });
       return chunks;
     }
     chunks.push({ type, length, dataOffset, crcOffset, totalEnd });
@@ -386,7 +401,12 @@ function readGif(data: Uint8Array): {
         offset += 8; // Graphic Control Extension — fixed length.
       } else if (label === 0xfe) {
         const [text, next] = readGifSubBlocks(data, offset + 2);
-        chunks.push({ kind: 'gif-comment', offset, length: next - offset, text });
+        chunks.push({
+          kind: 'gif-comment',
+          offset,
+          length: next - offset,
+          text,
+        });
         offset = next;
       } else if (label === 0xff) {
         const [appText, next] = readGifSubBlocks(data, offset + 2);
@@ -502,7 +522,11 @@ function walkJpegSegments(data: Uint8Array, cap = 4096): JpegSegment[] {
       continue;
     }
     const marker = data[offset + 1];
-    if (marker === 0xd8 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+    if (
+      marker === 0xd8 ||
+      marker === 0x01 ||
+      (marker >= 0xd0 && marker <= 0xd7)
+    ) {
       offset += 2;
       continue;
     }
@@ -625,7 +649,8 @@ function readWebp(data: Uint8Array): {
       if (payload + 10 <= data.length) {
         const width = (data[payload + 6] | (data[payload + 7] << 8)) & 0x3fff;
         const height = (data[payload + 8] | (data[payload + 9] << 8)) & 0x3fff;
-        if (width > 0 && height > 0) return { dims: { width, height }, anomalies };
+        if (width > 0 && height > 0)
+          return { dims: { width, height }, anomalies };
       }
       return { dims: null, anomalies };
     }
@@ -636,20 +661,27 @@ function readWebp(data: Uint8Array): {
         const b2 = data[payload + 3];
         const b3 = data[payload + 4];
         const width = 1 + (((b1 & 0x3f) << 8) | b0);
-        const height = 1 + (((b3 & 0x0f) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6));
-        if (width > 0 && height > 0) return { dims: { width, height }, anomalies };
+        const height =
+          1 + (((b3 & 0x0f) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6));
+        if (width > 0 && height > 0)
+          return { dims: { width, height }, anomalies };
       }
       return { dims: null, anomalies };
     }
     if (id === 'VP8X') {
       if (payload + 10 <= data.length) {
         const w1 =
-          data[payload + 4] | (data[payload + 5] << 8) | (data[payload + 6] << 16);
+          data[payload + 4] |
+          (data[payload + 5] << 8) |
+          (data[payload + 6] << 16);
         const h1 =
-          data[payload + 7] | (data[payload + 8] << 8) | (data[payload + 9] << 16);
+          data[payload + 7] |
+          (data[payload + 8] << 8) |
+          (data[payload + 9] << 16);
         const width = w1 + 1;
         const height = h1 + 1;
-        if (width > 0 && height > 0) return { dims: { width, height }, anomalies };
+        if (width > 0 && height > 0)
+          return { dims: { width, height }, anomalies };
       }
       return { dims: null, anomalies };
     }
@@ -683,7 +715,18 @@ const EXIF_TAG_NAMES: Record<number, string> = {
 };
 
 const TYPE_SIZE: Record<number, number> = {
-  1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8,
+  1: 1,
+  2: 1,
+  3: 2,
+  4: 4,
+  5: 8,
+  6: 1,
+  7: 1,
+  8: 2,
+  9: 4,
+  10: 8,
+  11: 4,
+  12: 8,
 };
 
 interface TiffReader {

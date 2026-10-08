@@ -155,7 +155,10 @@ export interface ArchiveCallbacks {
 
 let requestCounter = 0;
 function nextRequestId(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
     return `req-${crypto.randomUUID()}`;
   }
   requestCounter += 1;
@@ -212,23 +215,29 @@ export class FileAnalysisWorkerClient {
 
     switch (msg.type) {
       case 'progress':
-        if (meta.entry.kind === 'analyze') meta.entry.callbacks.onProgress?.(msg);
+        if (meta.entry.kind === 'analyze')
+          meta.entry.callbacks.onProgress?.(msg);
         return; // progress does not resolve the request
 
       case 'result':
-        if (meta.entry.kind === 'analyze') meta.entry.callbacks.onResult?.(msg.result);
+        if (meta.entry.kind === 'analyze')
+          meta.entry.callbacks.onResult?.(msg.result);
         break;
       case 'hash-result':
-        if (meta.entry.kind === 'hash') meta.entry.callbacks.onResult?.(msg.sha256);
+        if (meta.entry.kind === 'hash')
+          meta.entry.callbacks.onResult?.(msg.sha256);
         break;
       case 'strings-result':
-        if (meta.entry.kind === 'strings') meta.entry.callbacks.onResult?.(msg.result);
+        if (meta.entry.kind === 'strings')
+          meta.entry.callbacks.onResult?.(msg.result);
         break;
       case 'hex-range-result':
-        if (meta.entry.kind === 'range') meta.entry.callbacks.onResult?.(msg.range);
+        if (meta.entry.kind === 'range')
+          meta.entry.callbacks.onResult?.(msg.range);
         break;
       case 'archive-result':
-        if (meta.entry.kind === 'archive') meta.entry.callbacks.onResult?.(msg.archive);
+        if (meta.entry.kind === 'archive')
+          meta.entry.callbacks.onResult?.(msg.archive);
         break;
       case 'error':
         meta.entry.callbacks.onError?.(msg.message);
@@ -325,11 +334,7 @@ export class FileAnalysisWorkerClient {
   }
 
   /** Computes SHA-256. `data` is copied first so the caller keeps it usable. */
-  hash(
-    data: Uint8Array,
-    callbacks: HashCallbacks,
-    timeoutMs?: number,
-  ): string {
+  hash(data: Uint8Array, callbacks: HashCallbacks, timeoutMs?: number): string {
     const worker = this.ensureWorker();
     const requestId = nextRequestId();
     this.track(requestId, { kind: 'hash', callbacks }, timeoutMs);

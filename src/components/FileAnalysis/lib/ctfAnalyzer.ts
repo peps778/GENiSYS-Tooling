@@ -263,7 +263,10 @@ function scanPatterns(
     let count = 0;
     let match: RegExpExecArray | null;
 
-    while (count < MAX_MATCHES_PER_PATTERN && (match = re.exec(text)) !== null) {
+    while (
+      count < MAX_MATCHES_PER_PATTERN &&
+      (match = re.exec(text)) !== null
+    ) {
       // Guard against zero-length matches (none of ours are, but be safe).
       if (re.lastIndex === match.index) re.lastIndex++;
       if (match[0].length === 0) continue;
@@ -381,7 +384,15 @@ function decodeAndScan(
       // KEY FIX: promote decoded content into real findings.
       findings.push(...scanPatterns(out, blobOffset, prov));
 
-      decodeAndScan(out, blobOffset, prov, visited, findings, transforms, depth + 1);
+      decodeAndScan(
+        out,
+        blobOffset,
+        prov,
+        visited,
+        findings,
+        transforms,
+        depth + 1,
+      );
     }
   }
 }
@@ -489,14 +500,14 @@ export function analyzeCtfContent(
         'Jump to the offset in Hex and inspect nearby strings/instructions.',
     });
   }
-const CONFIDENCE_SEVERITY: Record<
-  EmbeddedFileCandidate['confidence'],
-  CtfSeverity
-> = {
-  confirmed: 'medium',
-  probable: 'low',
-  unknown: 'info',
-};
+  const CONFIDENCE_SEVERITY: Record<
+    EmbeddedFileCandidate['confidence'],
+    CtfSeverity
+  > = {
+    confirmed: 'medium',
+    probable: 'low',
+    unknown: 'info',
+  };
   // 3. Embedded file signatures.
   const hasExecutableSig = embeddedCandidates.some((c) =>
     /^(?:elf|pe|mach-?o)$/i.test(c.format),
@@ -530,7 +541,8 @@ const CONFIDENCE_SEVERITY: Record<
     if (transforms.length < MAX_TRANSFORMS) {
       transforms.push({
         name: 'ROT13',
-        description: 'Text transformed with ROT13; produced flag-shaped output.',
+        description:
+          'Text transformed with ROT13; produced flag-shaped output.',
         output: rot.replace(/[^\x20-\x7e]/g, '.').slice(0, 160),
       });
     }

@@ -627,9 +627,8 @@ function buildStage(
       }
       return () =>
         exe.instructions
-          .map(
-            (i) =>
-              `${i.address.toString(16).padStart(8, '0')}: ${i.bytes.padEnd(20)} ${i.mnemonic} ${i.operands}`.trimEnd(),
+          .map((i) =>
+            `${i.address.toString(16).padStart(8, '0')}: ${i.bytes.padEnd(20)} ${i.mnemonic} ${i.operands}`.trimEnd(),
           )
           .join('\n');
     }
@@ -689,4 +688,4 @@ export async function runVirtualShell(
         final.length - MAX_OUTPUT_CHARS
       } more characters]`
     : final;
-}   
+}

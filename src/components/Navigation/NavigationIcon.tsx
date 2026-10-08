@@ -1,4 +1,3 @@
-
 export function NavigationIcon({ name }: { name: string }) {
   const common = 'h-4 w-4 shrink-0 stroke-[1.8]';
 

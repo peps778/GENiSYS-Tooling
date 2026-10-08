@@ -41,7 +41,11 @@ function asciiAt(data: Uint8Array, offset: number, length: number): string {
 }
 
 /** Latin-1 view: every byte maps to exactly one char; binary-safe. */
-function latin1(data: Uint8Array, start = 0, length = data.length - start): string {
+function latin1(
+  data: Uint8Array,
+  start = 0,
+  length = data.length - start,
+): string {
   const end = Math.min(start + length, data.length);
   let s = '';
   for (let i = start; i < end; i++) s += String.fromCharCode(data[i]);
@@ -70,25 +74,70 @@ function longestPrintableRun(s: string): number {
 // ---------------------------------------------------------------------------
 
 const KNOWN_PNG_CHUNKS = new Set([
-  'IHDR', 'PLTE', 'IDAT', 'IEND', 'tRNS', 'cHRM', 'gAMA', 'iCCP',
-  'sBIT', 'sRGB', 'tEXt', 'zTXt', 'iTXt', 'bKGD', 'hIST', 'pHYs',
-  'sPLT', 'tIME', 'acTL', 'fcTL', 'fdAT', 'eXIf',
+  'IHDR',
+  'PLTE',
+  'IDAT',
+  'IEND',
+  'tRNS',
+  'cHRM',
+  'gAMA',
+  'iCCP',
+  'sBIT',
+  'sRGB',
+  'tEXt',
+  'zTXt',
+  'iTXt',
+  'bKGD',
+  'hIST',
+  'pHYs',
+  'sPLT',
+  'tIME',
+  'acTL',
+  'fcTL',
+  'fdAT',
+  'eXIf',
 ]);
 
 const KNOWN_WEBP_CHUNKS = new Set([
-  'VP8 ', 'VP8L', 'VP8X', 'ICCP', 'ANIM', 'ANMF', 'ALPH', 'EXIF', 'XMP ',
+  'VP8 ',
+  'VP8L',
+  'VP8X',
+  'ICCP',
+  'ANIM',
+  'ANMF',
+  'ALPH',
+  'EXIF',
+  'XMP ',
 ]);
 
 const KNOWN_RIFF_CHUNKS = new Set([
-  'fmt ', 'data', 'LIST', 'INFO', 'fact', 'cue ', 'plst', 'labl',
-  'note', 'ltxt', 'smpl', 'inst', 'bext', 'iXML', 'axml', 'id3 ', 'ID3 ',
+  'fmt ',
+  'data',
+  'LIST',
+  'INFO',
+  'fact',
+  'cue ',
+  'plst',
+  'labl',
+  'note',
+  'ltxt',
+  'smpl',
+  'inst',
+  'bext',
+  'iXML',
+  'axml',
+  'id3 ',
+  'ID3 ',
 ]);
 
 // ---------------------------------------------------------------------------
 // Known file signatures for embedded-payload detection.
 // ---------------------------------------------------------------------------
 
-interface Sig { name: string; bytes: number[] }
+interface Sig {
+  name: string;
+  bytes: number[];
+}
 
 const EMBEDDED_SIGS: Sig[] = [
   { name: 'ZIP', bytes: [0x50, 0x4b, 0x03, 0x04] },
@@ -109,12 +158,16 @@ const EMBEDDED_SIGS: Sig[] = [
   { name: 'RAR5', bytes: [0x52, 0x61, 0x72, 0x21, 0x1a, 0x07, 0x01, 0x00] },
 ];
 
-function findEmbeddedSignatureAt(buf: Uint8Array | string, offset = 0): string | null {
+function findEmbeddedSignatureAt(
+  buf: Uint8Array | string,
+  offset = 0,
+): string | null {
   const bytes =
     typeof buf === 'string'
       ? (() => {
           const out = new Uint8Array(buf.length);
-          for (let i = 0; i < buf.length; i++) out[i] = buf.charCodeAt(i) & 0xff;
+          for (let i = 0; i < buf.length; i++)
+            out[i] = buf.charCodeAt(i) & 0xff;
           return out;
         })()
       : buf;
@@ -172,11 +225,11 @@ function summarizeLsb(
   decoded: string,
   offset: number,
 ): LsbFinding {
-  const preview = decoded
-    .slice(0, 200)
-    .replace(/[^\x20-\x7e\n]/g, '.');
+  const preview = decoded.slice(0, 200).replace(/[^\x20-\x7e\n]/g, '.');
   const looksLikeFlag = FLAG_PREFIX_RE.test(decoded);
-  const embeddedSignature = findEmbeddedSignatureAt(bytesToLatin1(decoded.slice(0, 16)));
+  const embeddedSignature = findEmbeddedSignatureAt(
+    bytesToLatin1(decoded.slice(0, 16)),
+  );
   return {
     channel,
     bit,
@@ -201,8 +254,10 @@ export function inspectPngChunks(data: Uint8Array): {
   const lsbFindings: LsbFinding[] = [];
   if (
     data.length < 8 ||
-    data[0] !== 0x89 || data[1] !== 0x50 ||
-    data[2] !== 0x4e || data[3] !== 0x47
+    data[0] !== 0x89 ||
+    data[1] !== 0x50 ||
+    data[2] !== 0x4e ||
+    data[3] !== 0x47
   ) {
     return { anomalies, lsbFindings };
   }
@@ -364,7 +419,11 @@ function findJpegEnd(data: Uint8Array): number {
     const marker = data[offset + 1];
 
     // Standalone markers: no length field.
-    if (marker === 0xd8 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+    if (
+      marker === 0xd8 ||
+      marker === 0x01 ||
+      (marker >= 0xd0 && marker <= 0xd7)
+    ) {
       offset += 2;
       continue;
     }
@@ -498,7 +557,11 @@ function scanJpegSegments(data: Uint8Array): JpegSegment[] {
       continue;
     }
     const marker = data[offset + 1];
-    if (marker === 0xd8 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+    if (
+      marker === 0xd8 ||
+      marker === 0x01 ||
+      (marker >= 0xd0 && marker <= 0xd7)
+    ) {
       offset += 2;
       continue;
     }
@@ -532,7 +595,8 @@ export function inspectGif(data: Uint8Array): {
   const lsbFindings: LsbFinding[] = [];
   if (data.length < 13) return { anomalies, lsbFindings };
   const header = asciiAt(data, 0, 6);
-  if (header !== 'GIF87a' && header !== 'GIF89a') return { anomalies, lsbFindings };
+  if (header !== 'GIF87a' && header !== 'GIF89a')
+    return { anomalies, lsbFindings };
 
   const packed = data[10];
   let offset = 13;
@@ -663,14 +727,24 @@ export function inspectBmp(data: Uint8Array): {
     const bitsPerPixel = data[28] | (data[29] << 8);
     if (bitsPerPixel === 24 || bitsPerPixel === 32) {
       const bits: number[] = [];
-      for (let i = pixelDataOffset; i < data.length && bits.length < 8192 * 8; i++) {
+      for (
+        let i = pixelDataOffset;
+        i < data.length && bits.length < 8192 * 8;
+        i++
+      ) {
         bits.push(data[i] & 1);
       }
       if (bits.length >= 64) {
         const decoded = packBits(Uint8Array.from(bits));
         if (longestPrintableRun(decoded) >= 6) {
           lsbFindings.push(
-            summarizeLsb(`BMP-${bitsPerPixel}bpp-LSB`, 0, bits.length, decoded, pixelDataOffset),
+            summarizeLsb(
+              `BMP-${bitsPerPixel}bpp-LSB`,
+              0,
+              bits.length,
+              decoded,
+              pixelDataOffset,
+            ),
           );
         }
       }
@@ -796,7 +870,11 @@ export function parseWavHeader(data: Uint8Array): WavInfo | null {
 
   if (!fmt || dataOffset < 0) return null;
   const format: WavInfo['format'] =
-    fmt.audioFormat === 1 ? 'PCM' : fmt.audioFormat === 3 ? 'IEEE_FLOAT' : 'OTHER';
+    fmt.audioFormat === 1
+      ? 'PCM'
+      : fmt.audioFormat === 3
+        ? 'IEEE_FLOAT'
+        : 'OTHER';
 
   return {
     sampleRate: fmt.sampleRate,
@@ -847,7 +925,12 @@ export function inspectWav(data: Uint8Array): {
     const id = asciiAt(data, offset, 4);
     const size = readUint32LE(data, offset + 4);
     const payload = offset + 8;
-    if (id !== 'RIFF' && id !== 'fmt ' && id !== 'data' && !KNOWN_RIFF_CHUNKS.has(id)) {
+    if (
+      id !== 'RIFF' &&
+      id !== 'fmt ' &&
+      id !== 'data' &&
+      !KNOWN_RIFF_CHUNKS.has(id)
+    ) {
       anomalies.push({
         kind: 'unknown-chunk',
         description: `Unknown RIFF chunk '${id}' (${size} bytes).`,
@@ -900,7 +983,10 @@ function decodeWavToPcm(data: Uint8Array, info: WavInfo): PcmData | null {
       value = signed / 8388608;
     } else {
       const v =
-        data[pos] | (data[pos + 1] << 8) | (data[pos + 2] << 16) | (data[pos + 3] << 24);
+        data[pos] |
+        (data[pos + 1] << 8) |
+        (data[pos + 2] << 16) |
+        (data[pos + 3] << 24);
       value = v / 2147483648;
     }
     channels[ch][idx] = value;
@@ -934,9 +1020,7 @@ function extractAudioLsb(pcm: PcmData, bitsPerSample: number): LsbFinding[] {
       // decoded PCM lost that, so we approximate by re-quantising.
       const bits: number[] = [];
       for (let i = 0; i < channel.length && bits.length < MAX_BITS; i++) {
-        const raw =
-          bytesPerSampleToInt(channel[i], bitsPerSample) |
-          0;
+        const raw = bytesPerSampleToInt(channel[i], bitsPerSample) | 0;
         bits.push((raw >> bitIdx) & 1);
       }
 
@@ -1035,7 +1119,8 @@ export function inspectFlac(data: Uint8Array): AnomalyFinding[] {
     if (type === 4) {
       anomalies.push({
         kind: 'metadata-injection',
-        description: 'FLAC Vorbis comment block present — check for embedded comments.',
+        description:
+          'FLAC Vorbis comment block present — check for embedded comments.',
         offset,
         length: size + 4,
         confidence: 'confirmed',
@@ -1168,6 +1253,8 @@ export function inspectPngChunksLegacy(data: Uint8Array): AnomalyFinding[] {
   return inspectPngChunks(data).anomalies;
 }
 
-export function inspectJpegTrailingDataLegacy(data: Uint8Array): AnomalyFinding[] {
+export function inspectJpegTrailingDataLegacy(
+  data: Uint8Array,
+): AnomalyFinding[] {
   return inspectJpegTrailingData(data).anomalies;
 }

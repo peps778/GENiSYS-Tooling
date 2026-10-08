@@ -18,7 +18,6 @@ import NotesSOP from './NotesSOP';
 import OSINT from './OSINT';
 import { WebSecurityCTFPage } from './WebAutomation_Exploit';
 
-
 function ProtectedShell() {
   const { collapsed } = useSidebarCollapseContext();
 
@@ -31,7 +30,10 @@ function ProtectedShell() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/heap" element={<HeapDump />} />
           <Route path="/decode" element={<DecodingEncodingPage />} />
-          <Route path="/reverse-engineering" element={<ReverseEngineeringPage />} />
+          <Route
+            path="/reverse-engineering"
+            element={<ReverseEngineeringPage />}
+          />
           <Route path="/files" element={<FileAnalysisPage />} />
           <Route path="/linux" element={<LinuxDocs />} />
           <Route path="/networking" element={<Networking />} />
