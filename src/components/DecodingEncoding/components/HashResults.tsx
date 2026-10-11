@@ -3,6 +3,7 @@ import type { HashIdentificationResult } from '../tools/hashIdentifier';
 
 interface HashResultsProps {
   result: HashIdentificationResult;
+  hashValue: string;
 }
 
 const CONFIDENCE_STYLES: Record<string, string> = {
@@ -11,7 +12,7 @@ const CONFIDENCE_STYLES: Record<string, string> = {
   low: 'bg-[#F9FAFB] border-[#E5E7EB] text-[#6B7280]',
 };
 
-export default function HashResults({ result }: HashResultsProps) {
+export default function HashResults({ result, hashValue }: HashResultsProps) {
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-[10px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 sm:grid-cols-2">
@@ -56,6 +57,34 @@ export default function HashResults({ result }: HashResultsProps) {
           </li>
         ))}
       </ul>
+
+      <div className="flex flex-wrap gap-2 border-t border-[#E5E7EB] pt-3">
+        <a
+          href={`https://crackstation.net/?hash=${encodeURIComponent(hashValue)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-10 items-center justify-center rounded-[10px] bg-[#16A34A] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#15803D] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2"
+          aria-label="Open CrackStation to look up the detected hash"
+        >
+          Open in CrackStation
+        </a>
+        {hashValue.split('.').length === 3 && (
+          <a
+            href={`https://www.jwt.io/#debugger-io?token=${encodeURIComponent(hashValue)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-10 items-center justify-center rounded-[10px] border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#111827] transition hover:bg-[#F9FAFB] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2"
+          >
+            Open in JWT Editor
+          </a>
+        )}
+      </div>
+      <p className="text-xs text-[#6B7280]">
+        Hash identification is heuristic. CrackStation may not accept prefilled
+        hashes from URL parameters; paste the detected value there if it is not
+        populated automatically. JWT structure does not prove signature
+        validity.
+      </p>
     </div>
   );
 }

@@ -979,7 +979,9 @@ export default function DecodingEncodingPage() {
                 {error}
               </p>
             )}
-            {hashResult && <HashResults result={hashResult} />}
+            {hashResult && (
+              <HashResults result={hashResult} hashValue={input.trim()} />
+            )}
           </>
         )}
 

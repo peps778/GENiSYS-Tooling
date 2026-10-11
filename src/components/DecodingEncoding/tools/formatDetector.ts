@@ -195,6 +195,36 @@ export function detectFormats(rawInput: string): FormatCandidate[] {
   const candidates: FormatCandidate[] = [];
   const compact = input.replace(/\s+/g, '');
 
+  // A compact JWS/JWT has three dot-separated Base64URL segments. This
+  // identifies structure only; it does not validate the signature or claims.
+  const jwtParts = input.split('.');
+  if (
+    jwtParts.length === 3 &&
+    jwtParts.every((part) => part.length > 0 && /^[A-Za-z0-9_-]+$/.test(part))
+  ) {
+    try {
+      const decodeBase64UrlJson = (segment: string): unknown => {
+        const normalized = segment.replace(/-/g, '+').replace(/_/g, '/');
+        const padded =
+          normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+        return JSON.parse(atob(padded));
+      };
+      const header = decodeBase64UrlJson(jwtParts[0]);
+      const payload = decodeBase64UrlJson(jwtParts[1]);
+      if (header && typeof header === 'object' && payload !== null) {
+        addCandidate(candidates, {
+          toolId: 'hash-identifier',
+          toolLabel: 'JWT (JSON Web Token)',
+          confidence: 0.99,
+          reason:
+            'Three-segment token with Base64URL-encoded JSON header and payload. Signature validity is not verified.',
+        });
+      }
+    } catch {
+      // Invalid JSON/Base64URL segments are not treated as a confirmed JWT.
+    }
+  }
+
   // A known magic sequence is deterministic and should outrank generic hex.
   const hexBytes = hexToBytes(input);
   if (hexBytes) {

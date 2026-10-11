@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import DecodingEncodingPage from '../components/DecodingEncoding/DecodingEncodingPage';
-import { ReverseEngineeringPage } from '../components/ReverseEngineering';
 
 import Sidebar from '../components/Navigation/Sidebar';
 import {
@@ -30,10 +29,6 @@ function ProtectedShell() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/heap" element={<HeapDump />} />
           <Route path="/decode" element={<DecodingEncodingPage />} />
-          <Route
-            path="/reverse-engineering"
-            element={<ReverseEngineeringPage />}
-          />
           <Route path="/files" element={<FileAnalysisPage />} />
           <Route path="/linux" element={<LinuxDocs />} />
           <Route path="/networking" element={<Networking />} />

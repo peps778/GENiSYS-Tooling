@@ -30,6 +30,7 @@ import { runVirtualShell } from './lib/virtualShell';
 import { CtfWorkbenchPanel } from './components/CtfWorkbenchPanel';
 import { DisassemblyPanel } from './components/DisassemblyPanel';
 import { VirtualShellPanel } from './components/VirtualShellPanel';
+import { CodeAnalysisPanel } from './components/AdvancedFileAnalysisPanel';
 
 import type {
   AnalysisProgress,
@@ -428,7 +429,10 @@ export function FileAnalysisPage() {
               />
 
               {activeTab === 'overview' && (
-                <OverviewTab fileSummary={fileSummary} result={result} />
+                <>
+                  <OverviewTab fileSummary={fileSummary} result={result} />
+                  {file && <CodeAnalysisPanel file={file} />}
+                </>
               )}
               {activeTab === 'ctf' && result.ctf && (
                 <CtfWorkbenchPanel
@@ -502,7 +506,10 @@ export function FileAnalysisPage() {
                 />
               )}
               {activeTab === 'binary' && result.binaryStatistics && (
-                <BinaryAnalysisPanel stats={result.binaryStatistics} />
+                <BinaryAnalysisPanel
+                  stats={result.binaryStatistics}
+                  rawData={rawData}
+                />
               )}
             </div>
           )}

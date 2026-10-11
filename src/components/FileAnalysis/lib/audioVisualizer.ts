@@ -13,23 +13,30 @@ export function computeWaveform(
   targetWidth = 1000,
 ): AudioWaveform {
   const channelCount = pcm.channels.length;
+  const width = Number.isFinite(targetWidth)
+    ? Math.max(1, Math.min(10000, Math.floor(targetWidth)))
+    : 1000;
+  const sampleRate =
+    Number.isFinite(pcm.sampleRate) && pcm.sampleRate > 0 ? pcm.sampleRate : 0;
 
-  if (channelCount === 0 || pcm.channels[0].length === 0) {
+  if (channelCount === 0 || pcm.channels[0].length === 0 || sampleRate === 0) {
     return {
-      peaks: new Array(targetWidth).fill(0),
+      peaks: new Array(width).fill(0),
       duration: 0,
-      sampleRate: pcm.sampleRate,
+      sampleRate,
       channels: channelCount,
     };
   }
 
   const totalSamples = pcm.channels[0].length;
-  const samplesPerColumn = Math.max(1, Math.floor(totalSamples / targetWidth));
-  const peaks: number[] = new Array(targetWidth).fill(0);
+  const peaks: number[] = new Array(width).fill(0);
 
-  for (let col = 0; col < targetWidth; col++) {
-    const start = col * samplesPerColumn;
-    const end = Math.min(start + samplesPerColumn, totalSamples);
+  for (let col = 0; col < width; col++) {
+    const start = Math.floor((col * totalSamples) / width);
+    const end = Math.max(
+      start + 1,
+      Math.floor(((col + 1) * totalSamples) / width),
+    );
     let peak = 0;
     for (const channel of pcm.channels) {
       for (let i = start; i < end; i++) {
@@ -42,8 +49,8 @@ export function computeWaveform(
 
   return {
     peaks,
-    duration: totalSamples / pcm.sampleRate,
-    sampleRate: pcm.sampleRate,
+    duration: totalSamples / sampleRate,
+    sampleRate,
     channels: channelCount,
   };
 }
@@ -72,32 +79,55 @@ export function computeSpectrogram(
   pcm: PcmData,
   options: SpectrogramOptions = {},
 ): AudioSpectrogram {
-  const fftSize = nearestPow2(options.fftSize ?? 1024);
-  const hopSize = options.hopSize ?? Math.max(1, Math.floor(fftSize / 4));
-  const maxColumns = options.maxColumns ?? 1024;
-  const minDb = options.minDb ?? -100;
-  const maxDb = options.maxDb ?? -20;
+  // Keep FFT allocations bounded even when options come from untrusted UI input.
+  const requestedFft = Number.isFinite(options.fftSize)
+    ? Math.floor(options.fftSize!)
+    : 1024;
+  const fftSize = nearestPow2(Math.max(32, Math.min(8192, requestedFft)));
+  const requestedHop = Number.isFinite(options.hopSize)
+    ? Math.floor(options.hopSize!)
+    : Math.floor(fftSize / 4);
+  const hopSize = Math.max(1, Math.min(fftSize, requestedHop));
+  const requestedColumns = Number.isFinite(options.maxColumns)
+    ? Math.floor(options.maxColumns!)
+    : 1024;
+  const maxColumns = Math.max(1, Math.min(4096, requestedColumns));
+  const requestedMinDb = Number.isFinite(options.minDb) ? options.minDb! : -100;
+  const requestedMaxDb = Number.isFinite(options.maxDb) ? options.maxDb! : -20;
+  const minDb = Math.min(requestedMinDb, requestedMaxDb - 1);
+  const maxDb = Math.max(requestedMaxDb, minDb + 1);
   const halfBins = fftSize / 2;
+  const sampleRate =
+    Number.isFinite(pcm.sampleRate) && pcm.sampleRate > 0 ? pcm.sampleRate : 0;
 
-  if (pcm.channels.length === 0 || pcm.channels[0].length < fftSize) {
+  if (
+    sampleRate === 0 ||
+    pcm.channels.length === 0 ||
+    pcm.channels[0].length < fftSize
+  ) {
     return {
       width: 0,
       height: halfBins,
       magnitudes: new Float32Array(0),
       fftSize,
-      timeStep: hopSize / pcm.sampleRate,
-      freqStep: pcm.sampleRate / fftSize,
+      timeStep: sampleRate > 0 ? hopSize / sampleRate : 0,
+      freqStep: sampleRate > 0 ? sampleRate / fftSize : 0,
       minDb,
       maxDb,
     };
   }
 
-  const mono = downmixMono(pcm);
+  // Analyze channels independently so anti-phase stereo content cannot cancel out.
+  const channels = pcm.channels.filter((channel) => channel.length >= fftSize);
+  const sampleCount =
+    channels.length > 0
+      ? Math.min(...channels.map((channel) => channel.length))
+      : 0;
   const window = hannWindow(fftSize);
 
   const availableColumns = Math.max(
     1,
-    Math.floor((mono.length - fftSize) / hopSize) + 1,
+    Math.floor((sampleCount - fftSize) / hopSize) + 1,
   );
   const columnStride = Math.max(1, Math.ceil(availableColumns / maxColumns));
   const width = Math.ceil(availableColumns / columnStride);
@@ -105,18 +135,24 @@ export function computeSpectrogram(
   const magnitudes = new Float32Array(width * halfBins);
   const re = new Float32Array(fftSize);
   const im = new Float32Array(fftSize);
+  const strongestMagnitude = new Float32Array(halfBins);
 
   for (let col = 0; col < width; col++) {
     const frameStart = col * columnStride * hopSize;
-    for (let i = 0; i < fftSize; i++) {
-      re[i] = (mono[frameStart + i] ?? 0) * window[i];
-      im[i] = 0;
+    strongestMagnitude.fill(0);
+    for (const channel of channels) {
+      for (let i = 0; i < fftSize; i++) {
+        re[i] = channel[frameStart + i] * window[i];
+        im[i] = 0;
+      }
+      fftInPlace(re, im);
+      for (let bin = 0; bin < halfBins; bin++) {
+        const mag = Math.sqrt(re[bin] * re[bin] + im[bin] * im[bin]);
+        if (mag > strongestMagnitude[bin]) strongestMagnitude[bin] = mag;
+      }
     }
-    fftInPlace(re, im);
-
     for (let bin = 0; bin < halfBins; bin++) {
-      const mag = Math.sqrt(re[bin] * re[bin] + im[bin] * im[bin]);
-      const db = 20 * Math.log10(mag + 1e-12);
+      const db = 20 * Math.log10(strongestMagnitude[bin] + 1e-12);
       magnitudes[bin * width + col] = clamp01((db - minDb) / (maxDb - minDb));
     }
   }
@@ -126,8 +162,8 @@ export function computeSpectrogram(
     height: halfBins,
     magnitudes,
     fftSize,
-    timeStep: (hopSize * columnStride) / pcm.sampleRate,
-    freqStep: pcm.sampleRate / fftSize,
+    timeStep: (hopSize * columnStride) / sampleRate,
+    freqStep: sampleRate / fftSize,
     minDb,
     maxDb,
   };
@@ -136,19 +172,6 @@ export function computeSpectrogram(
 // ---------------------------------------------------------------------------
 // Internals
 // ---------------------------------------------------------------------------
-
-function downmixMono(pcm: PcmData): Float32Array {
-  if (pcm.channels.length === 1) return pcm.channels[0];
-  const n = pcm.channels[0].length;
-  const out = new Float32Array(n);
-  const chCount = pcm.channels.length;
-  for (let i = 0; i < n; i++) {
-    let sum = 0;
-    for (const ch of pcm.channels) sum += ch[i] ?? 0;
-    out[i] = sum / chCount;
-  }
-  return out;
-}
 
 function hannWindow(size: number): Float32Array {
   const w = new Float32Array(size);
